@@ -38,7 +38,7 @@ Juno helps users gain complete control over their finances through intentional s
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/juno-personal-finance.git
+git clone https://github.com/blnkspceSD/juno-personal-finance.git
 cd juno-personal-finance
 ```
 
