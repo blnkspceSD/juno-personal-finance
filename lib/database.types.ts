@@ -1,11 +1,3 @@
-// This file is deprecated - use lib/supabase/client.ts or lib/supabase/server.ts instead
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
 export type Database = {
   public: {
     Tables: {
@@ -18,7 +10,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          id?: string
+          id: string
           email: string
           name?: string | null
           created_at?: string
@@ -66,30 +58,33 @@ export type Database = {
         Row: {
           id: string
           user_id: string
+          budget_id: string
           name: string
           allocated: number
           spent: number
-          budget_id: string
+          sort_order: number
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
           user_id: string
+          budget_id: string
           name: string
           allocated: number
           spent?: number
-          budget_id: string
+          sort_order?: number
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           user_id?: string
+          budget_id?: string
           name?: string
           allocated?: number
           spent?: number
-          budget_id?: string
+          sort_order?: number
           updated_at?: string
         }
       }
@@ -97,30 +92,33 @@ export type Database = {
         Row: {
           id: string
           user_id: string
+          category_id: string
           amount: number
           description: string
-          category_id: string
           date: string
+          receipt_url: string | null
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
           user_id: string
+          category_id: string
           amount: number
           description: string
-          category_id: string
           date: string
+          receipt_url?: string | null
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           user_id?: string
+          category_id?: string
           amount?: number
           description?: string
-          category_id?: string
           date?: string
+          receipt_url?: string | null
           updated_at?: string
         }
       }
