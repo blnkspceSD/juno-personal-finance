@@ -93,7 +93,7 @@ As a working adult using Juno for envelope budgeting, I want to allocate my mont
 - Transaction tracking (separate feature)
 - Bank account integration
 - Budget history/reporting
-- Multi-user/family budgets
+- Multi-user/family budget
 
 ## Design Notes
 
