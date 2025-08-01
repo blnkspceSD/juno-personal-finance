@@ -1,0 +1,34 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "Juno Personal Finance",
+    "type": "nextjs-app",
+    "description": "Personal finance tool implementing YNAB's envelope budgeting method",
+    "created": "2025-08-01"
+  },
+  "framework": {
+    "type": "nextjs",
+    "version": "15",
+    "typescript": true,
+    "appRouter": true
+  },
+  "database": {
+    "type": "supabase",
+    "features": ["auth", "realtime", "storage"]
+  },
+  "deployment": {
+    "platform": "vercel",
+    "repository": "github"
+  },
+  "specs": {
+    "directory": ".agent-os/specs",
+    "naming": "YYYY-MM-DD-feature-name",
+    "required_files": ["spec.md", "tasks.md"]
+  },
+  "development": {
+    "workflow": "spec-driven",
+    "code_style": "typescript-strict",
+    "testing_strategy": "jest-rtl",
+    "mobile_first": true
+  }
+}
