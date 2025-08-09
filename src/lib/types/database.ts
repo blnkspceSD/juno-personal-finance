@@ -107,8 +107,85 @@ export interface BudgetSummary {
   overspent_categories: number
 }
 
+// Category suggestions types
+export interface CategoryUsage {
+  id: string
+  user_id: string
+  category_id: string
+  usage_count: number
+  last_used: string
+  weekly_frequency: number
+  monthly_frequency: number
+  created_at: string
+  updated_at: string
+}
+
+export interface RecentCategories {
+  id: string
+  user_id: string
+  category_ids: string[]
+  last_updated: string
+}
+
+export interface CategoryKeywords {
+  id: string
+  category_id: string
+  user_id: string | null
+  keywords: string[]
+  confidence_scores: number[]
+  created_at: string
+  updated_at: string
+}
+
+export interface CategoryAmountPatterns {
+  id: string
+  user_id: string
+  category_id: string
+  typical_amount_min: number
+  typical_amount_max: number
+  average_amount: number
+  confidence_threshold: number
+  transaction_count: number
+  created_at: string
+  updated_at: string
+}
+
+export interface CategoryTimePatterns {
+  id: string
+  user_id: string
+  category_id: string
+  day_of_week_patterns: number[]
+  hour_patterns: number[]
+  monthly_patterns: number[]
+  created_at: string
+  updated_at: string
+}
+
+// Category suggestion response types
+export interface CategorySuggestion {
+  category_id: string
+  category_name: string
+  confidence_score: number
+  reasoning: string[]
+  suggestion_type: 'frequent' | 'recent' | 'description' | 'amount' | 'time' | 'ai'
+  icon?: string
+  badge?: 'recommended' | 'popular' | 'new'
+}
+
+export interface CategorySuggestionGroup {
+  title: string
+  categories: CategorySuggestion[]
+  priority: number
+  max_display: number
+}
+
 // Database response types from Supabase
 export type DatabaseUser = User
 export type DatabaseBudget = Budget
 export type DatabaseCategory = Category
 export type DatabaseTransaction = Transaction
+export type DatabaseCategoryUsage = CategoryUsage
+export type DatabaseRecentCategories = RecentCategories
+export type DatabaseCategoryKeywords = CategoryKeywords
+export type DatabaseCategoryAmountPatterns = CategoryAmountPatterns
+export type DatabaseCategoryTimePatterns = CategoryTimePatterns
