@@ -9,14 +9,13 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { useRealtimeContext } from '@/lib/context/RealtimeContext'
 import { useRealtimeBalance } from '@/lib/hooks/useRealtimeBalance'
-import type { Category } from '@/lib/types/database'
+import { TransactionForm } from '@/components/forms/TransactionForm'
+import type { Category, CreateTransactionForm } from '@/lib/types/database'
 
 interface RealtimeTransactionFormProps {
   initialCategories: Category[]
@@ -30,27 +29,14 @@ export function RealtimeTransactionForm({ initialCategories, budgetId }: Realtim
   const { addOptimisticTransaction } = useRealtimeBalance(budgetId)
   
   const [categories, setCategories] = useState<Category[]>(initialCategories)
-  const [selectedCategoryId, setSelectedCategoryId] = useState('')
-  const [amount, setAmount] = useState('')
-  const [description, setDescription] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    if (categories.length > 0 && !selectedCategoryId) {
-      setSelectedCategoryId(categories[0].id)
-    }
-  }, [categories, selectedCategoryId])
 
   useEffect(() => {
     setCategories(initialCategories)
   }, [initialCategories])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (data: CreateTransactionForm) => {
     setLoading(true)
-    setError('')
 
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -58,39 +44,26 @@ export function RealtimeTransactionForm({ initialCategories, budgetId }: Realtim
         throw new Error('User not authenticated')
       }
 
-      const transactionAmount = parseFloat(amount)
-      if (!transactionAmount || transactionAmount <= 0) {
-        throw new Error('Please enter a valid amount')
-      }
-
-      if (!selectedCategoryId) {
-        throw new Error('Please select a category')
-      }
-
-      if (!description.trim()) {
-        throw new Error('Please enter a description')
-      }
-
       // Add optimistic update immediately for instant UI feedback
       addOptimisticTransaction({
-        category_id: selectedCategoryId,
-        amount: transactionAmount,
-        description: description.trim(),
-        date
+        category_id: data.category_id,
+        amount: data.amount,
+        description: data.description,
+        date: data.date
       })
 
       // Mark category as having pending update
-      addPendingUpdate(selectedCategoryId)
+      addPendingUpdate(data.category_id)
 
       // Insert transaction into database
       const { error: transactionError } = await supabase
         .from('transactions')
         .insert({
           user_id: user.id,
-          category_id: selectedCategoryId,
-          amount: transactionAmount,
-          description: description.trim(),
-          date
+          category_id: data.category_id,
+          amount: data.amount,
+          description: data.description,
+          date: data.date
         })
 
       if (transactionError) {
@@ -101,9 +74,50 @@ export function RealtimeTransactionForm({ initialCategories, budgetId }: Realtim
       router.push('/dashboard')
       
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      throw err // Let the form component handle error display
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleCancel = () => {
+    router.push('/dashboard')
+  }
+
+  const handleCategoryCreate = async (name: string): Promise<string | null> => {
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) {
+        throw new Error('User not authenticated')
+      }
+
+      // For now, we'll create a basic category without a specific budget
+      // In a real implementation, this would need to be associated with the current budget
+      const { data: newCategory, error: createError } = await supabase
+        .from('categories')
+        .insert({
+          user_id: user.id,
+          budget_id: budgetId, // Use the current budget ID
+          name: name.trim(),
+          allocated: 0, // Default allocation
+          spent: 0,
+          sort_order: categories.length
+        })
+        .select()
+        .single()
+
+      if (createError) {
+        console.error('Error creating category:', createError)
+        return null
+      }
+
+      // Update categories list
+      setCategories(prev => [...prev, newCategory])
+      
+      return newCategory.id
+    } catch (error) {
+      console.error('Error creating category:', error)
+      return null
     }
   }
 
@@ -138,87 +152,18 @@ export function RealtimeTransactionForm({ initialCategories, budgetId }: Realtim
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Record Expense</CardTitle>
-            <CardDescription>
-              Add a new expense and assign it to an envelope category. Updates will appear instantly on your dashboard.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="amount">Amount</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="e.g., 24.99"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Input
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="e.g., Grocery shopping at Whole Foods"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="category">Category (Envelope)</Label>
-                <select
-                  id="category"
-                  value={selectedCategoryId}
-                  onChange={(e) => setSelectedCategoryId(e.target.value)}
-                  className="block w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                >
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name} (${(category.allocated - category.spent).toFixed(2)} remaining)
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="date">Date</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  required
-                />
-              </div>
-
-              {error && (
-                <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200">
-                  {error}
-                </div>
-              )}
-
-              <div className="flex gap-3 pt-4">
-                <Button type="submit" disabled={loading} className="flex-1">
-                  {loading ? 'Adding Transaction...' : 'Add Transaction'}
-                </Button>
-                <Link href="/dashboard">
-                  <Button type="button" variant="outline">
-                    Cancel
-                  </Button>
-                </Link>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        <TransactionForm
+          categories={categories}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          onCategoryCreate={handleCategoryCreate}
+          loading={loading}
+          submitLabel="Add Transaction"
+          showNotes={false}
+          autoFocus={true}
+          allowCategoryCreation={true}
+          userId={categories[0]?.user_id}
+        />
       )}
     </div>
   )
