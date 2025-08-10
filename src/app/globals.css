@@ -1,9 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "../styles/juno-tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Existing Tailwind theme tokens */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -41,6 +43,171 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Juno Design System - Border Radius Scale */
+  --radius-juno-sm: var(--juno-radius-sm);
+  --radius-juno-md: var(--juno-radius-md);
+  --radius-juno-lg: var(--juno-radius-lg);
+  --radius-juno-xl: var(--juno-radius-xl);
+  --radius-juno-2xl: var(--juno-radius-2xl);
+  --radius-juno-3xl: var(--juno-radius-3xl);
+  --radius-juno-4xl: var(--juno-radius-4xl);
+  --radius-juno-full: var(--juno-radius-full);
+
+  /* Juno Design System - Brand Colors */
+  --color-juno-accent: var(--juno-accent);
+  --color-juno-text: var(--juno-text);
+  --color-juno-bg: var(--juno-bg);
+  --color-juno-on-accent: var(--juno-on-accent);
+
+  /* Juno Design System - Accent Scale */
+  --color-juno-accent-50: var(--juno-accent-50);
+  --color-juno-accent-100: var(--juno-accent-100);
+  --color-juno-accent-200: var(--juno-accent-200);
+  --color-juno-accent-300: var(--juno-accent-300);
+  --color-juno-accent-400: var(--juno-accent-400);
+  --color-juno-accent-500: var(--juno-accent-500);
+  --color-juno-accent-600: var(--juno-accent-600);
+  --color-juno-accent-700: var(--juno-accent-700);
+  --color-juno-accent-800: var(--juno-accent-800);
+  --color-juno-accent-900: var(--juno-accent-900);
+
+  /* Juno Design System - Teal Accent Scale */
+  --color-juno-teal-50: var(--juno-teal-50);
+  --color-juno-teal-100: var(--juno-teal-100);
+  --color-juno-teal-200: var(--juno-teal-200);
+  --color-juno-teal-300: var(--juno-teal-300);
+  --color-juno-teal-400: var(--juno-teal-400);
+  --color-juno-teal-500: var(--juno-teal-500);
+  --color-juno-teal-600: var(--juno-teal-600);
+  --color-juno-teal-700: var(--juno-teal-700);
+  --color-juno-teal-800: var(--juno-teal-800);
+  --color-juno-teal-900: var(--juno-teal-900);
+
+  /* Juno Design System - Blue Accent Scale */
+  --color-juno-blue-50: var(--juno-blue-50);
+  --color-juno-blue-100: var(--juno-blue-100);
+  --color-juno-blue-200: var(--juno-blue-200);
+  --color-juno-blue-300: var(--juno-blue-300);
+  --color-juno-blue-400: var(--juno-blue-400);
+  --color-juno-blue-500: var(--juno-blue-500);
+  --color-juno-blue-600: var(--juno-blue-600);
+  --color-juno-blue-700: var(--juno-blue-700);
+  --color-juno-blue-800: var(--juno-blue-800);
+  --color-juno-blue-900: var(--juno-blue-900);
+
+  /* Juno Design System - Neutral Scale */
+  --color-juno-neutral-100: var(--juno-neutral-100);
+  --color-juno-neutral-200: var(--juno-neutral-200);
+  --color-juno-neutral-300: var(--juno-neutral-300);
+  --color-juno-neutral-400: var(--juno-neutral-400);
+  --color-juno-neutral-500: var(--juno-neutral-500);
+  --color-juno-neutral-600: var(--juno-neutral-600);
+  --color-juno-neutral-750: var(--juno-neutral-750);
+  --color-juno-neutral-800: var(--juno-neutral-800);
+  --color-juno-neutral-850: var(--juno-neutral-850);
+  --color-juno-neutral-900: var(--juno-neutral-900);
+  --color-juno-neutral-950: var(--juno-neutral-950);
+
+  /* Juno Design System - Light Surface Scale */
+  --color-juno-surface-50: var(--juno-surface-50);
+  --color-juno-surface-100: var(--juno-surface-100);
+  --color-juno-surface-200: var(--juno-surface-200);
+  --color-juno-surface-300: var(--juno-surface-300);
+  --color-juno-surface-400: var(--juno-surface-400);
+  --color-juno-surface-500: var(--juno-surface-500);
+
+  /* Juno Design System - Semantic Colors */
+  --color-juno-success: var(--juno-success);
+  --color-juno-success-bg: var(--juno-success-bg);
+  --color-juno-success-fg: var(--juno-success-fg);
+  --color-juno-warning: var(--juno-warning);
+  --color-juno-warning-bg: var(--juno-warning-bg);
+  --color-juno-warning-fg: var(--juno-warning-fg);
+  --color-juno-danger: var(--juno-danger);
+  --color-juno-danger-bg: var(--juno-danger-bg);
+  --color-juno-danger-fg: var(--juno-danger-fg);
+  --color-juno-info: var(--juno-info);
+  --color-juno-info-bg: var(--juno-info-bg);
+  --color-juno-info-fg: var(--juno-info-fg);
+
+  /* Juno Design System - Derived Colors */
+  --color-juno-border: var(--juno-border);
+  --color-juno-muted-fg: var(--juno-muted-fg);
+  --color-juno-pill-fg: var(--juno-pill-fg);
+  --color-juno-pill-bg: var(--juno-pill-bg);
+  --color-juno-shadow: var(--juno-shadow);
+  --color-juno-focus-ring: var(--juno-focus-ring);
+
+  /* Juno Design System - Transparent Borders */
+  --color-juno-border-alpha-subtle: var(--juno-border-alpha-subtle);
+  --color-juno-border-alpha-soft: var(--juno-border-alpha-soft);
+  --color-juno-border-alpha-medium: var(--juno-border-alpha-medium);
+  --color-juno-border-alpha-strong: var(--juno-border-alpha-strong);
+  --color-juno-border-alpha-bold: var(--juno-border-alpha-bold);
+  --color-juno-border-alpha-dark-subtle: var(--juno-border-alpha-dark-subtle);
+  --color-juno-border-alpha-dark-soft: var(--juno-border-alpha-dark-soft);
+  --color-juno-border-alpha-dark-medium: var(--juno-border-alpha-dark-medium);
+  --color-juno-border-alpha-dark-strong: var(--juno-border-alpha-dark-strong);
+  --color-juno-border-alpha-accent-subtle: var(--juno-border-alpha-accent-subtle);
+  --color-juno-border-alpha-accent-soft: var(--juno-border-alpha-accent-soft);
+  --color-juno-border-alpha-accent-medium: var(--juno-border-alpha-accent-medium);
+
+  /* Juno Design System - Outline Colors (for stroke-outside borders) */
+  --color-juno-outline-alpha-subtle: var(--juno-border-alpha-subtle);
+  --color-juno-outline-alpha-soft: var(--juno-border-alpha-soft);
+  --color-juno-outline-alpha-medium: var(--juno-border-alpha-medium);
+  --color-juno-outline-alpha-strong: var(--juno-border-alpha-strong);
+  --color-juno-outline-alpha-bold: var(--juno-border-alpha-bold);
+  --color-juno-outline-alpha-dark-subtle: var(--juno-border-alpha-dark-subtle);
+  --color-juno-outline-alpha-dark-soft: var(--juno-border-alpha-dark-soft);
+  --color-juno-outline-alpha-dark-medium: var(--juno-border-alpha-dark-medium);
+  --color-juno-outline-alpha-dark-strong: var(--juno-border-alpha-dark-strong);
+  --color-juno-outline-alpha-accent-subtle: var(--juno-border-alpha-accent-subtle);
+  --color-juno-outline-alpha-accent-soft: var(--juno-border-alpha-accent-soft);
+  --color-juno-outline-alpha-accent-medium: var(--juno-border-alpha-accent-medium);
+
+  /* Juno Design System - Soft Shadow Scale */
+  --shadow-juno-xs: var(--juno-shadow-xs);
+  --shadow-juno-sm: var(--juno-shadow-sm);
+  --shadow-juno-card: var(--juno-shadow-card);
+  --shadow-juno-md: var(--juno-shadow-md);
+  --shadow-juno-lg: var(--juno-shadow-lg);
+  --shadow-juno-xl: var(--juno-shadow-xl);
+  --shadow-juno-soft: var(--juno-shadow-soft);
+  --shadow-juno-elevated: var(--juno-shadow-elevated);
+
+  /* Juno Design System - Stroke Shadow Scale */
+  --shadow-juno-stroke-subtle: var(--juno-shadow-stroke-subtle);
+  --shadow-juno-stroke-soft: var(--juno-shadow-stroke-soft);
+  --shadow-juno-stroke-medium: var(--juno-shadow-stroke-medium);
+  --shadow-juno-stroke-strong: var(--juno-shadow-stroke-strong);
+  --shadow-juno-stroke-bold: var(--juno-shadow-stroke-bold);
+  --shadow-juno-stroke-dark-subtle: var(--juno-shadow-stroke-dark-subtle);
+  --shadow-juno-stroke-dark-soft: var(--juno-shadow-stroke-dark-soft);
+  --shadow-juno-stroke-dark-medium: var(--juno-shadow-stroke-dark-medium);
+  --shadow-juno-stroke-dark-strong: var(--juno-shadow-stroke-dark-strong);
+  --shadow-juno-stroke-accent-subtle: var(--juno-shadow-stroke-accent-subtle);
+  --shadow-juno-stroke-accent-soft: var(--juno-shadow-stroke-accent-soft);
+  --shadow-juno-stroke-accent-medium: var(--juno-shadow-stroke-accent-medium);
+
+  /* Juno Design System - Combined Shadow + Stroke Effects */
+  --shadow-juno-soft-with-stroke: var(--juno-shadow-soft-with-stroke);
+  --shadow-juno-sm-with-stroke: var(--juno-shadow-sm-with-stroke);
+  --shadow-juno-card-with-stroke: var(--juno-shadow-card-with-stroke);
+  --shadow-juno-md-with-stroke: var(--juno-shadow-md-with-stroke);
+  --shadow-juno-lg-with-stroke: var(--juno-shadow-lg-with-stroke);
+  --shadow-juno-xl-with-stroke: var(--juno-shadow-xl-with-stroke);
+  --shadow-juno-elevated-with-stroke: var(--juno-shadow-elevated-with-stroke);
+  --shadow-juno-soft-with-dark-stroke: var(--juno-shadow-soft-with-dark-stroke);
+
+  /* Juno Design System - Button Shadow Effects */
+  --shadow-juno-btn-primary: var(--juno-shadow-button-primary);
+  --shadow-juno-btn-primary-hover: var(--juno-shadow-button-primary-hover);
+  --shadow-juno-btn-primary-active: var(--juno-shadow-button-primary-active);
+  --shadow-juno-btn-secondary: var(--juno-shadow-button-secondary);
+  --shadow-juno-btn-secondary-hover: var(--juno-shadow-button-secondary-hover);
+  --shadow-juno-btn-secondary-active: var(--juno-shadow-button-secondary-active);
 }
 
 :root {

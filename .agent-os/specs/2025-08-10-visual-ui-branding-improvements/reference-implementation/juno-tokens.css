@@ -1,0 +1,321 @@
+/**
+ * Juno Design System - Design Tokens
+ * 
+ * Complete CSS custom properties for the Juno visual redesign
+ * Based on Juno Design Direction v3 specifications
+ * 
+ * Usage: Import this file after your base CSS but before component styles
+ */
+
+:root {
+  /* ========================================
+   * JUNO BRAND COLORS (PRIMARY SYSTEM)
+   * ======================================== */
+  
+  /* Primary Brand Colors */
+  --juno-accent: oklch(0.85 0.08 190);      /* #85D6FF - Primary cyan background */
+  --juno-text: oklch(0.25 0.02 230);       /* #212730 - Primary text color */
+  --juno-bg: var(--juno-accent);           /* Background uses accent color */
+  --juno-on-accent: var(--juno-text);      /* Text on accent backgrounds */
+
+  /* ========================================
+   * JUNO ACCENT RAMP (FULL SCALE)
+   * ======================================== */
+  
+  --juno-accent-50: oklch(0.97 0.02 190);   /* #F3FBFF - Lightest tint */
+  --juno-accent-100: oklch(0.93 0.04 190);  /* #CEEFFF */
+  --juno-accent-200: oklch(0.89 0.06 190);  /* #AAE2FF */
+  --juno-accent-300: oklch(0.85 0.08 190);  /* #85D6FF - Primary accent */
+  --juno-accent-400: oklch(0.78 0.09 200);  /* #70BCE2 */
+  --juno-accent-500: oklch(0.71 0.08 200);  /* #5CA2C5 */
+  --juno-accent-600: oklch(0.63 0.07 210);  /* #4A88A8 */
+  --juno-accent-700: oklch(0.52 0.06 210);  /* #396F8A */
+  --juno-accent-800: oklch(0.42 0.05 220);  /* #2A576D */
+  --juno-accent-900: oklch(0.35 0.04 230);  /* #1D3F50 - Darkest shade */
+
+  /* ========================================
+   * JUNO NEUTRAL SCALE
+   * ======================================== */
+  
+  --juno-neutral-50: oklch(0.92 0.005 240);  /* #D2D6D4 - Lightest gray */
+  --juno-neutral-100: oklch(0.85 0.005 240); /* #B5BAB9 */
+  --juno-neutral-200: oklch(0.75 0.01 240);  /* #979F9E */
+  --juno-neutral-300: oklch(0.65 0.01 240);  /* #798383 */
+  --juno-neutral-400: oklch(0.50 0.015 240); /* #5C6568 */
+  --juno-neutral-500: oklch(0.40 0.02 240);  /* #3E464C */
+  --juno-neutral-600: oklch(0.30 0.02 240);  /* #212730 - Same as juno-text */
+  --juno-neutral-700: oklch(0.25 0.02 240);  /* #1D1F2A */
+  --juno-neutral-800: oklch(0.20 0.02 240);  /* #191824 */
+  --juno-neutral-850: oklch(0.18 0.02 240);  /* #17141F */
+  --juno-neutral-900: oklch(0.15 0.02 240);  /* #141019 - Darkest neutral */
+
+  /* ========================================
+   * WHITE NEUTRAL SCALE (LIGHT SURFACES)
+   * ======================================== */
+  
+  --juno-white-50: oklch(1.00 0 0);         /* #FFFFFF - Pure white */
+  --juno-white-100: oklch(0.99 0.005 240);  /* #FCFEFF - Slight cool tint */
+  --juno-white-200: oklch(0.97 0.01 240);   /* #F7FAFF */
+  --juno-white-300: oklch(0.95 0.015 240);  /* #F3F7FE */
+  --juno-white-400: oklch(0.93 0.02 240);   /* #EEF3FB */
+  --juno-white-500: oklch(0.91 0.025 240);  /* #EAF0F8 */
+
+  /* ========================================
+   * DERIVED COLOR TOKENS (ALPHA-BASED)
+   * ======================================== */
+  
+  /* Using juno-text as base for consistent alpha transparency */
+  --juno-border: color-mix(in oklch, var(--juno-text) 16%, transparent);         /* rgba(33,39,48,0.16) */
+  --juno-muted-fg: color-mix(in oklch, var(--juno-text) 72%, transparent);       /* rgba(33,39,48,0.72) */
+  --juno-pill-fg: color-mix(in oklch, var(--juno-text) 88%, transparent);        /* rgba(33,39,48,0.88) */
+  --juno-pill-bg: color-mix(in oklch, var(--juno-text) 10%, transparent);        /* rgba(33,39,48,0.10) */
+  --juno-shadow: color-mix(in oklch, var(--juno-text) 12%, transparent);         /* rgba(33,39,48,0.12) */
+  --juno-focus-ring: color-mix(in oklch, var(--juno-text) 70%, transparent);     /* rgba(33,39,48,0.70) */
+
+  /* Hover and active state modifiers */
+  --juno-hover-overlay: color-mix(in oklch, var(--juno-text) 5%, transparent);   /* rgba(33,39,48,0.05) */
+  --juno-active-overlay: color-mix(in oklch, var(--juno-text) 8%, transparent);  /* rgba(33,39,48,0.08) */
+
+  /* ========================================
+   * SEMANTIC COLORS (STATUS INDICATORS)
+   * ======================================== */
+  
+  --juno-success: oklch(0.70 0.12 140);     /* #12B76A - Green success */
+  --juno-success-bg: oklch(0.95 0.03 140);  /* Light green background */
+  --juno-success-fg: oklch(0.25 0.10 140);  /* Dark green text */
+  
+  --juno-warning: oklch(0.75 0.10 70);      /* #F5A623 - Amber warning */
+  --juno-warning-bg: oklch(0.95 0.03 70);   /* Light amber background */
+  --juno-warning-fg: oklch(0.30 0.08 70);   /* Dark amber text */
+  
+  --juno-danger: oklch(0.65 0.15 25);       /* #EF4040 - Red danger */
+  --juno-danger-bg: oklch(0.95 0.05 25);    /* Light red background */
+  --juno-danger-fg: oklch(0.30 0.12 25);    /* Dark red text */
+  
+  --juno-info: var(--juno-accent);          /* Use primary accent for info */
+  --juno-info-bg: var(--juno-accent-50);    /* Light accent background */
+  --juno-info-fg: var(--juno-text);         /* Primary text for info */
+
+  /* ========================================
+   * TYPOGRAPHY SCALE (MAJOR THIRD - 1.25×)
+   * ======================================== */
+  
+  /* Desktop typography scale */
+  --juno-fs-display: 4.8rem;               /* 76.8px */
+  --juno-fs-hero: 3.2rem;                  /* 51.2px */
+  --juno-fs-heading: 2.56rem;              /* 41px */
+  --juno-fs-subheading: 2.05rem;           /* 32.8px */
+  --juno-fs-body-lg: 1.6rem;               /* 25.6px */
+  --juno-fs-body: 1.28rem;                 /* 20.48px */
+  --juno-fs-caption: 1rem;                 /* 16px */
+  --juno-fs-code: 0.95rem;                 /* 15.2px */
+  
+  /* Line heights */
+  --juno-lh-tight: 1.35;                   /* For headings */
+  --juno-lh-normal: 1.6;                   /* For body text */
+  --juno-lh-code: 1.4;                     /* For code blocks */
+
+  /* ========================================
+   * SPACING SCALE (4px BASE UNIT)
+   * ======================================== */
+  
+  --juno-space-1: 0.25rem;                 /* 4px */
+  --juno-space-2: 0.5rem;                  /* 8px */
+  --juno-space-4: 1rem;                    /* 16px */
+  --juno-space-6: 1.5rem;                  /* 24px */
+  --juno-space-8: 2rem;                    /* 32px */
+  --juno-space-12: 3rem;                   /* 48px */
+  --juno-space-16: 4rem;                   /* 64px */
+  --juno-space-24: 6rem;                   /* 96px */
+
+  /* ========================================
+   * BORDER RADIUS SCALE
+   * ======================================== */
+  
+  --juno-radius-sm: 0.5rem;                /* 8px */
+  --juno-radius-md: 0.75rem;               /* 12px - Primary radius */
+  --juno-radius-lg: 1rem;                  /* 16px */
+  --juno-radius-xl: 1.5rem;                /* 24px */
+  --juno-radius-full: 9999px;              /* Full rounded */
+
+  /* ========================================
+   * SHADOW SCALE
+   * ======================================== */
+  
+  --juno-shadow-xs: 0 1px 2px var(--juno-shadow);                    /* Subtle */
+  --juno-shadow-sm: 0 2px 4px var(--juno-shadow);                    /* Small cards */
+  --juno-shadow-md: 0 4px 8px var(--juno-shadow);                    /* Buttons, primary cards */
+  --juno-shadow-lg: 0 8px 16px var(--juno-shadow);                   /* Tooltips, dropdowns */
+  --juno-shadow-xl: 0 16px 32px var(--juno-shadow);                  /* Modals, overlays */
+
+  /* ========================================
+   * ANIMATION TIMINGS
+   * ======================================== */
+  
+  --juno-duration-fast: 150ms;             /* Quick interactions */
+  --juno-duration-normal: 200ms;           /* Standard transitions */
+  --juno-duration-slow: 300ms;             /* Complex animations */
+  
+  --juno-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --juno-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --juno-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ========================================
+   * COMPONENT SPECIFIC TOKENS
+   * ======================================== */
+  
+  /* Button specific */
+  --juno-btn-height: 2.25rem;              /* 36px - default button height */
+  --juno-btn-height-sm: 2rem;              /* 32px - small button height */
+  --juno-btn-height-lg: 2.5rem;            /* 40px - large button height */
+  --juno-btn-padding-x: 1rem;              /* 16px - horizontal padding */
+  --juno-btn-padding-x-sm: 0.75rem;        /* 12px - small horizontal padding */
+  --juno-btn-padding-x-lg: 1.5rem;         /* 24px - large horizontal padding */
+  
+  /* Form specific */
+  --juno-input-height: 2.25rem;            /* 36px - input height */
+  --juno-input-padding: 0.75rem;           /* 12px - input padding */
+  --juno-focus-ring-width: 2px;            /* Focus ring thickness */
+  --juno-focus-ring-offset: 0px;           /* Focus ring offset */
+  
+  /* Card specific */
+  --juno-card-padding: 1.5rem;             /* 24px - card content padding */
+  --juno-card-gap: 1.5rem;                 /* 24px - gap between card elements */
+  
+  /* Educational components */
+  --juno-explain-chip-size: 2rem;          /* 32px - explain chip default size */
+  --juno-explain-chip-size-sm: 1.5rem;     /* 24px - small explain chip */
+  --juno-explain-chip-size-lg: 2.5rem;     /* 40px - large explain chip */
+  --juno-tooltip-max-width: 20rem;         /* 320px - tooltip max width */
+}
+
+/* ========================================
+ * MOBILE/RESPONSIVE OVERRIDES
+ * ======================================== */
+
+@media (max-width: 768px) {
+  :root {
+    /* Typography scale adjustments for mobile */
+    --juno-fs-display: 3.2rem;             /* 51.2px */
+    --juno-fs-hero: 2.4rem;                /* 38.4px */
+    --juno-fs-heading: 2rem;               /* 32px */
+    --juno-fs-subheading: 1.6rem;          /* 25.6px */
+    --juno-fs-body-lg: 1.4rem;             /* 22.4px */
+    --juno-fs-body: 1.12rem;               /* 17.92px */
+    --juno-fs-caption: 0.9rem;             /* 14.4px */
+    --juno-fs-code: 0.85rem;               /* 13.6px */
+    
+    /* Spacing adjustments for mobile */
+    --juno-card-padding: 1rem;             /* 16px - reduced card padding */
+    --juno-card-gap: 1rem;                 /* 16px - reduced gap */
+    
+    /* Component size adjustments */
+    --juno-btn-height: 2.5rem;             /* 40px - larger touch targets */
+    --juno-btn-height-sm: 2.25rem;         /* 36px */
+    --juno-btn-height-lg: 3rem;            /* 48px */
+    --juno-input-height: 2.5rem;           /* 40px - larger touch targets */
+    --juno-input-padding: 1rem;            /* 16px - more comfortable padding */
+    
+    /* Tooltip adjustments */
+    --juno-tooltip-max-width: 16rem;       /* 256px - narrower on mobile */
+  }
+}
+
+/* ========================================
+ * ACCESSIBILITY OVERRIDES
+ * ======================================== */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --juno-duration-fast: 0ms;
+    --juno-duration-normal: 0ms;
+    --juno-duration-slow: 0ms;
+  }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  :root {
+    --juno-border: var(--juno-text);       /* Solid borders for high contrast */
+    --juno-focus-ring: var(--juno-text);   /* Solid focus rings */
+    --juno-shadow: transparent;            /* Remove shadows in high contrast */
+  }
+}
+
+/* ========================================
+ * UTILITY CLASSES FOR COMMON PATTERNS
+ * ======================================== */
+
+/* Educational pattern utilities */
+.juno-explain-pattern {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--juno-space-2);
+}
+
+.juno-financial-number {
+  font-weight: 600;
+  color: var(--juno-text);
+}
+
+/* Coverage cap utility - ensures accent usage stays under 5% */
+.juno-accent-area {
+  /* Use for measuring accent coverage - should be minimal */
+  background: var(--juno-accent);
+  color: var(--juno-text);
+}
+
+/* Malaysian currency formatting */
+.juno-currency-rm::before {
+  content: "RM";
+  margin-right: 0.125rem;
+}
+
+/* Focus management utilities */
+.juno-focus-visible {
+  outline: var(--juno-focus-ring-width) solid var(--juno-focus-ring);
+  outline-offset: var(--juno-focus-ring-offset);
+}
+
+/* Educational hint visibility */
+.juno-teach-mode-hidden {
+  display: none;
+}
+
+.juno-teach-mode-visible {
+  display: block;
+}
+
+/* ========================================
+ * CSS CUSTOM PROPERTIES FALLBACKS
+ * ======================================== */
+
+/* Fallback values for older browsers */
+:root {
+  --juno-accent-fallback: #85D6FF;
+  --juno-text-fallback: #212730;
+  --juno-bg-fallback: #85D6FF;
+}
+
+/* Support for browsers without OKLCH */
+@supports not (color: oklch(0.5 0.1 180)) {
+  :root {
+    --juno-accent: var(--juno-accent-fallback);
+    --juno-text: var(--juno-text-fallback);
+    --juno-bg: var(--juno-bg-fallback);
+    
+    /* Simplified color ramp using HSL */
+    --juno-accent-50: hsl(195, 100%, 97%);
+    --juno-accent-100: hsl(195, 100%, 91%);
+    --juno-accent-200: hsl(195, 100%, 85%);
+    --juno-accent-300: hsl(195, 100%, 76%);
+    --juno-accent-400: hsl(195, 68%, 66%);
+    --juno-accent-500: hsl(195, 54%, 58%);
+    --juno-accent-600: hsl(205, 42%, 48%);
+    --juno-accent-700: hsl(205, 43%, 38%);
+    --juno-accent-800: hsl(208, 43%, 30%);
+    --juno-accent-900: hsl(215, 44%, 22%);
+  }
+}
