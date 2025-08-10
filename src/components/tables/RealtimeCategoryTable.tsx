@@ -90,41 +90,6 @@ export function RealtimeCategoryTable({
         </div>
       )}
 
-      {/* Real-time Budget Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-foreground">
-            {enhancedCategories.length}
-          </div>
-          <div className="text-sm text-muted-foreground">Categories</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-blue-600">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(enhancedCategories.reduce((sum, cat) => sum + cat.allocated, 0))}
-          </div>
-          <div className="text-sm text-muted-foreground">Total Allocated</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-green-600">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(enhancedCategories.reduce((sum, cat) => sum + cat.spent, 0))}
-          </div>
-          <div className="text-sm text-muted-foreground">Total Spent</div>
-        </div>
-        <div className="text-center">
-          <div className={`text-2xl font-bold ${
-            enhancedCategories.filter(cat => cat.is_overspent).length > 0 ? 'text-red-600' : 'text-green-600'
-          }`}>
-            {enhancedCategories.filter(cat => cat.is_overspent).length}
-          </div>
-          <div className="text-sm text-muted-foreground">Overspent</div>
-        </div>
-      </div>
 
       {/* Responsive Category View */}
       <ResponsiveCategoryView

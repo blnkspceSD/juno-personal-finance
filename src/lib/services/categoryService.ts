@@ -28,6 +28,30 @@ export class CategoryService {
     date?: Date
   ): Promise<CategorySuggestionGroup[]> {
     try {
+      // Temporarily disable smart suggestions to avoid database errors
+      console.log('Smart suggestions temporarily disabled - using simple fallback')
+      
+      // Simple fallback: just get basic categories
+      const categories = await this.getAllCategories(userId)
+      if (categories.length > 0) {
+        return [{
+          title: 'All Categories',
+          categories: categories.map(cat => ({
+            category_id: cat.id,
+            category_name: cat.name,
+            confidence_score: 0.1,
+            reasoning: ['Available category'],
+            suggestion_type: 'frequent' as const
+          })),
+          priority: 10,
+          max_display: -1
+        }]
+      }
+      
+      return []
+      
+      // TODO: Re-enable after database schema is fully deployed
+      /*
       const [
         categories,
         frequentSuggestions,
@@ -106,6 +130,7 @@ export class CategoryService {
       })
 
       return groups
+      */
 
     } catch (error) {
       console.error('Error getting category suggestions:', error)
@@ -135,6 +160,9 @@ export class CategoryService {
    * Get frequently used categories based on usage statistics
    */
   private async getFrequentCategories(userId: string): Promise<CategorySuggestion[]> {
+    // Temporarily disabled - tables don't exist yet
+    return []
+    
     try {
       const { data, error } = await this.supabase
         .from('category_usage')
@@ -177,6 +205,9 @@ export class CategoryService {
    * Get recently used categories
    */
   private async getRecentCategories(userId: string): Promise<Category[]> {
+    // Temporarily disabled - tables don't exist yet
+    return []
+    
     try {
       const { data, error } = await this.supabase
         .from('recent_categories')
@@ -225,6 +256,9 @@ export class CategoryService {
     userId: string,
     description: string
   ): Promise<CategorySuggestion[]> {
+    // Temporarily disabled - tables don't exist yet
+    return []
+    
     try {
       const descriptionLower = description.toLowerCase()
       const words = descriptionLower.split(/\s+/).filter(word => word.length > 2)
@@ -314,7 +348,10 @@ export class CategoryService {
     userId: string,
     amount: number
   ): Promise<CategorySuggestion[]> {
-    try {
+    // Temporarily disabled - tables don't exist yet
+    return []
+    
+    try{
       const { data, error } = await this.supabase
         .from('category_amount_patterns')
         .select(`
@@ -367,6 +404,9 @@ export class CategoryService {
     userId: string,
     date: Date
   ): Promise<CategorySuggestion[]> {
+    // Temporarily disabled - tables don't exist yet
+    return []
+    
     try {
       const dayOfWeek = date.getDay()
       const hour = date.getHours()

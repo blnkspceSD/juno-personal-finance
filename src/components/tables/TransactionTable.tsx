@@ -5,6 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 import { Transaction, Category } from "@/lib/types/database";
+import { formatCurrency, getCurrencyClasses } from "@/lib/utils/currency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -158,15 +159,9 @@ export function TransactionTable({
       header: "Amount",
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("amount"));
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(Math.abs(amount));
-
         return (
-          <div className={`font-medium ${amount < 0 ? "text-red-600" : "text-green-600"}`}>
-            {amount < 0 ? "-" : "+"}
-            {formatted}
+          <div className={getCurrencyClasses("font-medium text-slate-700")}>
+            {formatCurrency(amount)}
           </div>
         );
       },

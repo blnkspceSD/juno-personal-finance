@@ -15,6 +15,7 @@ import Link from 'next/link'
 import { useRealtimeContext } from '@/lib/context/RealtimeContext'
 import { useRealtimeBalance } from '@/lib/hooks/useRealtimeBalance'
 import { TransactionForm } from '@/components/forms/TransactionForm'
+import { categorySpentService } from '@/lib/services/categorySpentService'
 import type { Category, CreateTransactionForm } from '@/lib/types/database'
 
 interface RealtimeTransactionFormProps {
@@ -55,19 +56,39 @@ export function RealtimeTransactionForm({ initialCategories, budgetId }: Realtim
       // Mark category as having pending update
       addPendingUpdate(data.category_id)
 
-      // Insert transaction into database
-      const { error: transactionError } = await supabase
+      // Insert transaction into database (with minimal required fields)
+      const insertData = {
+        user_id: user.id,
+        category_id: data.category_id,
+        amount: data.amount,
+        description: data.description,
+        date: data.date
+      }
+      
+      console.log('Attempting to insert transaction:', insertData)
+      
+      const { data: insertedTransaction, error: transactionError } = await supabase
         .from('transactions')
-        .insert({
-          user_id: user.id,
-          category_id: data.category_id,
-          amount: data.amount,
-          description: data.description,
-          date: data.date
-        })
+        .insert(insertData)
+        .select()
+        .single()
 
       if (transactionError) {
+        console.error('Transaction insertion error:', transactionError)
         throw new Error(`Failed to add transaction: ${transactionError.message}`)
+      }
+      
+      console.log('Transaction inserted successfully:', insertedTransaction)
+      
+      // Update category spent amounts manually (since we removed the automatic trigger)
+      try {
+        await categorySpentService.handleTransactionChange(
+          'insert',
+          { category_id: data.category_id }
+        )
+      } catch (spentUpdateError) {
+        console.warn('Failed to update category spent amount:', spentUpdateError)
+        // Don't fail the transaction for this
       }
 
       // Redirect back to dashboard (optimistic update will be replaced by real-time update)
@@ -84,7 +105,12 @@ export function RealtimeTransactionForm({ initialCategories, budgetId }: Realtim
     router.push('/dashboard')
   }
 
+  // DISABLED: Category creation removed to prevent state management issues
   const handleCategoryCreate = async (name: string): Promise<string | null> => {
+    console.warn('Category creation disabled in transaction form')
+    return null
+    
+    /* REMOVED:
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError || !user) {
@@ -93,16 +119,21 @@ export function RealtimeTransactionForm({ initialCategories, budgetId }: Realtim
 
       // For now, we'll create a basic category without a specific budget
       // In a real implementation, this would need to be associated with the current budget
+      const categoryData = {
+        user_id: user.id,
+        budget_id: budgetId,
+        name: name.trim(),
+        allocated: 0,
+        spent: 0,
+        sort_order: categories.length,
+        color: '#6366f1'
+      }
+      
+      console.log('Attempting to create category:', categoryData)
+      
       const { data: newCategory, error: createError } = await supabase
         .from('categories')
-        .insert({
-          user_id: user.id,
-          budget_id: budgetId, // Use the current budget ID
-          name: name.trim(),
-          allocated: 0, // Default allocation
-          spent: 0,
-          sort_order: categories.length
-        })
+        .insert(categoryData)
         .select()
         .single()
 
@@ -111,14 +142,24 @@ export function RealtimeTransactionForm({ initialCategories, budgetId }: Realtim
         return null
       }
 
-      // Update categories list
-      setCategories(prev => [...prev, newCategory])
+      console.log('Category created successfully:', newCategory)
+
+      // Update categories list and wait for state update
+      setCategories(prev => {
+        const updated = [...prev, newCategory]
+        console.log('Updated categories:', updated.length)
+        return updated
+      })
+      
+      // Wait a bit for the state update to propagate
+      await new Promise(resolve => setTimeout(resolve, 100))
       
       return newCategory.id
     } catch (error) {
       console.error('Error creating category:', error)
       return null
     }
+    */
   }
 
   return (
@@ -156,12 +197,12 @@ export function RealtimeTransactionForm({ initialCategories, budgetId }: Realtim
           categories={categories}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
-          onCategoryCreate={handleCategoryCreate}
+          onCategoryCreate={undefined}
           loading={loading}
           submitLabel="Add Transaction"
           showNotes={false}
           autoFocus={true}
-          allowCategoryCreation={true}
+          allowCategoryCreation={false}
           userId={categories[0]?.user_id}
         />
       )}

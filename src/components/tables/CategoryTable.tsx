@@ -5,6 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Pencil, Trash2, TrendingUp, TrendingDown } from "lucide-react";
 
 import { Category } from "@/lib/types/database";
+import { formatCurrency, getCurrencyClasses } from "@/lib/utils/currency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -104,9 +105,11 @@ function ProgressBar({
         className={`h-2 rounded-full transition-all duration-300 ${
           isOverspent 
             ? "bg-red-500" 
-            : percentage > 80 
-            ? "bg-yellow-500" 
-            : "bg-green-500"
+            : percentage > 90 
+            ? "bg-orange-400" 
+            : percentage > 75
+            ? "bg-yellow-400"
+            : "bg-blue-500"
         }`}
         style={{ width: `${clampedPercentage}%` }}
       />
@@ -166,11 +169,8 @@ export function CategoryTable({
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("allocated"));
         return (
-          <div className="font-medium">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(amount)}
+          <div className={getCurrencyClasses("font-medium")}>
+            {formatCurrency(amount)}
           </div>
         );
       },
@@ -181,13 +181,9 @@ export function CategoryTable({
       header: "Spent",
       cell: ({ row }) => {
         const spent = parseFloat(row.getValue("spent"));
-        const category = row.original;
         return (
-          <div className={`font-medium ${category.is_overspent ? "text-red-600" : ""}`}>
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(spent)}
+          <div className={getCurrencyClasses("font-medium")}>
+            {formatCurrency(spent)}
           </div>
         );
       },
@@ -198,20 +194,17 @@ export function CategoryTable({
       header: "Remaining",
       cell: ({ row }) => {
         const remaining = row.original.remaining;
-        const isNegative = remaining < 0;
+        const isOverspent = remaining < 0;
         return (
-          <div className={`font-medium flex items-center gap-2 ${
-            isNegative ? "text-red-600" : "text-green-600"
+          <div className={`${getCurrencyClasses("font-medium")} flex items-center gap-2 ${
+            isOverspent ? "text-red-600" : "text-slate-700"
           }`}>
-            {isNegative ? (
+            {isOverspent ? (
               <TrendingDown className="h-4 w-4" />
             ) : (
-              <TrendingUp className="h-4 w-4" />
+              <TrendingUp className="h-4 w-4 text-slate-500" />
             )}
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(Math.abs(remaining))}
+            {formatCurrency(Math.abs(remaining))}
           </div>
         );
       },
@@ -282,20 +275,14 @@ export function CategoryTable({
           <div className="text-sm text-muted-foreground">Total Categories</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(data.reduce((sum, cat) => sum + cat.allocated, 0))}
+          <div className={getCurrencyClasses("text-2xl font-bold")}>
+            {formatCurrency(data.reduce((sum, cat) => sum + cat.allocated, 0))}
           </div>
           <div className="text-sm text-muted-foreground">Total Allocated</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(data.reduce((sum, cat) => sum + cat.spent, 0))}
+          <div className={getCurrencyClasses("text-2xl font-bold")}>
+            {formatCurrency(data.reduce((sum, cat) => sum + cat.spent, 0))}
           </div>
           <div className="text-sm text-muted-foreground">Total Spent</div>
         </div>

@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatCurrency, getCurrencyClasses } from "@/lib/utils/currency";
 import { TransactionTableRow } from "./TransactionTable";
 
 interface TransactionCardProps {
@@ -36,10 +37,7 @@ export function TransactionCard({
 }: TransactionCardProps) {
   const date = new Date(transaction.date);
   const amount = parseFloat(transaction.amount.toString());
-  const formattedAmount = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(Math.abs(amount));
+  const formattedAmount = formatCurrency(amount);
 
   return (
     <Card 
@@ -71,10 +69,7 @@ export function TransactionCard({
                     year: "numeric",
                   })}
                 </div>
-                <div className={`font-semibold ${
-                  amount < 0 ? "text-red-600" : "text-green-600"
-                }`}>
-                  {amount < 0 ? "-" : "+"}
+                <div className={getCurrencyClasses("font-semibold text-slate-700")}>
                   {formattedAmount}
                 </div>
               </div>

@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { CategoryTable, CategoryTableRow } from "./CategoryTable";
 import { CategoryCard } from "./CategoryCard";
+import { formatCurrencyCompact, getCurrencyClasses } from "@/lib/utils/currency";
 
 interface ResponsiveCategoryViewProps {
   data: CategoryTableRow[];
@@ -72,22 +73,14 @@ export function ResponsiveCategoryView({
           <div className="text-xs text-muted-foreground">Categories</div>
         </div>
         <div className="text-center">
-          <div className="text-xl font-bold">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-              notation: "compact",
-            }).format(data.reduce((sum, cat) => sum + cat.allocated, 0))}
+          <div className={getCurrencyClasses("text-xl font-bold")}>
+            {formatCurrencyCompact(data.reduce((sum, cat) => sum + cat.allocated, 0))}
           </div>
           <div className="text-xs text-muted-foreground">Allocated</div>
         </div>
         <div className="text-center">
-          <div className="text-xl font-bold">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-              notation: "compact",
-            }).format(data.reduce((sum, cat) => sum + cat.spent, 0))}
+          <div className={getCurrencyClasses("text-xl font-bold")}>
+            {formatCurrencyCompact(data.reduce((sum, cat) => sum + cat.spent, 0))}
           </div>
           <div className="text-xs text-muted-foreground">Spent</div>
         </div>

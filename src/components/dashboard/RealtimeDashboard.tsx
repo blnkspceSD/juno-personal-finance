@@ -10,9 +10,11 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Plus, TrendingUp, TrendingDown, DollarSign, Wifi, WifiOff } from 'lucide-react'
-import { useRealtimeBalance, useRealtimeConnection } from '@/lib/hooks/useRealtimeBalance'
+import { useRealtimeBalance } from '@/lib/hooks/useRealtimeBalance'
 import { useRealtimeContext } from '@/lib/context/RealtimeContext'
-import { calculateBudgetSummary, calculateCategoryStatus } from '@/lib/utils/budget-calculations'
+import { calculateBudgetSummary } from '@/lib/utils/budget-calculations'
+import { formatCurrency, getCurrencyClasses } from '@/lib/utils/currency'
+import { RealtimeCategoryTable } from '@/components/tables/RealtimeCategoryTable'
 import type { BudgetWithCategories } from '@/lib/types/database'
 
 interface RealtimeDashboardProps {
@@ -152,8 +154,8 @@ export function RealtimeDashboard({ initialBudget, user }: RealtimeDashboardProp
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Monthly Income</p>
-                <p className="text-2xl font-bold text-foreground">
-                  ${budgetSummary?.total_income?.toFixed(2) || '0.00'}
+                <p className={getCurrencyClasses("text-2xl font-bold text-foreground")}>
+                  {formatCurrency(budgetSummary?.total_income || 0)}
                 </p>
               </div>
               <div className="h-12 w-12 bg-muted rounded-xl flex items-center justify-center">
@@ -168,8 +170,8 @@ export function RealtimeDashboard({ initialBudget, user }: RealtimeDashboardProp
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Spent</p>
-                <p className="text-2xl font-bold text-foreground">
-                  ${budgetSummary?.total_spent?.toFixed(2) || '0.00'}
+                <p className={getCurrencyClasses("text-2xl font-bold text-foreground")}>
+                  {formatCurrency(budgetSummary?.total_spent || 0)}
                 </p>
               </div>
               <div className="h-12 w-12 bg-muted rounded-xl flex items-center justify-center">
@@ -184,12 +186,12 @@ export function RealtimeDashboard({ initialBudget, user }: RealtimeDashboardProp
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Available to Budget</p>
-                <p className={`text-2xl font-bold ${
+                <p className={getCurrencyClasses(`text-2xl font-bold ${
                   (budgetSummary?.available_to_budget || 0) < 0 
-                    ? 'text-destructive' 
+                    ? 'text-red-600' 
                     : 'text-foreground'
-                }`}>
-                  ${budgetSummary?.available_to_budget?.toFixed(2) || '0.00'}
+                }`)}>
+                  {formatCurrency(budgetSummary?.available_to_budget || 0)}
                 </p>
               </div>
               <div className="h-12 w-12 bg-muted rounded-xl flex items-center justify-center">
@@ -202,88 +204,42 @@ export function RealtimeDashboard({ initialBudget, user }: RealtimeDashboardProp
 
       {hasActiveBudget ? (
         <>
-          {/* Current Budget Envelopes */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Your Envelopes</CardTitle>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/dashboard/transactions/new">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Transaction
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href={`/dashboard/budget/${currentBudget.id}`}>
-                      Edit Budget
-                    </Link>
-                  </Button>
-                </div>
+          {/* Category Management Table */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-foreground">Your Envelopes</h2>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/dashboard/transactions/new">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Transaction
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={`/dashboard/budget/${currentBudget.id}`}>
+                    Edit Budget
+                  </Link>
+                </Button>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4">
-                {envelopes.map((envelope) => {
-                  const status = calculateCategoryStatus({
-                    id: envelope.id,
-                    user_id: envelope.user_id,
-                    budget_id: envelope.budget_id,
-                    name: envelope.name,
-                    allocated: envelope.allocated,
-                    spent: envelope.total_spent || envelope.spent,
-                    sort_order: envelope.sort_order,
-                    color: envelope.color,
-                    created_at: envelope.created_at,
-                    updated_at: envelope.updated_at
-                  })
-                  return (
-                    <div 
-                      key={envelope.id} 
-                      className={`flex items-center justify-between p-4 border rounded-lg transition-all duration-200 ${
-                        envelope.is_optimistic ? 'bg-blue-50 border-blue-200' : ''
-                      } ${envelope.has_pending ? 'animate-pulse' : ''}`}
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-foreground flex items-center gap-2">
-                            {envelope.name}
-                            {envelope.has_pending && (
-                              <div className="h-2 w-2 bg-blue-500 rounded-full animate-pulse" />
-                            )}
-                          </h4>
-                          <div className="text-sm text-muted-foreground">
-                            ${(envelope.total_spent || envelope.spent).toFixed(2)} / ${envelope.allocated.toFixed(2)}
-                            {envelope.pending_amount && (
-                              <span className="text-blue-600 ml-1">
-                                (+${envelope.pending_amount.toFixed(2)} pending)
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full transition-all duration-300 ${
-                              status.is_overspent ? 'bg-destructive' : envelope.is_optimistic ? 'bg-blue-500' : 'bg-primary'
-                            }`}
-                            style={{
-                              width: `${Math.min(status.percentage_used, 100)}%`
-                            }}
-                          />
-                        </div>
-                        <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-                          <span>{status.percentage_used.toFixed(1)}% used</span>
-                          <span className={status.is_overspent ? 'text-destructive' : 'text-muted-foreground'}>
-                            ${Math.abs(status.remaining).toFixed(2)} {status.is_overspent ? 'over' : 'remaining'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            
+            <RealtimeCategoryTable
+              budgetId={currentBudget.id}
+              initialCategories={currentBudget.categories}
+              onEdit={(category) => {
+                // TODO: Implement category editing
+                console.log('Edit category:', category)
+              }}
+              onDelete={(category) => {
+                // TODO: Implement category deletion
+                console.log('Delete category:', category)
+              }}
+              onAllocate={(category) => {
+                // TODO: Implement allocation editing
+                console.log('Allocate category:', category)
+              }}
+            />
+          </div>
         </>
       ) : (
         <>

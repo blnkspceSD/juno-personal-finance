@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatCurrency, getCurrencyClasses } from "@/lib/utils/currency";
 import { CategoryTableRow } from "./CategoryTable";
 
 interface CategoryCardProps {
@@ -61,20 +62,9 @@ export function CategoryCard({
   onAllocate,
   onClick,
 }: CategoryCardProps) {
-  const formattedAllocated = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(category.allocated);
-
-  const formattedSpent = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(category.spent);
-
-  const formattedRemaining = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(Math.abs(category.remaining));
+  const formattedAllocated = formatCurrency(category.allocated);
+  const formattedSpent = formatCurrency(category.spent);
+  const formattedRemaining = formatCurrency(Math.abs(category.remaining));
 
   return (
     <Card 
@@ -172,11 +162,11 @@ export function CategoryCard({
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <div className="text-muted-foreground">Allocated</div>
-            <div className="font-medium">{formattedAllocated}</div>
+            <div className={getCurrencyClasses("font-medium")}>{formattedAllocated}</div>
           </div>
           <div>
             <div className="text-muted-foreground">Spent</div>
-            <div className={`font-medium ${category.is_overspent ? "text-red-600" : ""}`}>
+            <div className={getCurrencyClasses("font-medium")}>
               {formattedSpent}
             </div>
           </div>
@@ -185,13 +175,13 @@ export function CategoryCard({
         {/* Remaining Amount */}
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">Remaining</div>
-          <div className={`font-semibold flex items-center gap-1 ${
-            category.remaining < 0 ? "text-red-600" : "text-green-600"
+          <div className={`${getCurrencyClasses("font-semibold")} flex items-center gap-1 ${
+            category.remaining < 0 ? "text-red-600" : "text-slate-700"
           }`}>
             {category.remaining < 0 ? (
               <TrendingDown className="h-4 w-4" />
             ) : (
-              <TrendingUp className="h-4 w-4" />
+              <TrendingUp className="h-4 w-4 text-slate-500" />
             )}
             {formattedRemaining}
           </div>

@@ -22,6 +22,7 @@ interface SmartCategoryDropdownProps {
   selectedCategoryId: string
   onCategorySelect: (categoryId: string) => void
   onCategoryCreate?: (name: string) => Promise<string | null>
+  onCategoryCreateWithFunding?: (name: string, transactionAmount: number) => Promise<string | null>
   placeholder?: string
   disabled?: boolean
   userId: string
@@ -30,6 +31,7 @@ interface SmartCategoryDropdownProps {
   transactionDate?: Date
   showUsageStats?: boolean
   allowCreate?: boolean
+  allowInlineFunding?: boolean
   error?: string
   className?: string
 }
@@ -39,6 +41,7 @@ export function SmartCategoryDropdown({
   selectedCategoryId,
   onCategorySelect,
   onCategoryCreate,
+  onCategoryCreateWithFunding,
   placeholder = 'Select or search categories...',
   disabled = false,
   userId,
@@ -47,6 +50,7 @@ export function SmartCategoryDropdown({
   transactionDate,
   showUsageStats = true,
   allowCreate = false,
+  allowInlineFunding = false,
   error,
   className
 }: SmartCategoryDropdownProps) {
@@ -224,15 +228,35 @@ export function SmartCategoryDropdown({
   }
 
   const handleCreateCategory = async (name: string) => {
-    if (!onCategoryCreate) return
-
+    // Close dropdown immediately to prevent React errors during async operations
+    setIsOpen(false)
+    setSearchQuery('')
+    setShowCreateOption(false)
+    
     try {
-      const newCategoryId = await onCategoryCreate(name)
+      let newCategoryId: string | null = null
+      
+      // Use funding-aware creation if available and transaction amount is provided
+      if (allowInlineFunding && onCategoryCreateWithFunding && transactionAmount && transactionAmount > 0) {
+        console.log('Creating category with funding:', name)
+        newCategoryId = await onCategoryCreateWithFunding(name, transactionAmount)
+      } else if (onCategoryCreate) {
+        // Fallback to basic category creation
+        console.log('Creating basic category:', name)
+        newCategoryId = await onCategoryCreate(name)
+      }
+      
       if (newCategoryId) {
-        handleCategorySelect(newCategoryId)
+        console.log('Category created, selecting:', newCategoryId)
+        // Wait a bit to ensure React state is stable
+        setTimeout(() => {
+          handleCategorySelect(newCategoryId)
+        }, 150)
       }
     } catch (error) {
       console.error('Error creating category:', error)
+      // Reopen dropdown on error so user can try again
+      setIsOpen(true)
     }
   }
 
@@ -336,9 +360,13 @@ export function SmartCategoryDropdown({
                   {/* Categories */}
                   {group.categories
                     .slice(0, group.max_display > 0 ? group.max_display : undefined)
+                    .filter(suggestion => suggestion && suggestion.category_id) // Filter out invalid suggestions
                     .map((suggestion, index) => {
-                      const category = categories.find(c => c.id === suggestion.category_id)
-                      if (!category) return null
+                      const category = categories.find(c => c && c.id === suggestion.category_id)
+                      if (!category || !category.name) {
+                        console.warn('Category not found for suggestion:', suggestion.category_id)
+                        return null
+                      }
 
                       const globalIndex = getAllSelectableItems().findIndex(
                         item => item.type === 'category' && item.categoryId === suggestion.category_id
@@ -374,7 +402,8 @@ export function SmartCategoryDropdown({
                           </div>
                         </div>
                       )
-                    })}
+                    })
+                    .filter(Boolean)} {/* Remove null values to prevent React errors */}
                 </div>
               ))}
 
@@ -391,7 +420,14 @@ export function SmartCategoryDropdown({
                     }`}
                   >
                     <Plus className="h-4 w-4 text-green-600" />
-                    <span className="text-green-600">Create &quot;{searchQuery.trim()}&quot;</span>
+                    <span className="text-green-600">
+                      Create &quot;{searchQuery.trim()}&quot;
+                      {allowInlineFunding && transactionAmount && transactionAmount > 0 && (
+                        <span className="ml-2 text-xs text-gray-500">
+                          (+ fund {formatCurrency(transactionAmount)})
+                        </span>
+                      )}
+                    </span>
                   </div>
                 </div>
               )}

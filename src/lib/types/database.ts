@@ -67,6 +67,7 @@ export interface CreateCategoryForm {
   allocated: number
   color?: string
   sort_order?: number
+  fundingStrategy?: CategoryFundingStrategy
 }
 
 export interface CreateTransactionForm {
@@ -96,6 +97,44 @@ export interface EnvelopeStatus {
   remaining: number
   percentage_used: number
   is_overspent: boolean
+}
+
+// Budget reallocation types
+export interface BudgetReallocation {
+  id: string
+  user_id: string
+  budget_id: string
+  from_category_id: string
+  to_category_id: string
+  amount: number
+  reason: string
+  transaction_id?: string // If reallocation was triggered by a transaction
+  created_at: string
+  updated_at: string
+}
+
+export interface CategoryFundingStrategy {
+  type: 'single' | 'smart_split' | 'manual' | 'left_to_budget'
+  donors: { categoryId: string; amount: number }[]
+  totalAmount: number
+  monthlyCap?: number
+}
+
+// Budget summary for Available to Spend calculations
+export interface BudgetSummary {
+  totalIncome: number
+  totalAllocated: number
+  totalSpent: number
+  availableToSpend: number
+  leftToBudget: number
+}
+
+// Category with computed budget metrics
+export interface CategoryWithMetrics extends Category {
+  headroom: number // allocated - spent
+  utilizationRate: number // spent / allocated
+  isOverspent: boolean
+  needsFunding: boolean
 }
 
 export interface BudgetSummary {

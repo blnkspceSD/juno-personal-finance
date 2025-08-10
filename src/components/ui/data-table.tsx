@@ -194,7 +194,7 @@ export function DataTable<TData, TValue>({
             </div>
             <div className="flex items-center space-x-2">
               <button
-                className="h-8 w-8 p-0 lg:h-8 lg:w-8 border rounded bg-background hover:bg-accent disabled:opacity-50"
+                className="h-8 w-8 p-0 lg:h-8 lg:w-8 border rounded bg-background hover:bg-accent disabled:opacity-50 flex items-center justify-center"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -202,7 +202,7 @@ export function DataTable<TData, TValue>({
                 <ChevronDown className="h-4 w-4 rotate-90" />
               </button>
               <button
-                className="h-8 w-8 p-0 border rounded bg-background hover:bg-accent disabled:opacity-50"
+                className="h-8 w-8 p-0 border rounded bg-background hover:bg-accent disabled:opacity-50 flex items-center justify-center"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -210,7 +210,7 @@ export function DataTable<TData, TValue>({
                 <ChevronDown className="h-4 w-4 rotate-90" />
               </button>
               <button
-                className="h-8 w-8 p-0 border rounded bg-background hover:bg-accent disabled:opacity-50"
+                className="h-8 w-8 p-0 border rounded bg-background hover:bg-accent disabled:opacity-50 flex items-center justify-center"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
@@ -218,7 +218,7 @@ export function DataTable<TData, TValue>({
                 <ChevronDown className="h-4 w-4 -rotate-90" />
               </button>
               <button
-                className="h-8 w-8 p-0 lg:h-8 lg:w-8 border rounded bg-background hover:bg-accent disabled:opacity-50"
+                className="h-8 w-8 p-0 lg:h-8 lg:w-8 border rounded bg-background hover:bg-accent disabled:opacity-50 flex items-center justify-center"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >
