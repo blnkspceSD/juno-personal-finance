@@ -1060,7 +1060,7 @@ export default function DesignSystemPage() {
                   <ul className="mt-2 space-y-1">
                     <li>• Height: <code>--juno-btn-height-lg</code> (40px)</li>
                     <li>• Radius: <code>--juno-radius-lg</code> (16px)</li>
-                    <li>• Colors: <code>--juno-accent</code> + <code>--juno-text</code></li>
+                    <li>• Colors: <code>--juno-accent</code> bg + <code>--juno-accent-700</code> border</li>
                     <li>• Shadows: <code>--juno-shadow-button-primary</code> variants</li>
                     <li>• Timing: <code>--juno-duration-*</code> + <code>--juno-ease-*</code></li>
                   </ul>

@@ -90,6 +90,7 @@ The design system now includes sophisticated CSS button classes that use all Jun
 - Sophisticated layered shadows with inset highlights
 - Micro-interactions: hover brightness, active press down
 - Uses `--juno-accent` background with `--juno-text` color
+- Border uses `--juno-accent-700` (2 levels darker) for cohesive accent theming
 - Focus ring using `--juno-focus-ring`
 
 #### Secondary Button (.btn--secondary)

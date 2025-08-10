@@ -259,8 +259,8 @@
 
   /* Button-specific shadows */
   --juno-shadow-button-primary: 0 1px 2px rgba(33, 39, 48, 0.12), 0 8px 16px -8px rgba(33, 39, 48, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.22);
-  --juno-shadow-button-primary-hover: 0 2px 6px rgba(33, 39, 48, 0.14), 0 16px 24px -12px rgba(33, 39, 48, 0.14), 0 0 0 1px rgba(33, 39, 48, 0.90), inset 0 1px 1px rgba(255, 255, 255, 0.25);
-  --juno-shadow-button-primary-active: 0 1px 2px rgba(33, 39, 48, 0.18), 0 6px 10px -6px rgba(33, 39, 48, 0.18), 0 0 0 1px rgba(33, 39, 48, 0.95), inset 0 1px 1px rgba(255, 255, 255, 0.18);
+  --juno-shadow-button-primary-hover: 0 2px 6px rgba(33, 39, 48, 0.14), 0 16px 24px -12px rgba(33, 39, 48, 0.14), 0 0 0 1px var(--juno-accent-500), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  --juno-shadow-button-primary-active: 0 1px 2px rgba(33, 39, 48, 0.18), 0 6px 10px -6px rgba(33, 39, 48, 0.18), 0 0 0 1px var(--juno-accent-600), inset 0 1px 1px rgba(255, 255, 255, 0.18);
   
   --juno-shadow-button-secondary: 0 1px 1px 0.5px rgba(51, 51, 51, 0.04), 0 3px 3px -1.5px rgba(51, 51, 51, 0.02), 0 6px 6px -3px rgba(51, 51, 51, 0.04), 0 12px 12px -6px rgba(51, 51, 51, 0.04), 0 24px 24px -12px rgba(51, 51, 51, 0.04), 0 48px 48px -24px rgba(51, 51, 51, 0.04), 0 0 0 1px rgba(51, 51, 51, 0.10), inset 0 -1px 1px -0.5px rgba(51, 51, 51, 0.06);
   --juno-shadow-button-secondary-hover: 0 1px 1px 0.5px rgba(51, 51, 51, 0.05), 0 3px 3px -1.5px rgba(51, 51, 51, 0.03), 0 6px 6px -3px rgba(51, 51, 51, 0.05), 0 12px 12px -6px rgba(51, 51, 51, 0.05), 0 24px 24px -12px rgba(51, 51, 51, 0.05), 0 48px 48px -24px rgba(51, 51, 51, 0.05), 0 0 0 1px rgba(51, 51, 51, 0.12), inset 0 -1px 1px -0.5px rgba(51, 51, 51, 0.08);
@@ -445,7 +445,7 @@
   color: var(--juno-text);
 
   /* Sophisticated shadows using Juno tokens */
-  border: 1px solid var(--juno-text);
+  border: 1px solid var(--juno-accent-400);
   box-shadow: var(--juno-shadow-button-primary);
 
   font-weight: 600;
