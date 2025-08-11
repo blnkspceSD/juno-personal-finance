@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Compatibility Test - Juno Design Tokens</title>
+    <style>
+        /* Test CSS custom properties support */
+        :root {
+            /* Primary Juno colors - hex values for maximum compatibility */
+            --juno-accent: #85D6FF;
+            --juno-text: #212730;
+            
+            /* Rgba colors for transparency effects */
+            --juno-border: rgba(33, 39, 48, 0.16);
+            --juno-muted-fg: rgba(33, 39, 48, 0.72);
+            --juno-pill-bg: rgba(33, 39, 48, 0.10);
+            --juno-shadow: rgba(33, 39, 48, 0.12);
+            
+            /* Fallback colors for older browsers */
+            --juno-accent-fallback: #85D6FF;
+            --juno-text-fallback: #212730;
+            --juno-border-fallback: #D1D5D9;
+            --juno-shadow-fallback: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Fallback styles for browsers without CSS custom properties support */
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #85D6FF; /* Fallback */
+            background: var(--juno-accent, #85D6FF); /* With custom property */
+            color: #212730; /* Fallback */
+            color: var(--juno-text, #212730); /* With custom property */
+            line-height: 1.6;
+        }
+
+        .compatibility-test {
+            background: white;
+            border: 1px solid #D1D5D9; /* Fallback */
+            border-color: var(--juno-border, #D1D5D9); /* With custom property */
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Fallback */
+            box-shadow: 0 2px 4px var(--juno-shadow, rgba(0, 0, 0, 0.1)); /* With custom property */
+        }
+
+        .feature-support {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(33, 39, 48, 0.05); /* Fallback */
+            background: var(--juno-pill-bg, rgba(33, 39, 48, 0.05)); /* With custom property */
+        }
+
+        .browser-info {
+            background: #212730; /* Fallback */
+            background: var(--juno-text, #212730); /* With custom property */
+            color: #85D6FF; /* Fallback */
+            color: var(--juno-accent, #85D6FF); /* With custom property */
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .support-item {
+            padding: 0.75rem;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .supported {
+            background: #12B76A;
+            color: white;
+        }
+
+        .partial {
+            background: #F5A623;
+            color: white;
+        }
+
+        .unsupported {
+            background: #EF4040;
+            color: white;
+        }
+
+        /* Test modern CSS features */
+        @supports (color: color-mix(in srgb, red 50%, blue)) {
+            .modern-feature-1 { 
+                background: color-mix(in srgb, var(--juno-accent) 20%, transparent);
+                border: 1px solid currentColor;
+                padding: 0.5rem;
+                margin: 0.5rem 0;
+            }
+            .modern-feature-1::before {
+                content: "✅ color-mix() supported";
+            }
+        }
+
+        @supports not (color: color-mix(in srgb, red 50%, blue)) {
+            .modern-feature-1 {
+                background: rgba(133, 214, 255, 0.2); /* Fallback */
+                border: 1px solid var(--juno-border);
+                padding: 0.5rem;
+                margin: 0.5rem 0;
+            }
+            .modern-feature-1::before {
+                content: "⚠️ color-mix() not supported - using rgba() fallback";
+            }
+        }
+
+        @supports (display: grid) {
+            .grid-support::before {
+                content: "✅ CSS Grid supported";
+                color: #12B76A;
+                font-weight: 600;
+            }
+        }
+
+        @supports not (display: grid) {
+            .grid-support::before {
+                content: "❌ CSS Grid not supported";
+                color: #EF4040;
+                font-weight: 600;
+            }
+        }
+
+        @supports (--custom: property) {
+            .css-vars-support::before {
+                content: "✅ CSS Custom Properties supported";
+                color: #12B76A;
+                font-weight: 600;
+            }
+        }
+
+        @supports not (--custom: property) {
+            .css-vars-support::before {
+                content: "❌ CSS Custom Properties not supported";
+                color: #EF4040;
+                font-weight: 600;
+            }
+        }
+
+        /* Test calc() support */
+        .calc-test {
+            width: calc(100% - 2rem);
+            background: var(--juno-pill-bg);
+            padding: 1rem;
+            margin: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Browser Compatibility Test</h1>
+    <p>Testing Juno design tokens across different browsers and feature support levels.</p>
+
+    <div class="browser-info" id="browserInfo">
+        Detecting browser information...
+    </div>
+
+    <div class="compatibility-test">
+        <h2>Core Feature Support</h2>
+        <div class="feature-support css-vars-support"></div>
+        <div class="feature-support grid-support"></div>
+        <div class="feature-support modern-feature-1"></div>
+    </div>
+
+    <div class="compatibility-test">
+        <h2>Expected Browser Support</h2>
+        <div class="support-grid">
+            <div class="support-item supported">Chrome 49+</div>
+            <div class="support-item supported">Firefox 31+</div>
+            <div class="support-item supported">Safari 9.1+</div>
+            <div class="support-item supported">Edge 16+</div>
+            <div class="support-item partial">IE 11 (Limited)</div>
+            <div class="support-item supported">iOS Safari 9.3+</div>
+            <div class="support-item supported">Android 4.4+</div>
+            <div class="support-item supported">Samsung Internet 4+</div>
+        </div>
+    </div>
+
+    <div class="compatibility-test">
+        <h2>Juno Colors Rendering Test</h2>
+        <p>If these colors display correctly, the Juno design tokens are working:</p>
+        
+        <div style="background: var(--juno-accent); color: var(--juno-text); padding: 1rem; margin: 0.5rem 0; border-radius: 8px;">
+            <strong>Primary Combination:</strong> Juno Accent Background (#85D6FF) with Juno Text (#212730)
+        </div>
+        
+        <div style="background: var(--juno-text); color: var(--juno-accent); padding: 1rem; margin: 0.5rem 0; border-radius: 8px;">
+            <strong>Reverse Combination:</strong> Juno Text Background (#212730) with Juno Accent Text (#85D6FF)
+        </div>
+        
+        <div style="background: var(--juno-pill-bg); color: var(--juno-muted-fg); padding: 1rem; margin: 0.5rem 0; border-radius: 8px; border: 1px solid var(--juno-border);">
+            <strong>Subtle Combination:</strong> Muted colors with transparency effects
+        </div>
+    </div>
+
+    <div class="compatibility-test">
+        <h2>CSS Features Used by Juno</h2>
+        <ul>
+            <li><strong>CSS Custom Properties:</strong> Core requirement for design tokens</li>
+            <li><strong>Hex Colors:</strong> Maximum compatibility (#85D6FF, #212730)</li>
+            <li><strong>RGBA Colors:</strong> Transparency effects with fallbacks</li>
+            <li><strong>CSS Grid:</strong> Layout components (graceful degradation)</li>
+            <li><strong>Flexbox:</strong> Component layouts (excellent support)</li>
+            <li><strong>Border Radius:</strong> 12px radius (universal support)</li>
+            <li><strong>Box Shadow:</strong> Card elevation (universal support)</li>
+            <li><strong>Media Queries:</strong> Responsive behavior (universal support)</li>
+        </ul>
+    </div>
+
+    <div class="calc-test">
+        <strong>Calc() Test:</strong> If this box has proper margins, calc() is working correctly.
+    </div>
+
+    <script>
+        // Detect browser information
+        function getBrowserInfo() {
+            const ua = navigator.userAgent;
+            const browserInfo = document.getElementById('browserInfo');
+            
+            let browser = 'Unknown';
+            let version = 'Unknown';
+            
+            if (ua.includes('Chrome/') && !ua.includes('Edge/')) {
+                browser = 'Chrome';
+                version = ua.match(/Chrome\/(\d+)/)?.[1];
+            } else if (ua.includes('Firefox/')) {
+                browser = 'Firefox';
+                version = ua.match(/Firefox\/(\d+)/)?.[1];
+            } else if (ua.includes('Safari/') && !ua.includes('Chrome/')) {
+                browser = 'Safari';
+                version = ua.match(/Version\/(\d+)/)?.[1];
+            } else if (ua.includes('Edge/')) {
+                browser = 'Edge Legacy';
+                version = ua.match(/Edge\/(\d+)/)?.[1];
+            } else if (ua.includes('Edg/')) {
+                browser = 'Edge';
+                version = ua.match(/Edg\/(\d+)/)?.[1];
+            }
+            
+            // Test CSS custom properties support
+            const supportsVars = window.CSS && CSS.supports && CSS.supports('--custom', 'property');
+            
+            // Test color-mix support
+            const supportsColorMix = window.CSS && CSS.supports && CSS.supports('color', 'color-mix(in srgb, red 50%, blue)');
+            
+            browserInfo.innerHTML = `
+                Browser: ${browser} ${version}<br>
+                User Agent: ${ua}<br>
+                Screen: ${window.screen.width} × ${window.screen.height}<br>
+                Viewport: ${window.innerWidth} × ${window.innerHeight}<br>
+                CSS Variables: ${supportsVars ? '✅ Supported' : '❌ Not supported'}<br>
+                Color-mix(): ${supportsColorMix ? '✅ Supported' : '❌ Not supported'}<br>
+                Touch Device: ${('ontouchstart' in window) ? '✅ Yes' : '❌ No'}
+            `;
+        }
+        
+        getBrowserInfo();
+        window.addEventListener('resize', getBrowserInfo);
+    </script>
+</body>
+</html>

@@ -88,8 +88,7 @@ Built-in dark mode support via CSS custom properties:
 - Automatically responds to `prefers-color-scheme: dark`
 
 ### Juno Design System
-**CRITICAL**: All components must follow the Juno Design System for consistency.
+All components must follow the Juno Design System for consistency.
 - **Complete Guidelines**: See `JUNO-DESIGN-SYSTEM.md` for comprehensive token usage, component patterns, and integration requirements
-- **Design System Preview**: http://localhost:3000/design-system
 - **Required**: Use `.btn--primary`/`.btn--secondary` CSS classes or `Button` component with Juno variants
 - **Mandatory**: All colors, spacing, shadows, and typography must use Juno design tokens

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Responsive Test - Juno Tokens</title>
+    <style>
+        /* Import our exact Juno tokens */
+        :root {
+            /* Desktop defaults */
+            --juno-fs-display: 4.8rem;
+            --juno-fs-hero: 3.2rem;
+            --juno-fs-heading: 2.56rem;
+            --juno-fs-body: 1.28rem;
+            --juno-btn-height: 2.25rem;
+            --juno-card-padding: 1.5rem;
+            --juno-explain-chip-size: 2rem;
+            --juno-accent: #85D6FF;
+            --juno-text: #212730;
+        }
+
+        /* Mobile overrides - exactly as in our juno-tokens.css */
+        @media (max-width: 768px) {
+            :root {
+                --juno-fs-display: 3.2rem;
+                --juno-fs-hero: 2.4rem;
+                --juno-fs-heading: 2rem;
+                --juno-fs-body: 1.12rem;
+                --juno-btn-height: 2.75rem;
+                --juno-card-padding: 1rem;
+                --juno-explain-chip-size: 2rem;
+            }
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 0;
+            padding: 1rem;
+            background: var(--juno-accent);
+            color: var(--juno-text);
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            space-y: 2rem;
+        }
+
+        .responsive-test {
+            background: white;
+            padding: var(--juno-card-padding);
+            border-radius: 12px;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(33,39,48,0.12);
+        }
+
+        .display-text {
+            font-size: var(--juno-fs-display);
+            font-weight: bold;
+            line-height: 1.35;
+            margin-bottom: 1rem;
+        }
+
+        .hero-text {
+            font-size: var(--juno-fs-hero);
+            font-weight: bold;
+            line-height: 1.35;
+            margin-bottom: 1rem;
+        }
+
+        .heading-text {
+            font-size: var(--juno-fs-heading);
+            font-weight: 600;
+            line-height: 1.35;
+            margin-bottom: 1rem;
+        }
+
+        .body-text {
+            font-size: var(--juno-fs-body);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .test-button {
+            background: var(--juno-text);
+            color: var(--juno-accent);
+            height: var(--juno-btn-height);
+            padding: 0 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: var(--juno-fs-body);
+            cursor: pointer;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .explain-chip {
+            width: var(--juno-explain-chip-size);
+            height: var(--juno-explain-chip-size);
+            background: rgba(33,39,48,0.1);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--juno-text);
+            margin-left: 0.5rem;
+        }
+
+        .viewport-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--juno-text);
+            color: var(--juno-accent);
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-indicator {
+                background: #12B76A !important;
+                color: white !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="viewport-info mobile-indicator">
+        Desktop View
+    </div>
+
+    <div class="test-container">
+        <div class="responsive-test">
+            <div class="display-text">Display Size</div>
+            <div class="hero-text">Hero Size</div>
+            <div class="heading-text">Heading Size</div>
+            <div class="body-text">
+                Body text that should resize between desktop and mobile. On mobile, 
+                this text should be smaller and the card padding should reduce.
+                <span class="explain-chip">i</span>
+            </div>
+            
+            <button class="test-button">Button (responsive height)</button>
+            <button class="test-button">Another Button</button>
+        </div>
+
+        <div class="responsive-test">
+            <h3 class="heading-text">Responsive Behavior Test</h3>
+            <div class="body-text">
+                <strong>Desktop (>768px):</strong>
+                <ul>
+                    <li>Display: 4.8rem (76.8px)</li>
+                    <li>Hero: 3.2rem (51.2px)</li>
+                    <li>Heading: 2.56rem (41px)</li>
+                    <li>Body: 1.28rem (20.48px)</li>
+                    <li>Button: 2.25rem height (36px)</li>
+                    <li>Card padding: 1.5rem (24px)</li>
+                </ul>
+                
+                <strong>Mobile (≤768px):</strong>
+                <ul>
+                    <li>Display: 3.2rem (51.2px)</li>
+                    <li>Hero: 2.4rem (38.4px)</li>
+                    <li>Heading: 2rem (32px)</li>
+                    <li>Body: 1.12rem (17.92px)</li>
+                    <li>Button: 2.75rem height (44px) - Better touch targets</li>
+                    <li>Card padding: 1rem (16px)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="responsive-test">
+            <h3 class="heading-text">Instructions</h3>
+            <div class="body-text">
+                1. View this page on desktop (>768px wide)<br>
+                2. Use browser dev tools to simulate mobile (≤768px)<br>
+                3. Notice the green indicator appears on mobile<br>
+                4. Observe text sizes and spacing adjust automatically<br>
+                5. Buttons become taller for better touch targets<br>
+                6. Card padding reduces to save space
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateViewportInfo() {
+            const indicator = document.querySelector('.viewport-info');
+            const width = window.innerWidth;
+            
+            if (width <= 768) {
+                indicator.textContent = `Mobile: ${width}px`;
+                indicator.classList.add('mobile-indicator');
+            } else {
+                indicator.textContent = `Desktop: ${width}px`;
+                indicator.classList.remove('mobile-indicator');
+            }
+        }
+
+        updateViewportInfo();
+        window.addEventListener('resize', updateViewportInfo);
+    </script>
+</body>
+</html>
