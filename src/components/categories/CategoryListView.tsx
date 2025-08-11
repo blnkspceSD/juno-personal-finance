@@ -10,8 +10,9 @@ import { CategoryWithGroup, Budget, CategoryGroup } from '@/lib/types/database'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { DollarSign } from 'lucide-react'
+import { DollarSign, ArrowLeftRight } from 'lucide-react'
 import { CategoryFundingDialog } from './CategoryFundingDialog'
+import { CategoryReallocationDialog } from './CategoryReallocationDialog'
 import { formatCurrency } from '@/lib/utils/currency'
 
 interface CategoryListViewProps {
@@ -32,6 +33,7 @@ export function CategoryListView({
   userId
 }: CategoryListViewProps) {
   const [fundingCategory, setFundingCategory] = useState<CategoryWithGroup | null>(null)
+  const [reallocationCategory, setReallocationCategory] = useState<CategoryWithGroup | null>(null)
   
   return (
     <div className="space-y-4">
@@ -108,8 +110,8 @@ export function CategoryListView({
                       )}
                     </div>
                     
-                    {/* Fund button for zero-budget categories */}
-                    {category.allocated === 0 && (
+                    {/* Action buttons based on category state */}
+                    {category.allocated === 0 ? (
                       <Button
                         variant="outline"
                         size="sm"
@@ -118,6 +120,16 @@ export function CategoryListView({
                       >
                         <DollarSign className="h-3 w-3 mr-1" />
                         Fund
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setReallocationCategory(category)}
+                        className="text-xs px-2 py-1 h-6"
+                      >
+                        <ArrowLeftRight className="h-3 w-3 mr-1" />
+                        Move
                       </Button>
                     )}
                   </div>
@@ -140,6 +152,15 @@ export function CategoryListView({
         open={!!fundingCategory}
         onOpenChange={(open) => !open && setFundingCategory(null)}
         category={fundingCategory}
+        categories={categories}
+        currentBudget={currentBudget}
+      />
+
+      {/* Category Reallocation Dialog */}
+      <CategoryReallocationDialog
+        open={!!reallocationCategory}
+        onOpenChange={(open) => !open && setReallocationCategory(null)}
+        sourceCategory={reallocationCategory}
         categories={categories}
         currentBudget={currentBudget}
       />

@@ -9,12 +9,11 @@ import { useState, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Plus, BarChart3, PieChart, Settings2 } from 'lucide-react'
+import { Plus, BarChart3, PieChart } from 'lucide-react'
 import { CategoryListView } from './CategoryListView'
 import { CategoryCreationDialog } from './CategoryCreationDialog'
 import { BudgetVisualizationChart } from './BudgetVisualizationChart'
-import { BudgetReallocationView } from './BudgetReallocationView'
-import type { CategoryGroup, CategoryWithGroup, Budget, BudgetReallocation } from '@/lib/types/database'
+import type { CategoryGroup, CategoryWithGroup, Budget } from '@/lib/types/database'
 
 interface CategoryManagementLayoutProps {
   categories: CategoryWithGroup[]
@@ -87,29 +86,6 @@ export function CategoryManagementLayout({
     return categories
   }, [categories, currentView, selectedGroup])
 
-  // Handle budget reallocation save
-  const handleSaveReallocations = async (reallocations: BudgetReallocation[]) => {
-    try {
-      for (const reallocation of reallocations) {
-        const response = await fetch('/api/budget/reallocate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(reallocation)
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to save budget reallocation')
-        }
-      }
-      
-      // Refresh the page to show updated data
-      router.refresh()
-    } catch (error) {
-      console.error('Error saving budget reallocations:', error)
-      throw error
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -165,10 +141,6 @@ export function CategoryManagementLayout({
             <TabsTrigger value="charts" className="flex items-center gap-2">
               {chartType === 'pie' ? <PieChart className="h-4 w-4" /> : <BarChart3 className="h-4 w-4" />}
               Charts
-            </TabsTrigger>
-            <TabsTrigger value="reallocation" className="flex items-center gap-2">
-              <Settings2 className="h-4 w-4" />
-              Reallocation
             </TabsTrigger>
           </TabsList>
           
@@ -228,17 +200,6 @@ export function CategoryManagementLayout({
           </div>
         </TabsContent>
 
-        {/* Budget Reallocation Tab */}
-        <TabsContent value="reallocation" className="space-y-6">
-          <div className="bg-white rounded-lg p-6 shadow-sm border">
-            <BudgetReallocationView
-              categories={categories}
-              currentBudget={currentBudget}
-              onSaveReallocations={handleSaveReallocations}
-              onCancel={() => setActiveTab('list')}
-            />
-          </div>
-        </TabsContent>
       </Tabs>
 
       {/* Dialogs */}
