@@ -5,14 +5,18 @@
 
 'use client'
 
-import { CategoryWithGroup, Budget } from '@/lib/types/database'
+import { useState } from 'react'
+import { CategoryWithGroup, Budget, CategoryGroup } from '@/lib/types/database'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { DollarSign } from 'lucide-react'
+import { CategoryFundingDialog } from './CategoryFundingDialog'
 import { formatCurrency } from '@/lib/utils/currency'
 
 interface CategoryListViewProps {
   categories: CategoryWithGroup[]
-  categoryGroups: any[]
+  categoryGroups: CategoryGroup[]
   currentBudget: Budget
   selectedCategories: string[]
   onCategorySelect: (categoryIds: string[]) => void
@@ -27,6 +31,8 @@ export function CategoryListView({
   onCategorySelect,
   userId
 }: CategoryListViewProps) {
+  const [fundingCategory, setFundingCategory] = useState<CategoryWithGroup | null>(null)
+  
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -82,17 +88,37 @@ export function CategoryListView({
                     />
                   </div>
 
-                  {/* Status badges */}
-                  <div className="flex gap-2 mt-3">
-                    {isOverspent && (
-                      <Badge variant="destructive" className="text-xs">
-                        Overspent
-                      </Badge>
-                    )}
-                    {utilizationRate < 10 && category.allocated > 0 && (
-                      <Badge variant="secondary" className="text-xs">
-                        Unused
-                      </Badge>
+                  {/* Status badges and actions */}
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex gap-2">
+                      {isOverspent && (
+                        <Badge variant="destructive" className="text-xs">
+                          Overspent
+                        </Badge>
+                      )}
+                      {utilizationRate < 10 && category.allocated > 0 && (
+                        <Badge variant="secondary" className="text-xs">
+                          Unused
+                        </Badge>
+                      )}
+                      {category.allocated === 0 && (
+                        <Badge variant="outline" className="text-xs">
+                          Unfunded
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    {/* Fund button for zero-budget categories */}
+                    {category.allocated === 0 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setFundingCategory(category)}
+                        className="text-xs px-2 py-1 h-6"
+                      >
+                        <DollarSign className="h-3 w-3 mr-1" />
+                        Fund
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -108,6 +134,15 @@ export function CategoryListView({
           <p className="text-gray-600 mb-4">Create your first spending category to get started</p>
         </div>
       )}
+      
+      {/* Category Funding Dialog */}
+      <CategoryFundingDialog
+        open={!!fundingCategory}
+        onOpenChange={(open) => !open && setFundingCategory(null)}
+        category={fundingCategory}
+        categories={categories}
+        currentBudget={currentBudget}
+      />
     </div>
   )
 }

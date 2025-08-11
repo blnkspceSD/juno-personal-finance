@@ -250,6 +250,9 @@ export interface BudgetAllocation {
   created_at: string
 }
 
+// Alias for budget reallocation operations
+export type BudgetReallocation = Omit<BudgetAllocation, 'id' | 'user_id' | 'created_at'>
+
 // Extended category types with group information
 export interface CategoryWithGroup extends Category {
   group?: CategoryGroup

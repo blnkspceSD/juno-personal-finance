@@ -8,10 +8,13 @@
 import { useState, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Plus, BarChart3, PieChart, Settings2 } from 'lucide-react'
 import { CategoryListView } from './CategoryListView'
 import { CategoryCreationDialog } from './CategoryCreationDialog'
-import type { CategoryGroup, CategoryWithGroup, Budget } from '@/lib/types/database'
+import { BudgetVisualizationChart } from './BudgetVisualizationChart'
+import { BudgetReallocationView } from './BudgetReallocationView'
+import type { CategoryGroup, CategoryWithGroup, Budget, BudgetReallocation } from '@/lib/types/database'
 
 interface CategoryManagementLayoutProps {
   categories: CategoryWithGroup[]
@@ -37,6 +40,8 @@ export function CategoryManagementLayout({
   
   const [showCategoryDialog, setShowCategoryDialog] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [activeTab, setActiveTab] = useState('list')
+  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie')
 
   // Calculate summary statistics
   const stats = useMemo(() => {
@@ -82,6 +87,30 @@ export function CategoryManagementLayout({
     return categories
   }, [categories, currentView, selectedGroup])
 
+  // Handle budget reallocation save
+  const handleSaveReallocations = async (reallocations: BudgetReallocation[]) => {
+    try {
+      for (const reallocation of reallocations) {
+        const response = await fetch('/api/budget/reallocate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(reallocation)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to save budget reallocation')
+        }
+      }
+      
+      // Refresh the page to show updated data
+      router.refresh()
+    } catch (error) {
+      console.error('Error saving budget reallocations:', error)
+      throw error
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Budget Overview */}
@@ -125,30 +154,92 @@ export function CategoryManagementLayout({
         )}
       </div>
 
-      {/* Main Content */}
-      <div className="space-y-6">
-        {/* Action Buttons */}
+      {/* Main Content with Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Your Categories</h2>
-          <Button
-            onClick={() => setShowCategoryDialog(true)}
-            className="flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            New Category
-          </Button>
+          <TabsList>
+            <TabsTrigger value="list" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Categories
+            </TabsTrigger>
+            <TabsTrigger value="charts" className="flex items-center gap-2">
+              {chartType === 'pie' ? <PieChart className="h-4 w-4" /> : <BarChart3 className="h-4 w-4" />}
+              Charts
+            </TabsTrigger>
+            <TabsTrigger value="reallocation" className="flex items-center gap-2">
+              <Settings2 className="h-4 w-4" />
+              Reallocation
+            </TabsTrigger>
+          </TabsList>
+          
+          <div className="flex items-center gap-2">
+            {activeTab === 'charts' && (
+              <div className="flex items-center gap-1">
+                <Button
+                  variant={chartType === 'pie' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setChartType('pie')}
+                >
+                  <PieChart className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={chartType === 'bar' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setChartType('bar')}
+                >
+                  <BarChart3 className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+            <Button
+              onClick={() => setShowCategoryDialog(true)}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              New Category
+            </Button>
+          </div>
         </div>
 
-        {/* Category List */}
-        <CategoryListView
-          categories={categories}
-          categoryGroups={categoryGroups}
-          currentBudget={currentBudget}
-          selectedCategories={selectedCategories}
-          onCategorySelect={setSelectedCategories}
-          userId={userId}
-        />
-      </div>
+        {/* Category List Tab */}
+        <TabsContent value="list" className="space-y-6">
+          <CategoryListView
+            categories={categories}
+            categoryGroups={categoryGroups}
+            currentBudget={currentBudget}
+            selectedCategories={selectedCategories}
+            onCategorySelect={setSelectedCategories}
+            userId={userId}
+          />
+        </TabsContent>
+
+        {/* Charts Tab */}
+        <TabsContent value="charts" className="space-y-6">
+          <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Budget Visualization - {chartType === 'pie' ? 'Pie Chart' : 'Bar Chart'}
+            </h3>
+            <BudgetVisualizationChart
+              categories={categories}
+              type={chartType}
+              showSpent={true}
+              interactive={true}
+            />
+          </div>
+        </TabsContent>
+
+        {/* Budget Reallocation Tab */}
+        <TabsContent value="reallocation" className="space-y-6">
+          <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <BudgetReallocationView
+              categories={categories}
+              currentBudget={currentBudget}
+              onSaveReallocations={handleSaveReallocations}
+              onCancel={() => setActiveTab('list')}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Dialogs */}
       <CategoryCreationDialog

@@ -134,10 +134,11 @@ export function CategoryCreationDialog({
     setIsSubmitting(true)
     
     try {
-      // Create the category
+      // Create the category with 0 allocation initially
+      // The reallocation system will handle funding
       const categoryData: CreateCategoryForm = {
         name: formData.name.trim(),
-        allocated: parseFloat(formData.allocated),
+        allocated: 0, // Always start at 0, reallocation will add funds
         color: formData.color,
         description: formData.description.trim() || undefined,
         icon: formData.icon.trim() || undefined,
