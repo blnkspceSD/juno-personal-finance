@@ -554,80 +554,46 @@ export default function DesignSystemPage() {
           <h2 className="text-2xl font-semibold text-juno-text mb-8">Button Variants</h2>
           
           <div className="space-y-12">
-            {/* Primary Cyan Buttons */}
+            {/* CSS Button Classes - Primary Section */}
             <div>
-              <h3 className="text-lg font-medium text-juno-text mb-6">Primary Cyan (Main Brand)</h3>
+              <h3 className="text-lg font-medium text-juno-text mb-6">CSS Button Classes (Recommended)</h3>
               <div className="bg-juno-surface-100 p-6 rounded-juno-xl shadow-juno-card-with-stroke">
                 <div className="flex flex-wrap gap-6">
-                <button className="bg-juno-accent text-juno-text rounded-juno-xl shadow-md hover:brightness-105 active:brightness-95 focus-visible:ring-2 focus-visible:ring-juno-focus-ring focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Juno Primary
+                <button className="btn--primary">
+                  <span className="btn__lead">Primary CTA</span>
                 </button>
-                <button className="border border-juno-text text-juno-text bg-transparent rounded-juno-xl hover:bg-juno-pill-bg focus-visible:ring-2 focus-visible:ring-juno-focus-ring focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Juno Secondary
+                <button className="btn--primary">
+                  <span className="btn__lead">Create</span>
+                  <span className="btn__sub">New Item</span>
                 </button>
-                <button className="text-juno-text hover:bg-juno-pill-bg focus-visible:ring-2 focus-visible:ring-juno-focus-ring focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Juno Ghost
+                <button className="btn--secondary">
+                  Secondary Action
                 </button>
-                <button className="text-juno-text underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-juno-focus-ring focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Juno Link
+                <button className="btn--secondary btn--icon-only">
+                  <span className="icon">×</span>
                 </button>
+                <button className="btn--secondary" style={{color: 'var(--juno-danger)'}}>
+                  Delete Item
+                </button>
+                <button className="btn--primary" disabled>
+                  <span className="btn__lead">Disabled</span>
+                </button>
+                </div>
+                <div className="mt-6 p-4 bg-juno-surface-200 rounded-juno-lg">
+                  <p className="text-sm text-juno-muted-fg mb-2">
+                    <strong>Usage:</strong> <code className="bg-juno-pill-bg px-2 py-1 rounded text-xs">className="btn--primary"</code>, 
+                    <code className="bg-juno-pill-bg px-2 py-1 rounded text-xs ml-2">className="btn--secondary"</code>
+                  </p>
+                  <p className="text-sm text-juno-muted-fg mb-2">
+                    <strong>Destructive:</strong> <code className="bg-juno-pill-bg px-2 py-1 rounded text-xs">className="btn--secondary" style=&#123;&#123;color: 'var(--juno-danger)'&#125;&#125;</code>
+                  </p>
+                  <p className="text-xs text-juno-muted-fg">
+                    All buttons use Juno design tokens for consistent styling, shadows, and interactions.
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Teal Buttons */}
-            <div>
-              <h3 className="text-lg font-medium text-juno-text mb-6">Teal (Professional, Cooler)</h3>
-              <div className="bg-juno-surface-100 p-6 rounded-juno-xl shadow-juno-card-with-stroke">
-                <div className="flex flex-wrap gap-6">
-                <button className="bg-juno-teal-400 text-white rounded-juno-xl shadow-md hover:bg-juno-teal-500 active:bg-juno-teal-600 focus-visible:ring-2 focus-visible:ring-juno-teal-300 focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Teal Primary
-                </button>
-                <button className="border border-juno-teal-500 text-juno-teal-600 bg-transparent rounded-juno-xl hover:bg-juno-teal-50 focus-visible:ring-2 focus-visible:ring-juno-teal-300 focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Teal Outline
-                </button>
-                <button className="text-juno-teal-600 hover:bg-juno-teal-50 focus-visible:ring-2 focus-visible:ring-juno-teal-300 focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Teal Ghost
-                </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Blue Buttons */}
-            <div>
-              <h3 className="text-lg font-medium text-juno-text mb-6">Blue (Trustworthy, Warmer)</h3>
-              <div className="bg-juno-surface-100 p-6 rounded-juno-xl shadow-juno-card-with-stroke">
-                <div className="flex flex-wrap gap-6">
-                <button className="bg-juno-blue-500 text-white rounded-juno-xl shadow-md hover:bg-juno-blue-600 active:bg-juno-blue-700 focus-visible:ring-2 focus-visible:ring-juno-blue-300 focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Blue Primary
-                </button>
-                <button className="border border-juno-blue-500 text-juno-blue-600 bg-transparent rounded-juno-xl hover:bg-juno-blue-50 focus-visible:ring-2 focus-visible:ring-juno-blue-300 focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Blue Outline
-                </button>
-                <button className="text-juno-blue-600 hover:bg-juno-blue-50 focus-visible:ring-2 focus-visible:ring-juno-blue-300 focus-visible:ring-offset-0 h-9 px-4 py-2">
-                  Blue Ghost
-                </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Optimized Sizes */}
-            <div>
-              <h3 className="text-lg font-medium text-juno-text mb-6">Mobile Touch Targets (44px+)</h3>
-              <div className="bg-juno-surface-100 p-6 rounded-juno-xl shadow-juno-card-with-stroke">
-                <div className="flex flex-wrap gap-6">
-                <button className="bg-juno-accent text-juno-text rounded-juno-xl shadow-md hover:brightness-105 active:brightness-95 focus-visible:ring-2 focus-visible:ring-juno-focus-ring focus-visible:ring-offset-0 h-11 px-6 py-3 md:h-9 md:px-4 md:py-2">
-                  Mobile Default
-                </button>
-                <button className="bg-juno-teal-400 text-white rounded-juno-xl shadow-md hover:bg-juno-teal-500 active:bg-juno-teal-600 focus-visible:ring-2 focus-visible:ring-juno-teal-300 focus-visible:ring-offset-0 h-10 px-4 py-2.5 md:h-8 md:px-3">
-                  Mobile Small
-                </button>
-                <button className="bg-juno-blue-500 text-white rounded-juno-xl shadow-md hover:bg-juno-blue-600 active:bg-juno-blue-700 focus-visible:ring-2 focus-visible:ring-juno-blue-300 focus-visible:ring-offset-0 h-12 px-8 py-4 md:h-10 md:px-6">
-                  Mobile Large
-                </button>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 

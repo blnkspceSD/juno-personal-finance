@@ -1,46 +1,61 @@
+"use client"
+
 import * as React from "react"
+import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
-interface TooltipProps {
-  children: React.ReactNode
-  content: string
-  side?: 'top' | 'bottom' | 'left' | 'right'
-  disabled?: boolean
-}
+import { cn } from "@/lib/utils"
 
-export function Tooltip({ children, content, side = 'top', disabled = false }: TooltipProps) {
-  const [isVisible, setIsVisible] = React.useState(false)
-
-  if (disabled) {
-    return <>{children}</>
-  }
-
-  const sideClasses = {
-    top: 'bottom-full mb-2 left-1/2 transform -translate-x-1/2',
-    bottom: 'top-full mt-2 left-1/2 transform -translate-x-1/2',
-    left: 'right-full mr-2 top-1/2 transform -translate-y-1/2',
-    right: 'left-full ml-2 top-1/2 transform -translate-y-1/2'
-  }
-
-  const arrowClasses = {
-    top: 'top-full left-1/2 transform -translate-x-1/2 border-t-gray-800 border-t-4 border-l-transparent border-r-transparent border-l-4 border-r-4',
-    bottom: 'bottom-full left-1/2 transform -translate-x-1/2 border-b-gray-800 border-b-4 border-l-transparent border-r-transparent border-l-4 border-r-4',
-    left: 'left-full top-1/2 transform -translate-y-1/2 border-l-gray-800 border-l-4 border-t-transparent border-b-transparent border-t-4 border-b-4',
-    right: 'right-full top-1/2 transform -translate-y-1/2 border-r-gray-800 border-r-4 border-t-transparent border-b-transparent border-t-4 border-b-4'
-  }
-
+function TooltipProvider({
+  delayDuration = 0,
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
   return (
-    <div 
-      className="relative inline-block"
-      onMouseEnter={() => setIsVisible(true)}
-      onMouseLeave={() => setIsVisible(false)}
-    >
-      {children}
-      {isVisible && (
-        <div className={`absolute z-10 px-2 py-1 text-xs text-white bg-gray-800 rounded whitespace-nowrap ${sideClasses[side]}`}>
-          {content}
-          <div className={`absolute w-0 h-0 ${arrowClasses[side]}`} />
-        </div>
-      )}
-    </div>
+    <TooltipPrimitive.Provider
+      data-slot="tooltip-provider"
+      delayDuration={delayDuration}
+      {...props}
+    />
   )
 }
+
+function Tooltip({
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
+  return (
+    <TooltipProvider>
+      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+    </TooltipProvider>
+  )
+}
+
+function TooltipTrigger({
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+}
+
+function TooltipContent({
+  className,
+  sideOffset = 0,
+  children,
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+  return (
+    <TooltipPrimitive.Portal>
+      <TooltipPrimitive.Content
+        data-slot="tooltip-content"
+        sideOffset={sideOffset}
+        className={cn(
+          "bg-primary text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-3 py-1.5 text-xs text-balance",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        <TooltipPrimitive.Arrow className="bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
+      </TooltipPrimitive.Content>
+    </TooltipPrimitive.Portal>
+  )
+}
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }

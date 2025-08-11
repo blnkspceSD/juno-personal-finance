@@ -38,49 +38,52 @@ export function NavProjects({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-juno-muted-fg font-medium">Financial Goals</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton 
+              asChild
+              className="text-juno-text hover:bg-juno-surface-200 hover:text-juno-text gap-2"
+            >
               <a href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
+                <item.icon strokeWidth={1.5} />
+                <span className="font-medium">{item.name}</span>
               </a>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
+                <SidebarMenuAction showOnHover className="text-juno-muted-fg hover:text-juno-text">
+                  <MoreHorizontal strokeWidth={1.5} />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-48 rounded-lg"
+                className="w-48 rounded-juno-lg bg-juno-surface-100 border border-juno-border"
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
               >
-                <DropdownMenuItem>
-                  <Folder className="text-muted-foreground" />
-                  <span>View Project</span>
+                <DropdownMenuItem className="text-juno-text hover:bg-juno-surface-200">
+                  <Folder strokeWidth={1.5} />
+                  <span>View Goal</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Forward className="text-muted-foreground" />
-                  <span>Share Project</span>
+                <DropdownMenuItem className="text-juno-text hover:bg-juno-surface-200">
+                  <Forward strokeWidth={1.5} />
+                  <span>Share Goal</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Trash2 className="text-muted-foreground" />
-                  <span>Delete Project</span>
+                <DropdownMenuSeparator className="bg-juno-border" />
+                <DropdownMenuItem className="text-juno-danger-fg hover:bg-juno-danger-bg">
+                  <Trash2 strokeWidth={1.5} />
+                  <span>Delete Goal</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <MoreHorizontal className="text-sidebar-foreground/70" />
-            <span>More</span>
+          <SidebarMenuButton className="text-juno-muted-fg hover:text-juno-text hover:bg-juno-surface-100 gap-2">
+            <MoreHorizontal strokeWidth={1.5} />
+            <span>View All Goals</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
