@@ -49,9 +49,9 @@ export function NavMain({
                   tooltip={item.title}
                   className="text-juno-text hover:bg-juno-surface-200 hover:text-juno-text gap-2"
                 >
-                  {item.icon && <item.icon strokeWidth={1.5} />}
+                  {item.icon && <item.icon strokeWidth={2} className="text-juno-neutral-400" />}
                   <span className="font-medium">{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" strokeWidth={1.5} />
+                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 text-juno-neutral-400" strokeWidth={2} />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>

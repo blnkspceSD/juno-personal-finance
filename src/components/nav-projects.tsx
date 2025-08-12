@@ -47,14 +47,14 @@ export function NavProjects({
               className="text-juno-text hover:bg-juno-surface-200 hover:text-juno-text gap-2"
             >
               <a href={item.url}>
-                <item.icon strokeWidth={1.5} />
+                <item.icon strokeWidth={2} className="text-juno-neutral-400" />
                 <span className="font-medium">{item.name}</span>
               </a>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover className="text-juno-muted-fg hover:text-juno-text">
-                  <MoreHorizontal strokeWidth={1.5} />
+                  <MoreHorizontal strokeWidth={2} />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
@@ -64,16 +64,16 @@ export function NavProjects({
                 align={isMobile ? "end" : "start"}
               >
                 <DropdownMenuItem className="text-juno-text hover:bg-juno-surface-200">
-                  <Folder strokeWidth={1.5} />
+                  <Folder strokeWidth={2} />
                   <span>View Goal</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="text-juno-text hover:bg-juno-surface-200">
-                  <Forward strokeWidth={1.5} />
+                  <Forward strokeWidth={2} />
                   <span>Share Goal</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-juno-border" />
                 <DropdownMenuItem className="text-juno-danger-fg hover:bg-juno-danger-bg">
-                  <Trash2 strokeWidth={1.5} />
+                  <Trash2 strokeWidth={2} />
                   <span>Delete Goal</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -82,7 +82,7 @@ export function NavProjects({
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton className="text-juno-muted-fg hover:text-juno-text hover:bg-juno-surface-100 gap-2">
-            <MoreHorizontal strokeWidth={1.5} />
+            <MoreHorizontal strokeWidth={2} />
             <span>View All Goals</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
