@@ -7,14 +7,22 @@
 
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Plus, TrendingUp, TrendingDown, DollarSign, Wifi, WifiOff } from 'lucide-react'
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
 import { useRealtimeBalance } from '@/lib/hooks/useRealtimeBalance'
 import { useRealtimeContext } from '@/lib/context/RealtimeContext'
 import { calculateBudgetSummary } from '@/lib/utils/budget-calculations'
 import { formatCurrency, getCurrencyClasses } from '@/lib/utils/currency'
 import { RealtimeCategoryTable } from '@/components/tables/RealtimeCategoryTable'
+import { TransactionTable, TransactionTableRow } from '@/components/tables/TransactionTable'
 import type { BudgetWithCategories } from '@/lib/types/database'
 
 interface RealtimeDashboardProps {
@@ -26,9 +34,22 @@ interface RealtimeDashboardProps {
       name?: string
     }
   } | null
+  monthlySpendingData?: {
+    month: string
+    actual: number
+    estimated: number
+  }[]
+  recentTransactions?: {
+    id: string
+    description: string
+    amount: number
+    date: string
+    category_id: string
+    category_name: string
+  }[]
 }
 
-export function RealtimeDashboard({ initialBudget, user }: RealtimeDashboardProps) {
+export function RealtimeDashboard({ initialBudget, user, monthlySpendingData = [], recentTransactions = [] }: RealtimeDashboardProps) {
   const [currentBudget, setCurrentBudget] = useState<BudgetWithCategories | null>(initialBudget)
   const { setBudget } = useRealtimeContext()
   const initializedRef = useRef<string | null>(null)
@@ -90,6 +111,34 @@ export function RealtimeDashboard({ initialBudget, user }: RealtimeDashboardProp
   const hasActiveBudget = currentBudget && currentBudget.categories.length > 0
   const budgetSummary = currentBudget ? calculateBudgetSummary(currentBudget) : null
 
+  // Use real spending data from database or fall back to empty array
+  const spendingChartData = monthlySpendingData.length > 0 ? monthlySpendingData : [
+    // Fallback data if no real data available
+    { month: "No data", actual: 0, estimated: 0 }
+  ]
+
+  const chartConfig = {
+    actual: {
+      label: "Actual Spending",
+      color: "var(--chart-1)",
+    },
+    estimated: {
+      label: "Estimated Spending", 
+      color: "var(--chart-2)",
+    },
+  } satisfies ChartConfig
+
+  // Current spending metrics - use real budget data
+  const currentSpending = budgetSummary?.total_spent || 0
+  const budgetLimit = budgetSummary?.total_income || 0
+  const spendingProgress = budgetLimit > 0 ? (currentSpending / budgetLimit) * 100 : 0
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState('spending')
+
+  // Use real recent transactions or show empty state
+  const displayTransactions = recentTransactions.length > 0 ? recentTransactions : []
+
   return (
     <div className="space-y-8">
       {/* Connection Status Indicator */}
@@ -121,85 +170,100 @@ export function RealtimeDashboard({ initialBudget, user }: RealtimeDashboardProp
         </div>
       )}
 
-      {/* Welcome Header */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">
-                Welcome back, {user?.user_metadata?.name || 'there'}! 👋
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                {hasActiveBudget 
-                  ? `Managing your ${currentBudget.name}` 
-                  : "Let's take control of your finances with envelope budgeting"
-                }
-              </p>
-            </div>
-            <div className="hidden sm:block">
-              <div className="h-16 w-16 bg-primary rounded-2xl flex items-center justify-center">
-                <svg className="h-8 w-8 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-            </div>
+      {/* Tab Navigation */}
+      <div className="flex space-x-1 bg-muted p-1 rounded-lg w-fit">
+        {[
+          { id: 'spending', label: 'Spending' },
+          { id: 'networth', label: 'Net worth' },
+          { id: 'investments', label: 'Investments' }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+              activeTab === tab.id
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Spending Metric Display */}
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground font-medium">SPENDING THIS MONTH</p>
+        <div className="flex items-baseline space-x-2">
+          <span className="text-4xl font-bold tracking-tight">
+            ${currentSpending.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </span>
+          <span className="text-xl text-muted-foreground">
+            / ${budgetLimit.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </span>
+        </div>
+        <div className="w-full bg-muted rounded-full h-2">
+          <div 
+            className="bg-foreground h-2 rounded-full transition-all duration-300" 
+            style={{ width: `${Math.min(spendingProgress, 100)}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Spending Chart */}
+      <div className="space-y-4">
+        <div className="h-[400px]">
+          <ChartContainer config={chartConfig} className="h-full w-full">
+            <BarChart accessibilityLayer data={spendingChartData} margin={{ top: 20, left: 12, right: 12 }}>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator="dashed" />}
+              />
+              <Bar dataKey="estimated" fill="var(--color-estimated)" radius={4} />
+              <Bar dataKey="actual" fill="var(--color-actual)" radius={4} />
+            </BarChart>
+          </ChartContainer>
+        </div>
+        <div className="flex items-center justify-end gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-sm bg-chart-1"></div>
+            <span className="text-sm text-muted-foreground">Current Period</span>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-sm bg-chart-2"></div>
+            <span className="text-sm text-muted-foreground">Last Period</span>
+          </div>
+        </div>
+      </div>
 
-      {/* Quick Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Monthly Income</p>
-                <p className={getCurrencyClasses("text-2xl font-bold text-foreground")}>
-                  {formatCurrency(budgetSummary?.total_income || 0)}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-muted rounded-xl flex items-center justify-center">
-                <DollarSign className="h-6 w-6 text-muted-foreground" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Spent</p>
-                <p className={getCurrencyClasses("text-2xl font-bold text-foreground")}>
-                  {formatCurrency(budgetSummary?.total_spent || 0)}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-muted rounded-xl flex items-center justify-center">
-                <TrendingDown className="h-6 w-6 text-muted-foreground" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Available to Budget</p>
-                <p className={getCurrencyClasses(`text-2xl font-bold ${
-                  (budgetSummary?.available_to_budget || 0) < 0 
-                    ? 'text-red-600' 
-                    : 'text-foreground'
-                }`)}>
-                  {formatCurrency(budgetSummary?.available_to_budget || 0)}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-muted rounded-xl flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-muted-foreground" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Recent Transactions */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Recent Transactions</h2>
+          <Button className="btn--secondary">
+            <Plus className="h-4 w-4" />
+            Add transaction
+          </Button>
+        </div>
+        
+        <TransactionTable 
+          data={displayTransactions as TransactionTableRow[]}
+          onEdit={(transaction) => {
+            console.log('Edit transaction:', transaction)
+            // TODO: Implement transaction editing
+          }}
+          onDelete={(transaction) => {
+            console.log('Delete transaction:', transaction)
+            // TODO: Implement transaction deletion
+          }}
+        />
       </div>
 
       {hasActiveBudget ? (

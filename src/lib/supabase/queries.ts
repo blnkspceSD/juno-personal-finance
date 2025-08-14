@@ -106,12 +106,17 @@ export async function updateCategoryAllocated(categoryId: string, amount: number
 }
 
 // Transaction Queries
-export async function getRecentTransactions(limit: number = 10): Promise<Transaction[]> {
+export async function getRecentTransactions(limit: number = 10): Promise<(Transaction & { category_name: string })[]> {
   const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('transactions')
-    .select('*')
+    .select(`
+      *,
+      categories (
+        name
+      )
+    `)
     .order('date', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(limit)
@@ -120,7 +125,11 @@ export async function getRecentTransactions(limit: number = 10): Promise<Transac
     throw new Error(`Failed to fetch transactions: ${error.message}`)
   }
 
-  return data || []
+  // Transform data to include category name
+  return (data || []).map(transaction => ({
+    ...transaction,
+    category_name: transaction.categories?.name || 'Uncategorized'
+  }))
 }
 
 export async function getTransactionsByCategory(categoryId: string): Promise<Transaction[]> {
@@ -166,6 +175,57 @@ export async function addTransaction(transaction: {
   }
 
   return data
+}
+
+// Chart Data Queries
+export async function getMonthlySpendingData(): Promise<{
+  month: string;
+  actual: number;
+  estimated: number;
+}[]> {
+  const supabase = await createClient()
+  
+  // Get the last 12 months
+  const endDate = new Date()
+  const startDate = new Date()
+  startDate.setMonth(endDate.getMonth() - 11)
+  
+  // Get all budgets in the date range
+  const { data: budgets, error: budgetsError } = await supabase
+    .from('budgets')
+    .select(`
+      month,
+      total_income,
+      categories (
+        allocated,
+        spent
+      )
+    `)
+    .gte('month', startDate.toISOString().slice(0, 7))
+    .lte('month', endDate.toISOString().slice(0, 7))
+    .order('month', { ascending: true })
+
+  if (budgetsError) {
+    console.error('Failed to fetch monthly spending data:', budgetsError)
+    return []
+  }
+
+  // Transform data for chart
+  const chartData = (budgets || []).map(budget => {
+    const monthDate = new Date(budget.month + '-01')
+    const monthShort = monthDate.toLocaleDateString('en-US', { month: 'short' })
+    
+    const estimated = budget.categories?.reduce((sum, category) => sum + (category.allocated || 0), 0) || 0
+    const actual = budget.categories?.reduce((sum, category) => sum + (category.spent || 0), 0) || 0
+    
+    return {
+      month: monthShort,
+      actual: Math.round(actual),
+      estimated: Math.round(estimated)
+    }
+  })
+  
+  return chartData
 }
 
 // Re-export utility functions for backwards compatibility
