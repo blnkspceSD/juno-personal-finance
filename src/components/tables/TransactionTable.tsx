@@ -30,6 +30,7 @@ interface TransactionTableProps {
   onBulkDelete?: (transactions: TransactionTableRow[]) => void;
   isLoading?: boolean;
   className?: string;
+  enablePagination?: boolean;
 }
 
 function TransactionRowActions({ 
@@ -99,6 +100,7 @@ export function TransactionTable({
   onBulkDelete,
   isLoading = false,
   className,
+  enablePagination = true,
 }: TransactionTableProps) {
 
   const columns: ColumnDef<TransactionTableRow>[] = [
@@ -130,11 +132,14 @@ export function TransactionTable({
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 text-juno-muted-fg hover:text-juno-text font-medium"
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
         >
           Date
         </Button>
       ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => {
         const date = new Date(row.getValue("date"));
         return (
@@ -155,11 +160,14 @@ export function TransactionTable({
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 text-juno-muted-fg hover:text-juno-text font-medium"
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
         >
           Description
         </Button>
       ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => (
         <div className="text-sm text-juno-text font-medium max-w-[200px] truncate">
           {row.getValue("description")}
@@ -173,11 +181,14 @@ export function TransactionTable({
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 text-juno-muted-fg hover:text-juno-text font-medium"
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
         >
           Category
         </Button>
       ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => (
         <Badge 
           variant="secondary" 
@@ -194,11 +205,14 @@ export function TransactionTable({
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 text-juno-muted-fg hover:text-juno-text font-medium"
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
         >
           Amount
         </Button>
       ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("amount"));
         const isNegative = amount < 0;
@@ -257,9 +271,9 @@ export function TransactionTable({
       <DataTable 
         columns={columns} 
         data={data}
-        enablePagination={true}
+        enablePagination={enablePagination}
         enableSorting={true}
-        initialPageSize={5}
+        initialPageSize={enablePagination ? 5 : data.length}
       />
     </div>
   );

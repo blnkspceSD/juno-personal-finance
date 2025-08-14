@@ -9,7 +9,7 @@ import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, TrendingUp, TrendingDown, DollarSign, Wifi, WifiOff } from 'lucide-react'
+import { Plus, TrendingUp, TrendingDown, DollarSign, Wifi, WifiOff, ChevronDown } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import {
   ChartConfig,
@@ -254,7 +254,7 @@ export function RealtimeDashboard({ initialBudget, user, monthlySpendingData = [
         </div>
         
         <TransactionTable 
-          data={displayTransactions as TransactionTableRow[]}
+          data={displayTransactions.slice(0, 10) as TransactionTableRow[]}
           onEdit={(transaction) => {
             console.log('Edit transaction:', transaction)
             // TODO: Implement transaction editing
@@ -263,7 +263,17 @@ export function RealtimeDashboard({ initialBudget, user, monthlySpendingData = [
             console.log('Delete transaction:', transaction)
             // TODO: Implement transaction deletion
           }}
+          enablePagination={false}
         />
+        
+        <div className="flex justify-center pt-4">
+          <Button variant="ghost" className="text-juno-text hover:text-juno-text gap-2" asChild>
+            <Link href="/dashboard/transactions">
+              See all transactions
+              <ChevronDown className="h-4 w-4 -rotate-90" />
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {hasActiveBudget ? (

@@ -148,7 +148,18 @@ export function CategoryTable({
     },
     {
       accessorKey: "name",
-      header: "Category",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
+        >
+          Category
+        </Button>
+      ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => {
         const category = row.original;
         return (
@@ -165,7 +176,18 @@ export function CategoryTable({
     },
     {
       accessorKey: "allocated",
-      header: "Allocated",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
+        >
+          Allocated
+        </Button>
+      ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("allocated"));
         return (
@@ -178,7 +200,18 @@ export function CategoryTable({
     },
     {
       accessorKey: "spent",
-      header: "Spent",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
+        >
+          Spent
+        </Button>
+      ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => {
         const spent = parseFloat(row.getValue("spent"));
         return (
@@ -191,7 +224,18 @@ export function CategoryTable({
     },
     {
       accessorKey: "remaining",
-      header: "Remaining",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
+        >
+          Remaining
+        </Button>
+      ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => {
         const remaining = row.original.remaining;
         const isOverspent = remaining < 0;
@@ -212,7 +256,18 @@ export function CategoryTable({
     },
     {
       accessorKey: "percentage_used",
-      header: "Progress",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
+        >
+          Progress
+        </Button>
+      ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => {
         const category = row.original;
         return (
@@ -236,7 +291,18 @@ export function CategoryTable({
     },
     {
       accessorKey: "transaction_count",
-      header: "Transactions",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 text-juno-muted-fg group-hover:text-juno-text hover:bg-transparent font-medium"
+        >
+          Transactions
+        </Button>
+      ),
+      meta: {
+        headerClassName: "group hover:text-juno-text cursor-pointer"
+      },
       cell: ({ row }) => {
         const count = row.original.transaction_count || 0;
         return (

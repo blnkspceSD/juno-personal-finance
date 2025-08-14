@@ -88,7 +88,7 @@ export function DataTable<TData, TValue>({
                     <TableHead
                       key={header.id}
                       style={{ width: `${header.getSize()}px` }}
-                      className="h-11"
+                      className={cn("h-11", header.column.columnDef.meta?.headerClassName)}
                     >
                       {header.isPlaceholder ? null : header.column.getCanSort() ? (
                         <div
@@ -112,7 +112,7 @@ export function DataTable<TData, TValue>({
                           {{
                             asc: (
                               <ChevronUp
-                                className="shrink-0 opacity-60"
+                                className="shrink-0 opacity-60 group-hover:opacity-100"
                                 size={16}
                                 strokeWidth={2}
                                 aria-hidden="true"
@@ -120,7 +120,7 @@ export function DataTable<TData, TValue>({
                             ),
                             desc: (
                               <ChevronDown
-                                className="shrink-0 opacity-60"
+                                className="shrink-0 opacity-60 group-hover:opacity-100"
                                 size={16}
                                 strokeWidth={2}
                                 aria-hidden="true"
