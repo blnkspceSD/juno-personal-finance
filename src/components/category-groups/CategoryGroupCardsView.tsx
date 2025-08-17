@@ -179,7 +179,7 @@ export function CategoryGroupCardsView({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold text-juno-text">
-            Watchlist
+            Spending Pockets
           </h2>
         </div>
         
@@ -196,7 +196,7 @@ export function CategoryGroupCardsView({
               className="btn--secondary"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Add Group
+              Add pocket
             </Button>
           )}
         </div>

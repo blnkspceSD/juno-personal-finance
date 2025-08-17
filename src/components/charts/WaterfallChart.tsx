@@ -761,18 +761,7 @@ export function WaterfallChart({
         </div>
       </div>
 
-      {/* Chart Enhancement Notice */}
-      <div className="mt-4 p-3 rounded-lg border bg-blue-50 border-blue-200">
-        <div className="text-sm text-blue-800">
-          <div className="font-medium mb-1">✨ Chart Enhancements Active</div>
-          <ul className="text-xs space-y-1 text-blue-700">
-            <li>• Enhanced tooltips show percentages and detailed breakdowns</li>
-            <li>• Overlay labels appear on segments larger than 60px</li>
-            <li>• All segments display their true proportional sizes</li>
-            <li>• Stripe patterns help distinguish expense categories</li>
-          </ul>
-        </div>
-      </div>
+  
     </div>
   )
 }

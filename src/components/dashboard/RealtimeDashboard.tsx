@@ -227,7 +227,7 @@ export function RealtimeDashboard({
       </div>
 
       {/* Cash Flow Chart - New Onboarding Data Visualization */}
-      <div className="space-y-4">
+      <div className="space-y-4 pb-12">
         <WaterfallChart 
           height={300}
           defaultView="month"
@@ -238,19 +238,7 @@ export function RealtimeDashboard({
 
       {/* Spending Pockets */}
       {hasActiveBudget && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">Spending pockets</h2>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setIsCreateDialogOpen(true)}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add pocket
-            </Button>
-          </div>
-          
+        <div className="space-y-4 pb-12">
           {categoryGroups.length > 0 ? (
             <CategoryGroupCardsView
               groups={categoryGroups}
@@ -296,7 +284,7 @@ export function RealtimeDashboard({
       )}
 
       {/* Recent Transactions */}
-      <div className="space-y-4">
+      <div className="space-y-4 pb-12">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Recent Transactions</h2>
           <Button className="btn--secondary">
