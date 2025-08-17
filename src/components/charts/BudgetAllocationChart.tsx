@@ -107,18 +107,15 @@ export function BudgetAllocationChart({
 
   return (
     <div className={className}>
-      {/* Header */}
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold" style={{ color: 'var(--juno-text)' }}>
-          {title}
-        </h3>
-        <p className="text-sm" style={{ color: 'var(--juno-muted-fg)' }}>
-          Total budgeted: {formatWaterfallCurrency(totalBudget)}
-        </p>
-      </div>
-
       {/* Nivo Chart - Matching WaterfallChart styling exactly */}
       <div className="w-full" style={{ height: `${height}px` }}>
+        <style jsx global>{`
+          /* Chart hover effects to match WaterfallChart */
+          .chart-bar-hover {
+            filter: brightness(1.2) !important;
+            transition: filter 0.2s ease !important;
+          }
+        `}</style>
         <ResponsiveBar
           data={nivoData}
           keys={chartKeys}
@@ -126,8 +123,8 @@ export function BudgetAllocationChart({
           layout="horizontal"
           margin={{ 
             top: 40, 
-            right: 140, // Same as WaterfallChart
-            left: 140,  // Same as WaterfallChart
+            right: 100, // Match updated WaterfallChart spacing in dual layout
+            left: 100,  // Match updated WaterfallChart spacing in dual layout
             bottom: 60 
           }}
           groupMode="stacked"
@@ -140,6 +137,18 @@ export function BudgetAllocationChart({
           colors={({ id }) => getMutedCategoryColor(id as string)}
           defs={linePatterns}
           fill={fillPatterns}
+          onMouseEnter={(data, event) => {
+            const element = event.target as SVGElement
+            if (element) {
+              element.classList.add('chart-bar-hover')
+            }
+          }}
+          onMouseLeave={(data, event) => {
+            const element = event.target as SVGElement
+            if (element) {
+              element.classList.remove('chart-bar-hover')
+            }
+          }}
           theme={{
             grid: {
               line: {
@@ -151,12 +160,12 @@ export function BudgetAllocationChart({
             axis: {
               ticks: {
                 text: {
-                  fontSize: 14
+                  fontSize: 12 // Match WaterfallChart font size in dual layout
                 }
               },
               legend: {
                 text: {
-                  fontSize: 14
+                  fontSize: 12 // Match WaterfallChart font size in dual layout
                 }
               }
             },
@@ -189,7 +198,7 @@ export function BudgetAllocationChart({
           }}
           axisLeft={{
             tickSize: 0,
-            tickPadding: 29, // Same as WaterfallChart
+            tickPadding: 20, // Match WaterfallChart in dual layout
             tickRotation: 0,
             legend: '',
             legendPosition: 'middle',
