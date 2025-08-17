@@ -38,12 +38,60 @@ import { BudgetAllocationChart } from '@/components/charts/BudgetAllocationChart
 /**
  * Main Horizontal Waterfall Chart Component (Simplified)
  */
+// Helper function to determine the best default view based on data availability
+async function getDataDrivenDefaultView(): Promise<TimeViewPeriod> {
+  try {
+    // Get current date for analysis
+    const now = new Date()
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    
+    // Get available data months to analyze data maturity
+    const availableMonths = await getAvailableDataMonths()
+    
+    // Calculate how many days of data we might have
+    const daysSinceMonthStart = Math.floor((now.getTime() - currentMonthStart.getTime()) / (1000 * 60 * 60 * 24))
+    
+    // Check if we have data for the current month
+    const hasCurrentMonthData = availableMonths.length > 0 && 
+      availableMonths.some(month => {
+        // Parse month format like "august-2025" or "july-2025"
+        const [monthName, year] = month.split('-')
+        const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth()
+        return monthIndex === now.getMonth() && 
+               parseInt(year) === now.getFullYear()
+      })
+    
+    // Priority 1: Month view if we have substantial month data (15+ days into month)
+    if (hasCurrentMonthData && daysSinceMonthStart >= 15) {
+      return 'month'
+    }
+    
+    // Priority 2: Week view if we have at least a week of data or multiple months
+    if (hasCurrentMonthData && (daysSinceMonthStart >= 7 || availableMonths.length > 1)) {
+      return 'week'
+    }
+    
+    // Priority 3: Week view if we have historical data from previous months
+    if (availableMonths.length > 0) {
+      return 'week'
+    }
+    
+    // Fallback: Day view for minimal or no data
+    return 'day'
+  } catch (error) {
+    console.warn('Failed to determine data-driven default view:', error)
+    return 'day' // Safe fallback
+  }
+}
+
 export function WaterfallChart({
   data,
   height = 200,
   className,
   onDataPointClick,
-  defaultView = 'month',
+  defaultView,
   defaultPeriod,
   onViewChange,
   enabledViews = ['day', 'week', 'month'],
@@ -51,7 +99,7 @@ export function WaterfallChart({
   periodSelectorProps,
 }: WaterfallChartProps) {
   // Enhanced state management for view selection
-  const [selectedView, setSelectedView] = useState<TimeViewPeriod>(defaultView)
+  const [selectedView, setSelectedView] = useState<TimeViewPeriod>(defaultView || 'day')
   const [selectedMonth, setSelectedMonth] = useState(() => {
     if (defaultPeriod) return defaultPeriod
     return 'august-2025' // Default to august-2025
@@ -71,7 +119,7 @@ export function WaterfallChart({
   useEffect(() => {
     setIsClient(true)
     
-    // Fetch available months on client mount
+    // Fetch available months and set data-driven default view on client mount
     const loadAvailableMonths = async () => {
       try {
         const months = await getAvailableDataMonths()
@@ -81,6 +129,12 @@ export function WaterfallChart({
         if (months.length > 0 && !months.includes(selectedMonth)) {
           setSelectedMonth(months[0])
         }
+        
+        // Set data-driven default view if no defaultView was provided
+        if (!defaultView) {
+          const dataDrivenView = await getDataDrivenDefaultView()
+          setSelectedView(dataDrivenView)
+        }
       } catch (error) {
         console.error('Failed to load available months:', error)
         // Fallback to static list
@@ -89,7 +143,7 @@ export function WaterfallChart({
     }
     
     loadAvailableMonths()
-  }, [])
+  }, [defaultView, selectedMonth])
 
   // Handle view changes
   const handleViewChange = useCallback((newView: TimeViewPeriod) => {
@@ -124,7 +178,7 @@ export function WaterfallChart({
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        let data: WaterfallChartData
+        let data: any
         
         switch (selectedView) {
           case 'day':
@@ -266,12 +320,12 @@ export function WaterfallChart({
   }
 
   // Function to get color for any category
-  const getCategoryColor = (categoryId) => {
-    return categoryColors[categoryId] || '#c5c5c5'
+  const getCategoryColor = (categoryId: string) => {
+    return categoryColors[categoryId as keyof typeof categoryColors] || '#c5c5c5'
   }
 
   // Function to mute colors by adding neutral-500 overlay (20% opacity)
-  const getMutedCategoryColor = (categoryId) => {
+  const getMutedCategoryColor = (categoryId: string) => {
     const originalColor = getCategoryColor(categoryId)
     if (originalColor === '#c5c5c5') {
       return originalColor
@@ -508,207 +562,264 @@ export function WaterfallChart({
                 className="h-full"
               />
             ) : (
-              // Show dual chart layout when data exists
-              <div className="w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Budget Allocation Chart */}
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold" style={{ color: 'var(--juno-text)' }}>
-                    Budget Allocation
-                  </h3>
-                  <div className="h-full">
-                    <BudgetAllocationChart 
-                      height={height}
-                      className="h-full"
-                    />
-                  </div>
-                </div>
-                
-                {/* Spending Chart (Original Waterfall) */}
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold" style={{ color: 'var(--juno-text)' }}>
-                    Actual Spending
-                  </h3>
-                  <div className="h-full">
-                    <div className="w-full h-full">
-                      <style jsx global>{`
-                        /* Leftover section styling */
-                        .leftover-section {
-                          fill: url(#neutral-stripes) !important;
-                          rx: 8px !important;
-                          ry: 8px !important;
-                          stroke: none !important;
+              // Show single unified chart combining budget and actual spending
+              <div className="w-full h-full">
+                <style jsx global>{`
+                  /* Leftover section styling */
+                  .leftover-section {
+                    fill: url(#neutral-stripes) !important;
+                    rx: 8px !important;
+                    ry: 8px !important;
+                    stroke: none !important;
+                  }
+                  
+                  .leftover-section:hover {
+                    fill: url(#neutral-stripes-hover) !important;
+                  }
+                  
+                  /* Hover effect for chart bars using white tint overlay */
+                  .chart-bar-hover {
+                    filter: brightness(1.2) !important;
+                    transition: filter 0.2s ease !important;
+                  }
+                  
+                  /* Specific hover effect for leftover bar - slightly darker */
+                  .leftover-bar-hover {
+                    filter: brightness(0.85) !important;
+                    transition: filter 0.2s ease !important;
+                  }
+                `}</style>
+                {/* Custom SVG patterns for leftover section */}
+                <svg width="0" height="0">
+                  <defs>
+                    {/* Neutral stripes for leftover section */}
+                    <pattern id="neutral-stripes" patternUnits="userSpaceOnUse" width="8" height="8">
+                      <path d="M 0,8 l 8,-8 M -2,2 l 4,-4 M 6,10 l 4,-4" stroke="#6b7280" strokeWidth="1"/>
+                    </pattern>
+                    <pattern id="neutral-stripes-hover" patternUnits="userSpaceOnUse" width="8" height="8">
+                      <path d="M 0,8 l 8,-8 M -2,2 l 4,-4 M 6,10 l 4,-4" stroke="#4b5563" strokeWidth="1"/>
+                    </pattern>
+                  </defs>
+                </svg>
+                <ResponsiveBar
+                  key={`waterfall-chart-${selectedView}`}
+                  data={nivoData}
+                  keys={chartKeys}
+                  indexBy="category"
+                  layout="horizontal"
+                  margin={{ 
+                    top: 40, 
+                    right: 140,
+                    left: 140,
+                    bottom: 60 
+                  }}
+                  groupMode="stacked"
+                  valueScale={{ 
+                    type: 'linear',
+                    min: 0,
+                    max: dynamicMax
+                  }}
+                  indexScale={{ type: 'band', round: true }}
+                  colors={({ id }) => {
+                    if (id === 'Leftover') {
+                      return leftoverMoney > 0 ? '#e9ecef' : 'transparent'
+                    }
+                    return getMutedCategoryColor(id)
+                  }}
+                  defs={linePatterns}
+                  fill={fillPatterns}
+                  onMouseEnter={(data, event) => {
+                    const element = event.target as SVGElement
+                    if (element) {
+                      if (data.id === 'Leftover') {
+                        element.classList.add('leftover-bar-hover')
+                      } else {
+                        element.classList.add('chart-bar-hover')
+                      }
+                    }
+                  }}
+                  onMouseLeave={(data, event) => {
+                    const element = event.target as SVGElement
+                    if (element) {
+                      if (data.id === 'Leftover') {
+                        element.classList.remove('leftover-bar-hover')
+                      } else {
+                        element.classList.remove('chart-bar-hover')
+                      }
+                    }
+                  }}
+                  theme={{
+                    grid: {
+                      line: {
+                        stroke: '#e2e8f0',
+                        strokeWidth: 1,
+                        strokeDasharray: '3 3'
+                      }
+                    },
+                    axis: {
+                      ticks: {
+                        text: {
+                          fontSize: 14
                         }
+                      },
+                      legend: {
+                        text: {
+                          fontSize: 14
+                        }
+                      }
+                    },
+                    tooltip: {
+                      container: {
+                        background: 'white',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }
+                    }
+                  }}
+                  axisTop={null}
+                  axisRight={null}
+                  axisBottom={{
+                    tickSize: 0,
+                    tickPadding: 5,
+                    tickRotation: 0,
+                    legend: null,
+                    legendPosition: 'middle',
+                    legendOffset: 32,
+                    format: value => {
+                      if (value >= 1000) {
+                        return `RM${(value / 1000).toFixed(1)}k`
+                      } else {
+                        return `RM${value}`
+                      }
+                    }
+                  }}
+                  axisLeft={{
+                    tickSize: 0,
+                    tickPadding: 29,
+                    tickRotation: 0,
+                    legend: '',
+                    legendPosition: 'middle',
+                    legendOffset: -40
+                  }}
+                  enableLabel={false}
+                  tooltip={({ id, value }) => {
+                    const correctColor = id === 'Leftover' ? (leftoverMoney > 0 ? '#e9ecef' : 'transparent')
+                      : getCategoryColor(id)
+                    
+                    const categoryData = chartData.categories.find(cat => cat.name === id)
+                    const percentage = categoryData?.type === 'expense' 
+                      ? ((categoryData.originalAmount || categoryData.amount) / totalSpent * 100).toFixed(1)
+                      : ((categoryData?.amount || 0) / monthData.totalIncome * 100).toFixed(1)
+                    
+                    const isAdjusted = categoryData?.originalAmount && 
+                      categoryData.originalAmount !== categoryData.amount
+                    
+                    return (
+                      <div className="bg-white rounded-lg p-3 border shadow-lg max-w-64">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: correctColor }}
+                          />
+                          <span className="font-medium">{id}</span>
+                        </div>
                         
-                        .leftover-section:hover {
-                          fill: url(#neutral-stripes-hover) !important;
-                        }
-                        
-                        /* Hover effect for chart bars using white tint overlay */
-                        .chart-bar-hover {
-                          filter: brightness(1.2) !important;
-                          transition: filter 0.2s ease !important;
-                        }
-                        
-                        /* Specific hover effect for leftover bar - slightly darker */
-                        .leftover-bar-hover {
-                          filter: brightness(0.85) !important;
-                          transition: filter 0.2s ease !important;
-                        }
-                      `}</style>
-                      {/* Custom SVG patterns for leftover section */}
-                      <svg width="0" height="0">
-                        <defs>
-                          {/* Neutral stripes for leftover section */}
-                          <pattern id="neutral-stripes" patternUnits="userSpaceOnUse" width="8" height="8">
-                            <path d="M 0,8 l 8,-8 M -2,2 l 4,-4 M 6,10 l 4,-4" stroke="#6b7280" strokeWidth="1"/>
-                          </pattern>
-                          <pattern id="neutral-stripes-hover" patternUnits="userSpaceOnUse" width="8" height="8">
-                            <path d="M 0,8 l 8,-8 M -2,2 l 4,-4 M 6,10 l 4,-4" stroke="#4b5563" strokeWidth="1"/>
-                          </pattern>
-                        </defs>
-                      </svg>
-                      <ResponsiveBar
-                        key={`waterfall-chart-${selectedView}`}
-                        data={nivoData}
-                        keys={chartKeys}
-                        indexBy="category"
-                        layout="horizontal"
-                        margin={{ 
-                          top: 40, 
-                          right: 100,
-                          left: 100,
-                          bottom: 60 
-                        }}
-                        groupMode="stacked"
-                        valueScale={{ 
-                          type: 'linear',
-                          min: 0,
-                          max: dynamicMax
-                        }}
-                        indexScale={{ type: 'band', round: true }}
-                        colors={({ id }) => {
-                          if (id === 'Leftover') {
-                            return leftoverMoney > 0 ? '#e9ecef' : 'transparent'
-                          }
-                          return getMutedCategoryColor(id)
-                        }}
-                        defs={linePatterns}
-                        fill={fillPatterns}
-                        onMouseEnter={(data, event) => {
-                          const element = event.target as SVGElement
-                          if (element) {
-                            if (data.id === 'Leftover') {
-                              element.classList.add('leftover-bar-hover')
-                            } else {
-                              element.classList.add('chart-bar-hover')
-                            }
-                          }
-                        }}
-                        onMouseLeave={(data, event) => {
-                          const element = event.target as SVGElement
-                          if (element) {
-                            if (data.id === 'Leftover') {
-                              element.classList.remove('leftover-bar-hover')
-                            } else {
-                              element.classList.remove('chart-bar-hover')
-                            }
-                          }
-                        }}
-                        theme={{
-                          grid: {
-                            line: {
-                              stroke: '#e2e8f0',
-                              strokeWidth: 1,
-                              strokeDasharray: '3 3'
-                            }
-                          },
-                          axis: {
-                            ticks: {
-                              text: {
-                                fontSize: 12
-                              }
-                            },
-                            legend: {
-                              text: {
-                                fontSize: 12
-                              }
-                            }
-                          },
-                          tooltip: {
-                            container: {
-                              background: 'white',
-                              border: '1px solid #e2e8f0',
-                              borderRadius: '8px',
-                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                            }
-                          }
-                        }}
-                        axisTop={null}
-                        axisRight={null}
-                        axisBottom={{
-                          tickSize: 0,
-                          tickPadding: 5,
-                          tickRotation: 0,
-                          legend: null,
-                          legendPosition: 'middle',
-                          legendOffset: 32,
-                          format: value => {
-                            if (value >= 1000) {
-                              return `RM${(value / 1000).toFixed(1)}k`
-                            } else {
-                              return `RM${value}`
-                            }
-                          }
-                        }}
-                        axisLeft={{
-                          tickSize: 0,
-                          tickPadding: 20,
-                          tickRotation: 0,
-                          legend: '',
-                          legendPosition: 'middle',
-                          legendOffset: -40
-                        }}
-                        enableLabel={false}
-                        tooltip={({ id, value }) => {
-                          const correctColor = id === 'Leftover' ? (leftoverMoney > 0 ? '#e9ecef' : 'transparent')
-                            : getCategoryColor(id)
+                        <div className="space-y-1 text-sm">
+                          <div className="font-medium text-lg">
+                            RM{value.toLocaleString()}
+                          </div>
                           
-                          const categoryData = chartData.categories.find(cat => cat.name === id)
-                          const percentage = categoryData?.type === 'expense' 
-                            ? ((categoryData.originalAmount || categoryData.amount) / totalSpent * 100).toFixed(1)
-                            : ((categoryData?.amount || 0) / monthData.totalIncome * 100).toFixed(1)
+                          <div className="text-gray-600">
+                            {percentage}% of {categoryData?.type === 'expense' ? 'spending' : 'income'}
+                          </div>
                           
-                          return (
-                            <div className="bg-white rounded-lg p-3 border shadow-lg max-w-64">
-                              <div className="flex items-center gap-2 mb-2">
-                                <div 
-                                  className="w-3 h-3 rounded-full" 
-                                  style={{ backgroundColor: correctColor }}
-                                />
-                                <span className="font-medium">{id}</span>
-                              </div>
-                              <div className="space-y-1 text-sm">
-                                <div className="font-medium text-lg">
-                                  RM{value.toLocaleString()}
-                                </div>
-                                <div className="text-gray-600">
-                                  {percentage}% of {categoryData?.type === 'expense' ? 'spending' : 'income'}
-                                </div>
-                              </div>
+                          {/* Show original amount if adjusted for visibility */}
+                          {isAdjusted && (
+                            <div className="text-xs text-orange-600 border-t pt-1 mt-2">
+                              Original: RM{(categoryData.originalAmount || 0).toLocaleString()}
+                              <br />
+                              <span className="text-gray-500">
+                                * Segment enlarged for visibility
+                              </span>
                             </div>
-                          )
-                        }}
-                        enableGridY={false}
-                        enableGridX={true}
-                        animate={true}
-                        motionConfig="gentle"
-                        borderRadius={12}
-                        padding={0.4}
-                        innerPadding={2}
-                      />
-                    </div>
-                  </div>
-                </div>
+                          )}
+                          
+                          {/* Show grouped categories if this is "Other" */}
+                          {categoryData?.isGrouped && categoryData.groupedCategories && (
+                            <div className="text-xs text-gray-600 border-t pt-1 mt-2">
+                              Includes: {categoryData.groupedCategories.join(', ')}
+                            </div>
+                          )}
+                          
+                          {id === 'Leftover' && (
+                            <div className="text-xs text-gray-600">
+                              {leftoverMoney > 0 ? 'Money saved this period' : 'Budget deficit'}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  }}
+                  enableGridY={false}
+                  enableGridX={true}
+                  animate={true}
+                  motionConfig="gentle"
+                  borderRadius={12}
+                  padding={0.4}
+                  innerPadding={2}
+                  layers={[
+                    'grid',
+                    'axes',
+                    'bars',
+                    'markers',
+                    'legends',
+                    // Custom layer for segment labels
+                    ({ bars, innerWidth, innerHeight }) => {
+                      return (
+                        <g>
+                          {bars.map((bar) => {
+                            const segmentWidth = Math.abs(bar.width)
+                            const segmentHeight = Math.abs(bar.height)
+                            const centerX = bar.x + bar.width / 2
+                            const centerY = bar.y + bar.height / 2
+                            
+                            // Only show labels on segments that are wide enough (minimum 60px)
+                            if (segmentWidth < 60) return null
+                            
+                            // Format the value
+                            const value = Math.abs((bar.data.data as any)[bar.data.id as string] as number)
+                            const formattedValue = value >= 1000 
+                              ? `RM${(value / 1000).toFixed(1)}k`
+                              : `RM${value.toLocaleString()}`
+                            
+                            // Skip if value is 0
+                            if (value === 0) return null
+                            
+                            return (
+                              <text
+                                key={`${bar.data.indexValue}-${bar.data.id}-label`}
+                                x={centerX}
+                                y={centerY}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                style={{
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  fill: 'white',
+                                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                                  pointerEvents: 'none'
+                                }}
+                              >
+                                {formattedValue}
+                              </text>
+                            )
+                          })}
+                        </g>
+                      )
+                    }
+                  ]}
+                />
               </div>
             )}
           </div>
