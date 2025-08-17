@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button'
 import { Plus, TrendingUp, TrendingDown, DollarSign, Wifi, WifiOff, ChevronDown } from 'lucide-react'
 import { WaterfallChart } from '@/components/charts/WaterfallChart'
+import { CategoryGroupCardsView, CategoryGroupCreateDialog } from '@/components/category-groups'
 import { useRealtimeBalance } from '@/lib/hooks/useRealtimeBalance'
 import { useRealtimeContext } from '@/lib/context/RealtimeContext'
 import { calculateBudgetSummary } from '@/lib/utils/budget-calculations'
@@ -41,9 +42,42 @@ interface RealtimeDashboardProps {
     category_id: string
     category_name: string
   }[]
+  categoryGroups?: {
+    id: string
+    user_id: string
+    name: string
+    description?: string
+    color: string
+    icon?: string
+    sort_order: number
+    created_at: string
+    updated_at: string
+  }[]
+  categoriesByGroup?: Record<string, {
+    id: string
+    name: string
+    allocated: number
+    spent: number
+    color: string
+  }[]>
+  unassignedCategories?: {
+    id: string
+    name: string
+    allocated: number
+    spent: number
+    color: string
+  }[]
 }
 
-export function RealtimeDashboard({ initialBudget, user, monthlySpendingData = [], recentTransactions = [] }: RealtimeDashboardProps) {
+export function RealtimeDashboard({ 
+  initialBudget, 
+  user, 
+  monthlySpendingData = [], 
+  recentTransactions = [],
+  categoryGroups = [],
+  categoriesByGroup = {},
+  unassignedCategories = []
+}: RealtimeDashboardProps) {
   const [currentBudget, setCurrentBudget] = useState<BudgetWithCategories | null>(initialBudget)
   const { setBudget } = useRealtimeContext()
   const initializedRef = useRef<string | null>(null)
@@ -114,6 +148,9 @@ export function RealtimeDashboard({ initialBudget, user, monthlySpendingData = [
 
   // Tab state
   const [activeTab, setActiveTab] = useState('spending')
+  
+  // Category groups state
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
   // Use real recent transactions or show empty state
   const displayTransactions = recentTransactions.length > 0 ? recentTransactions : []
@@ -270,6 +307,74 @@ export function RealtimeDashboard({ initialBudget, user, monthlySpendingData = [
               }}
             />
           </div>
+
+          {/* Category Groups */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-foreground">Category Groups</h2>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsCreateDialogOpen(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Group
+              </Button>
+            </div>
+            
+            {categoryGroups.length > 0 ? (
+              <CategoryGroupCardsView
+                groups={categoryGroups}
+                categoriesByGroup={categoriesByGroup}
+                onGroupClick={(group) => {
+                  console.log('Group clicked:', group)
+                }}
+                onCreateGroup={() => {
+                  setIsCreateDialogOpen(true)
+                }}
+                onEditGroup={(group) => {
+                  console.log('Edit group:', group)
+                }}
+                onDeleteGroup={(group) => {
+                  console.log('Delete group:', group)
+                }}
+              />
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Organize Your Categories</CardTitle>
+                  <CardDescription>
+                    Group your spending categories to get better insights into your spending patterns.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <div className="mx-auto h-16 w-16 bg-muted rounded-lg flex items-center justify-center mb-4">
+                      <div className="w-8 h-8 bg-muted-foreground/20 rounded"></div>
+                    </div>
+                    <p className="text-muted-foreground mb-4">
+                      No category groups yet. Create your first group to organize your spending categories.
+                    </p>
+                    <Button onClick={() => setIsCreateDialogOpen(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create First Group
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Category Group Create Dialog */}
+          <CategoryGroupCreateDialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+            unassignedCategories={unassignedCategories}
+            onSuccess={(newGroup) => {
+              console.log('Group created:', newGroup)
+              setIsCreateDialogOpen(false)
+            }}
+          />
         </>
       ) : (
         <>
