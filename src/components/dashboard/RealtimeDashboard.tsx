@@ -236,6 +236,65 @@ export function RealtimeDashboard({
         />
       </div>
 
+      {/* Spending Pockets */}
+      {hasActiveBudget && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">Spending pockets</h2>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setIsCreateDialogOpen(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add pocket
+            </Button>
+          </div>
+          
+          {categoryGroups.length > 0 ? (
+            <CategoryGroupCardsView
+              groups={categoryGroups}
+              categoriesByGroup={categoriesByGroup}
+              onGroupClick={(group) => {
+                console.log('Group clicked:', group)
+              }}
+              onCreateGroup={() => {
+                setIsCreateDialogOpen(true)
+              }}
+              onEditGroup={(group) => {
+                console.log('Edit group:', group)
+              }}
+              onDeleteGroup={(group) => {
+                console.log('Delete group:', group)
+              }}
+            />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Create Your First Spending Pocket</CardTitle>
+                <CardDescription>
+                  Group your spending categories into pockets to get better insights into your spending patterns.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <div className="mx-auto h-16 w-16 bg-muted rounded-lg flex items-center justify-center mb-4">
+                    <div className="w-8 h-8 bg-muted-foreground/20 rounded"></div>
+                  </div>
+                  <p className="text-muted-foreground mb-4">
+                    No spending pockets yet. Create your first pocket to organize your spending categories.
+                  </p>
+                  <Button onClick={() => setIsCreateDialogOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add pocket
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
       {/* Recent Transactions */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -308,62 +367,6 @@ export function RealtimeDashboard({
             />
           </div>
 
-          {/* Category Groups */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-foreground">Category Groups</h2>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsCreateDialogOpen(true)}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create Group
-              </Button>
-            </div>
-            
-            {categoryGroups.length > 0 ? (
-              <CategoryGroupCardsView
-                groups={categoryGroups}
-                categoriesByGroup={categoriesByGroup}
-                onGroupClick={(group) => {
-                  console.log('Group clicked:', group)
-                }}
-                onCreateGroup={() => {
-                  setIsCreateDialogOpen(true)
-                }}
-                onEditGroup={(group) => {
-                  console.log('Edit group:', group)
-                }}
-                onDeleteGroup={(group) => {
-                  console.log('Delete group:', group)
-                }}
-              />
-            ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Organize Your Categories</CardTitle>
-                  <CardDescription>
-                    Group your spending categories to get better insights into your spending patterns.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <div className="mx-auto h-16 w-16 bg-muted rounded-lg flex items-center justify-center mb-4">
-                      <div className="w-8 h-8 bg-muted-foreground/20 rounded"></div>
-                    </div>
-                    <p className="text-muted-foreground mb-4">
-                      No category groups yet. Create your first group to organize your spending categories.
-                    </p>
-                    <Button onClick={() => setIsCreateDialogOpen(true)}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Create First Group
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
 
           {/* Category Group Create Dialog */}
           <CategoryGroupCreateDialog

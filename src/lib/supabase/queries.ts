@@ -252,5 +252,153 @@ export async function getMonthlySpendingData(): Promise<{
   return chartData
 }
 
+// Category Group Queries
+export async function getCategoryGroups(): Promise<{
+  id: string;
+  user_id: string;
+  name: string;
+  description?: string;
+  color: string;
+  icon?: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}[]> {
+  const supabase = await createClient()
+  
+  const { data, error } = await supabase
+    .from('category_groups')
+    .select('*')
+    .order('sort_order')
+
+  if (error) {
+    throw new Error(`Failed to fetch category groups: ${error.message}`)
+  }
+
+  return data || []
+}
+
+export async function getCategoriesWithSpending(): Promise<{
+  id: string;
+  name: string;
+  allocated: number;
+  spent: number;
+  color: string;
+  group_id?: string;
+}[]> {
+  const supabase = await createClient()
+  
+  // Get current month budget first
+  const currentBudget = await getCurrentMonthBudget()
+  if (!currentBudget) {
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('budget_id', currentBudget.id)
+    .is('archived_at', null)
+    .order('sort_order')
+
+  if (error) {
+    throw new Error(`Failed to fetch categories with spending: ${error.message}`)
+  }
+
+  return (data || []).map(category => ({
+    id: category.id,
+    name: category.name,
+    allocated: category.allocated || 0,
+    spent: category.spent || 0,
+    color: category.color || '#6366f1',
+    group_id: category.group_id
+  }))
+}
+
+export async function getCategoryGroupsWithCategories(): Promise<{
+  groups: {
+    id: string;
+    user_id: string;
+    name: string;
+    description?: string;
+    color: string;
+    icon?: string;
+    sort_order: number;
+    created_at: string;
+    updated_at: string;
+  }[];
+  categoriesByGroup: Record<string, {
+    id: string;
+    name: string;
+    allocated: number;
+    spent: number;
+    color: string;
+  }[]>;
+}> {
+  const [groups, categories] = await Promise.all([
+    getCategoryGroups(),
+    getCategoriesWithSpending()
+  ])
+
+  // Group categories by group_id
+  const categoriesByGroup: Record<string, typeof categories> = {}
+  
+  // Initialize empty arrays for all groups
+  groups.forEach(group => {
+    categoriesByGroup[group.id] = []
+  })
+  
+  // Add categories to their respective groups
+  categories.forEach(category => {
+    if (category.group_id && categoriesByGroup[category.group_id]) {
+      categoriesByGroup[category.group_id].push({
+        id: category.id,
+        name: category.name,
+        allocated: category.allocated,
+        spent: category.spent,
+        color: category.color
+      })
+    }
+  })
+
+  return { groups, categoriesByGroup }
+}
+
+export async function getUnassignedCategories(): Promise<{
+  id: string;
+  name: string;
+  allocated: number;
+  spent: number;
+  color: string;
+}[]> {
+  const supabase = await createClient()
+  
+  // Get current month budget first
+  const currentBudget = await getCurrentMonthBudget()
+  if (!currentBudget) {
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('budget_id', currentBudget.id)
+    .is('group_id', null)
+    .is('archived_at', null)
+    .order('sort_order')
+
+  if (error) {
+    throw new Error(`Failed to fetch unassigned categories: ${error.message}`)
+  }
+
+  return (data || []).map(category => ({
+    id: category.id,
+    name: category.name,
+    allocated: category.allocated || 0,
+    spent: category.spent || 0,
+    color: category.color || '#6366f1'
+  }))
+}
+
 // Re-export utility functions for backwards compatibility
 export { calculateBudgetSummary, calculateCategoryStatus } from '@/lib/utils/budget-calculations'
