@@ -161,10 +161,34 @@ export async function addTransaction(transaction: {
     throw new Error('User not authenticated')
   }
 
+  // Get the category to determine if this is income or expense
+  const { data: category, error: categoryError } = await supabase
+    .from('categories')
+    .select('name')
+    .eq('id', transaction.category_id)
+    .single()
+
+  if (categoryError) {
+    throw new Error(`Failed to get category: ${categoryError.message}`)
+  }
+
+  // Determine if this is an income category
+  const categoryName = category.name.toLowerCase()
+  const isIncomeCategory = categoryName.includes('salary') || 
+                           categoryName.includes('income') ||
+                           categoryName.includes('bonus') ||
+                           categoryName.includes('freelance') ||
+                           categoryName.includes('wage') ||
+                           categoryName.includes('revenue')
+
+  // Store expenses as negative amounts, income as positive
+  const finalAmount = isIncomeCategory ? Math.abs(transaction.amount) : -Math.abs(transaction.amount)
+
   const { data, error } = await supabase
     .from('transactions')
     .insert({
       ...transaction,
+      amount: finalAmount, // Use the corrected amount
       user_id: user.id
     })
     .select()
