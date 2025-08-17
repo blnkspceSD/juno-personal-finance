@@ -108,10 +108,10 @@ export function WaterfallChart({
   const [isClient, setIsClient] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [dataState, setDataState] = useState<{
-    state: 'no-data' | 'day-data' | 'week-data' | 'month-data';
+    state: 'no-data' | 'day-data' | 'week-data' | 'month-data' | 'loading';
     disabledViews: TimeViewPeriod[];
   }>({
-    state: 'no-data',
+    state: 'loading', // Start with loading state instead of no-data
     disabledViews: ['week', 'month']
   })
 
@@ -202,20 +202,14 @@ export function WaterfallChart({
         setChartData(data)
         
         // Detect data state for onboarding logic
-        // For now, simulate different states based on selected month for demo
+        // For demo purposes, default to showing full chart with month data
         let simulatedState: { state: 'no-data' | 'day-data' | 'week-data' | 'month-data'; disabledViews: TimeViewPeriod[] }
         
         if (selectedMonth === 'june-2025') {
-          // Simulate no data state
+          // Simulate no data state only for June
           simulatedState = { state: 'no-data', disabledViews: ['week', 'month'] }
-        } else if (selectedMonth === 'july-2025') {
-          // Simulate day data state
-          simulatedState = { state: 'day-data', disabledViews: ['week', 'month'] }
-        } else if (selectedMonth === 'august-2025') {
-          // Simulate week data state  
-          simulatedState = { state: 'week-data', disabledViews: ['month'] }
         } else {
-          // Simulate full month data state
+          // Default to full month data state to show the chart
           simulatedState = { state: 'month-data', disabledViews: [] }
         }
         
@@ -240,10 +234,10 @@ export function WaterfallChart({
             setChartData(generateMockWaterfallDataForMonth(selectedMonth))
         }
         
-        // Set default no-data state for fallback
+        // Set appropriate data state for fallback
         setDataState({
-          state: 'no-data',
-          disabledViews: ['week', 'month']
+          state: 'month-data', // Default to month-data for fallback to show chart
+          disabledViews: []
         })
       } finally {
         setIsLoading(false)
@@ -333,9 +327,9 @@ export function WaterfallChart({
     
     // Convert hex to RGB
     const hex = originalColor.replace('#', '')
-    const r = parseInt(hex.substr(0, 2), 16)
-    const g = parseInt(hex.substr(2, 2), 16)
-    const b = parseInt(hex.substr(4, 2), 16)
+    const r = parseInt(hex.substring(0, 2), 16)
+    const g = parseInt(hex.substring(2, 4), 16)
+    const b = parseInt(hex.substring(4, 6), 16)
     
     // Neutral-500 gray RGB values: #6b7280 = rgb(107, 114, 128)
     const neutralR = 107
@@ -552,7 +546,16 @@ export function WaterfallChart({
             )}
             
             {/* Render based on data state */}
-            {dataState.state === 'no-data' ? (
+            {dataState.state === 'loading' ? (
+              // Show loading state while data is being fetched
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--juno-muted-fg)' }}>
+                  <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" 
+                       style={{ borderColor: 'var(--juno-primary)', borderTopColor: 'transparent' }} />
+                  Loading chart data...
+                </div>
+              </div>
+            ) : dataState.state === 'no-data' ? (
               // Show empty state when no data
               <OnboardingEmptyState 
                 onAddTransaction={() => {
@@ -624,7 +627,7 @@ export function WaterfallChart({
                     if (id === 'Leftover') {
                       return leftoverMoney > 0 ? '#e9ecef' : 'transparent'
                     }
-                    return getMutedCategoryColor(id)
+                    return getMutedCategoryColor(String(id))
                   }}
                   defs={linePatterns}
                   fill={fillPatterns}
@@ -705,7 +708,7 @@ export function WaterfallChart({
                   enableLabel={false}
                   tooltip={({ id, value }) => {
                     const correctColor = id === 'Leftover' ? (leftoverMoney > 0 ? '#e9ecef' : 'transparent')
-                      : getCategoryColor(id)
+                      : getCategoryColor(String(id))
                     
                     const categoryData = chartData.categories.find(cat => cat.name === id)
                     const percentage = categoryData?.type === 'expense' 
