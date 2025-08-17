@@ -10,13 +10,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Plus, TrendingUp, TrendingDown, DollarSign, Wifi, WifiOff, ChevronDown } from 'lucide-react'
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
+import { WaterfallChart } from '@/components/charts/WaterfallChart'
 import { useRealtimeBalance } from '@/lib/hooks/useRealtimeBalance'
 import { useRealtimeContext } from '@/lib/context/RealtimeContext'
 import { calculateBudgetSummary } from '@/lib/utils/budget-calculations'
@@ -111,22 +105,7 @@ export function RealtimeDashboard({ initialBudget, user, monthlySpendingData = [
   const hasActiveBudget = currentBudget && currentBudget.categories.length > 0
   const budgetSummary = currentBudget ? calculateBudgetSummary(currentBudget) : null
 
-  // Use real spending data from database or fall back to empty array
-  const spendingChartData = monthlySpendingData.length > 0 ? monthlySpendingData : [
-    // Fallback data if no real data available
-    { month: "No data", actual: 0, estimated: 0 }
-  ]
-
-  const chartConfig = {
-    actual: {
-      label: "Actual Spending",
-      color: "var(--chart-1)",
-    },
-    estimated: {
-      label: "Estimated Spending", 
-      color: "var(--chart-2)",
-    },
-  } satisfies ChartConfig
+  // Note: monthlySpendingData still available if needed for other components
 
   // Current spending metrics - use real budget data
   const currentSpending = budgetSummary?.total_spent || 0
@@ -210,37 +189,14 @@ export function RealtimeDashboard({ initialBudget, user, monthlySpendingData = [
         </div>
       </div>
 
-      {/* Spending Chart */}
+      {/* Cash Flow Chart - New Onboarding Data Visualization */}
       <div className="space-y-4">
-        <div className="h-[400px]">
-          <ChartContainer config={chartConfig} className="h-full w-full">
-            <BarChart accessibilityLayer data={spendingChartData} margin={{ top: 20, left: 12, right: 12 }}>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-              />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator="dashed" />}
-              />
-              <Bar dataKey="estimated" fill="var(--color-estimated)" radius={4} />
-              <Bar dataKey="actual" fill="var(--color-actual)" radius={4} />
-            </BarChart>
-          </ChartContainer>
-        </div>
-        <div className="flex items-center justify-end gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm bg-chart-1"></div>
-            <span className="text-sm text-muted-foreground">Current Period</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm bg-chart-2"></div>
-            <span className="text-sm text-muted-foreground">Last Period</span>
-          </div>
-        </div>
+        <WaterfallChart 
+          height={300}
+          defaultView="month"
+          enabledViews={['day', 'week', 'month']}
+          className="w-full"
+        />
       </div>
 
       {/* Recent Transactions */}
