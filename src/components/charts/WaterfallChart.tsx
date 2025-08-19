@@ -6,6 +6,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import { useChartPerformance } from '@/lib/utils/performance-analysis'
 import { ResponsiveBar } from '@nivo/bar'
 import { patternLinesDef, linearGradientDef } from '@nivo/core'
 import {
@@ -99,6 +100,9 @@ export function WaterfallChart({
   periodSelectorProps,
   currentBudget,
 }: WaterfallChartProps) {
+  // Performance measurement hooks
+  const { startMeasurement, endMeasurement, measureDataTransform } = useChartPerformance('WaterfallChart')
+  
   // Enhanced state management for view selection
   const [selectedView, setSelectedView] = useState<TimeViewPeriod>(defaultView || 'day')
   const [selectedMonth, setSelectedMonth] = useState(() => {
@@ -177,6 +181,7 @@ export function WaterfallChart({
   // Effect to fetch real data when view or period changes
   useEffect(() => {
     const fetchData = async () => {
+      const measurementId = startMeasurement()
       setIsLoading(true)
       try {
         let data: any
@@ -242,6 +247,7 @@ export function WaterfallChart({
         })
       } finally {
         setIsLoading(false)
+        endMeasurement(measurementId, (chartData?.categories?.length || 0))
       }
     }
 
@@ -279,7 +285,9 @@ export function WaterfallChart({
   const leftoverMoney = totalIncome - totalSpent
 
   // Calculate budget amount (sum of all allocated amounts)
-  const budgetAmount = expenseCategories.reduce((sum, cat) => sum + (cat.allocated || cat.amount * 1.2), 0) + (leftoverMoney * 1.2)
+  const totalAllocated = expenseCategories.reduce((sum, cat) => sum + (cat.allocated || 0), 0)
+  const budgetLeftover = totalIncome - totalAllocated
+  const budgetAmount = totalAllocated + Math.max(0, budgetLeftover)
 
   // Calculate dynamic max value based on actual data for appropriate axis intervals
   const maxDataValue = Math.max(totalIncome, totalSpent, budgetAmount)
@@ -288,28 +296,30 @@ export function WaterfallChart({
   // Transform to Nivo horizontal mixed bar format - no padding, start at RM 0
   const chartKeys = ['Income', ...expenseCategories.map(cat => cat.name), 'Leftover']
   
-  const budgetRow = {
-    category: 'Budget',
-    Income: 0,
-    ...expenseCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: cat.allocated || cat.amount * 1.2 }), {}),
-    Leftover: leftoverMoney * 1.2 // Add some buffer for budget leftover
-  }
-  
-  const incomeRow = {
-    category: 'Income',
-    Income: totalIncome,
-    ...expenseCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: 0 }), {}),
-    Leftover: 0
-  }
-  
-  const spendingRow = {
-    category: 'Spending',
-    Income: 0,
-    ...expenseCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: cat.amount }), {}),
-    Leftover: leftoverMoney
-  }
+  const nivoData = measureDataTransform(() => {
+    const budgetRow = {
+      category: 'Budget',
+      Income: 0,
+      ...expenseCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: cat.allocated || 0 }), {}),
+      Leftover: Math.max(0, budgetLeftover) // Only show positive budget leftover
+    }
+    
+    const incomeRow = {
+      category: 'Income',
+      Income: totalIncome,
+      ...expenseCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: 0 }), {}),
+      Leftover: 0
+    }
+    
+    const spendingRow = {
+      category: 'Spending',
+      Income: 0,
+      ...expenseCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: cat.amount }), {}),
+      Leftover: leftoverMoney
+    }
 
-  const nivoData = [spendingRow, incomeRow, budgetRow]
+    return [spendingRow, incomeRow, budgetRow]
+  })
   
   // Color mapping for categories - more flexible matching
   const categoryColors = {
@@ -363,123 +373,63 @@ export function WaterfallChart({
     return `rgb(${mutedR}, ${mutedG}, ${mutedB})`
   }
 
-  // Define line patterns for stripes - updated for real category names
+  // Helper function to get category color (real data or fallback)
+  const getCategoryColorForPattern = (categoryName: string) => {
+    if (currentBudget) {
+      const category = expenseCategories.find(cat => cat.name === categoryName)
+      if (category) {
+        return category.color
+      }
+    }
+    return getCategoryColor(categoryName)
+  }
+
+  // Dynamically create line patterns for all real categories
   const linePatterns = [
+    // Income pattern
     patternLinesDef('income-lines', {
       spacing: 14,
       rotation: -45,
       lineWidth: 6,
-      background: getMutedCategoryColor('Income'),
-      color: 'rgba(0, 0, 0, 0.05)'
+      background: getCategoryColorForPattern('Income'),
+      color: 'rgba(255, 255, 255, 0.15)'
     }),
-    patternLinesDef('groceries-lines', {
+    // Dynamic patterns for all expense categories
+    ...expenseCategories.map(cat => 
+      patternLinesDef(`${cat.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-lines`, {
+        spacing: 14,
+        rotation: -45,
+        lineWidth: 6,
+        background: cat.color,
+        color: 'rgba(255, 255, 255, 0.15)'
+      })
+    ),
+    // Generic fallback pattern
+    patternLinesDef('generic-lines', {
       spacing: 14,
       rotation: -45,
       lineWidth: 6,
-      background: getMutedCategoryColor('Groceries'),
-      color: 'rgba(0, 0, 0, 0.05)'
-    }),
-    patternLinesDef('rent-mortgage-lines', {
-      spacing: 14,
-      rotation: -45,
-      lineWidth: 6,
-      background: getMutedCategoryColor('Rent/Mortgage'),
-      color: 'rgba(0, 0, 0, 0.05)'
-    }),
-    patternLinesDef('grab-lines', {
-      spacing: 14,
-      rotation: -45,
-      lineWidth: 6,
-      background: getMutedCategoryColor('Grab'),
-      color: 'rgba(0, 0, 0, 0.05)'
-    }),
-    // Keep original patterns for backward compatibility
-    patternLinesDef('rent-lines', {
-      spacing: 14,
-      rotation: -45,
-      lineWidth: 6,
-      background: getMutedCategoryColor('Rent'),
-      color: 'rgba(0, 0, 0, 0.05)'
-    }),
-    patternLinesDef('food-lines', {
-      spacing: 14,
-      rotation: -45,
-      lineWidth: 6,
-      background: getMutedCategoryColor('Food'),
-      color: 'rgba(0, 0, 0, 0.05)'
-    }),
-    patternLinesDef('bills-lines', {
-      spacing: 14,
-      rotation: -45,
-      lineWidth: 6,
-      background: getMutedCategoryColor('Bills'),
-      color: 'rgba(0, 0, 0, 0.05)'
-    }),
-    patternLinesDef('transport-lines', {
-      spacing: 14,
-      rotation: -45,
-      lineWidth: 6,
-      background: getMutedCategoryColor('Transport'),
-      color: 'rgba(0, 0, 0, 0.05)'
-    }),
-    patternLinesDef('tax-lines', {
-      spacing: 14,
-      rotation: -45,
-      lineWidth: 6,
-      background: getMutedCategoryColor('Income tax'),
-      color: 'rgba(0, 0, 0, 0.05)'
-    }),
-    patternLinesDef('personal-lines', {
-      spacing: 14,
-      rotation: -45,
-      lineWidth: 6,
-      background: getMutedCategoryColor('Personal'),
-      color: 'rgba(0, 0, 0, 0.05)'
+      background: '#6366f1',
+      color: 'rgba(255, 255, 255, 0.15)'
     }),
   ]
 
-  // Define the fill patterns for stripes - updated for real category names
+  // Define the fill patterns for stripes - apply to all bars
   const fillPatterns = [
+    // Income pattern for all rows
     {
       match: { id: 'Income' },
       id: 'income-lines'
     },
+    // Dynamic patterns for all expense categories in all rows
+    ...expenseCategories.map(cat => ({
+      match: { id: cat.name },
+      id: `${cat.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-lines`
+    })),
+    // Generic fallback for any other category
     {
-      match: { id: 'Groceries' },
-      id: 'groceries-lines'
-    },
-    {
-      match: { id: 'Rent/Mortgage' },
-      id: 'rent-mortgage-lines'
-    },
-    {
-      match: { id: 'Grab' },
-      id: 'grab-lines'
-    },
-    // Keep original patterns for backward compatibility
-    {
-      match: { id: 'Rent' },
-      id: 'rent-lines'
-    },
-    {
-      match: { id: 'Food' },
-      id: 'food-lines'
-    },
-    {
-      match: { id: 'Bills' },
-      id: 'bills-lines'
-    },
-    {
-      match: { id: 'Transport' },
-      id: 'transport-lines'
-    },
-    {
-      match: { id: 'Income tax' },
-      id: 'tax-lines'
-    },
-    {
-      match: { id: 'Personal' },
-      id: 'personal-lines'
+      match: () => true,
+      id: 'generic-lines'
     }
   ]
 
@@ -642,11 +592,19 @@ export function WaterfallChart({
                     max: dynamicMax
                   }}
                   indexScale={{ type: 'band', round: true }}
-                  colors={({ id }) => {
+                  colors={({ id, data }) => {
                     if (id === 'Leftover') {
                       return leftoverMoney > 0 ? '#e9ecef' : 'transparent'
                     }
-                    return getMutedCategoryColor(String(id))
+                    // Use real category colors from budget data when available
+                    if (currentBudget) {
+                      const category = expenseCategories.find(cat => cat.name === id)
+                      if (category) {
+                        return category.color
+                      }
+                    }
+                    // Fallback to hardcoded colors for mock data
+                    return getCategoryColor(String(id))
                   }}
                   defs={linePatterns}
                   fill={fillPatterns}

@@ -5,12 +5,12 @@
 
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, TrendingUp, TrendingDown, DollarSign, Wifi, WifiOff, ChevronDown } from 'lucide-react'
-import { WaterfallChart } from '@/components/charts/WaterfallChart'
+import { Plus, Wifi, WifiOff, ChevronDown } from 'lucide-react'
+import { ProgressiveChart } from '@/components/charts/ProgressiveChart'
 import { CategoryGroupCardsView, CategoryGroupCreateDialog } from '@/components/category-groups'
 import { useRealtimeBalance } from '@/lib/hooks/useRealtimeBalance'
 import { useRealtimeContext } from '@/lib/context/RealtimeContext'
@@ -35,6 +35,14 @@ interface RealtimeDashboardProps {
     estimated: number
   }[]
   recentTransactions?: {
+    id: string
+    description: string
+    amount: number
+    date: string
+    category_id: string
+    category_name: string
+  }[]
+  chartTransactions?: {
     id: string
     description: string
     amount: number
@@ -74,6 +82,7 @@ export function RealtimeDashboard({
   user, 
   monthlySpendingData = [], 
   recentTransactions = [],
+  chartTransactions = [],
   categoryGroups = [],
   categoriesByGroup = {},
   unassignedCategories = []
@@ -98,7 +107,7 @@ export function RealtimeDashboard({
       setBudget(currentBudget.id, currentBudget)
       updateEnvelopes(currentBudget.categories)
     }
-  }, [currentBudget?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentBudget?.id, setBudget, updateEnvelopes, currentBudget])
 
   // Update budget when envelopes change
   useEffect(() => {
@@ -226,16 +235,49 @@ export function RealtimeDashboard({
         </div>
       </div>
 
-      {/* Cash Flow Chart - New Onboarding Data Visualization */}
-      <div className="space-y-4 pb-12">
-        <WaterfallChart 
-          height={300}
-          defaultView="month"
-          enabledViews={['day', 'week', 'month']}
+      {/* Budget Utilization Chart */}
+      {hasActiveBudget && (
+        <ProgressiveChart
+          transactions={chartTransactions.map(transaction => ({
+            id: transaction.id,
+            amount: Math.abs(transaction.amount),
+            date: transaction.date,
+            categoryId: transaction.category_id,
+            categoryName: transaction.category_name,
+            description: transaction.description,
+            type: transaction.amount > 0 ? 'income' : 'expense'
+          }))}
+          budget={currentBudget ? {
+            id: currentBudget.id,
+            totalIncome: currentBudget.total_income,
+            period: new Date().toISOString().slice(0, 7),
+            categories: currentBudget.categories.map(cat => ({
+              id: cat.id,
+              name: cat.name,
+              allocated: cat.allocated,
+              spent: cat.spent,
+              color: cat.color,
+              type: 'expense' as const,
+              isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
+                cat.name.toLowerCase().includes(keyword)
+              )
+            }))
+          } : undefined}
+          categories={currentBudget?.categories.map(cat => ({
+            id: cat.id,
+            name: cat.name,
+            allocated: cat.allocated,
+            spent: cat.spent,
+            color: cat.color,
+            type: 'expense' as const,
+            isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
+              cat.name.toLowerCase().includes(keyword)
+            )
+          })) || []}
+          height={400}
           className="w-full"
-          currentBudget={currentBudget}
         />
-      </div>
+      )}
 
       {/* Spending Pockets */}
       {hasActiveBudget && (
