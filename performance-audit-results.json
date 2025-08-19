@@ -1,0 +1,78 @@
+{
+  "timestamp": "2025-08-17T14:59:55.070Z",
+  "summary": {
+    "total": 8,
+    "passed": 8,
+    "failed": 0,
+    "errors": 0
+  },
+  "results": [
+    {
+      "testName": "Generate Mock Day Data",
+      "duration": "0.02",
+      "memoryDelta": "0.01",
+      "threshold": 25,
+      "status": "✅ PASS"
+    },
+    {
+      "testName": "Generate Mock Week Data",
+      "duration": "0.06",
+      "memoryDelta": "0.01",
+      "threshold": 50,
+      "status": "✅ PASS"
+    },
+    {
+      "testName": "Generate Mock Month Data",
+      "duration": "0.05",
+      "memoryDelta": "0.01",
+      "threshold": 75,
+      "status": "✅ PASS"
+    },
+    {
+      "testName": "Nivo Data Transformation (Small)",
+      "duration": "0.06",
+      "memoryDelta": "0.01",
+      "threshold": 15,
+      "status": "✅ PASS"
+    },
+    {
+      "testName": "Nivo Data Transformation (Medium)",
+      "duration": "0.08",
+      "memoryDelta": "0.02",
+      "threshold": 25,
+      "status": "✅ PASS"
+    },
+    {
+      "testName": "Nivo Data Transformation (Large)",
+      "duration": "0.02",
+      "memoryDelta": "0.01",
+      "threshold": 40,
+      "status": "✅ PASS"
+    },
+    {
+      "testName": "Rapid Data Updates (10x)",
+      "duration": "0.10",
+      "memoryDelta": "0.12",
+      "threshold": 100,
+      "status": "✅ PASS"
+    },
+    {
+      "testName": "Large Dataset Processing",
+      "duration": "0.55",
+      "memoryDelta": "-0.14",
+      "threshold": 150,
+      "status": "✅ PASS"
+    }
+  ],
+  "environment": {
+    "node": "v22.14.0",
+    "platform": "darwin",
+    "memory": {
+      "rss": 43220992,
+      "heapTotal": 6635520,
+      "heapUsed": 4765552,
+      "external": 1774647,
+      "arrayBuffers": 10515
+    }
+  }
+}
