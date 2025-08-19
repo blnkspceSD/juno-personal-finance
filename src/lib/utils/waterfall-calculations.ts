@@ -295,10 +295,27 @@ export function transformTransactionsToWaterfall(
       const originalCategory = calculation.expenses.categories.find(orig => orig.categoryId === cat.categoryId)
       const totalExpenses = calculation.expenses.total
       
+      // Add mock allocated amounts based on category name
+      const getAllocatedAmount = (categoryName: string): number => {
+        const categoryMap: Record<string, number> = {
+          'Rent': 1200,
+          'Food': 500,
+          'Bills': 200,
+          'Transport': 150,
+          'Income tax': 500,
+          'Personal': 250,
+          'Groceries': 500,
+          'Utilities': 200,
+          'Grab': 150
+        }
+        return categoryMap[categoryName] || cat.totalAmount * 1.2 // Default to 20% more than spent
+      }
+
       return {
         id: cat.categoryId,
         name: cat.categoryName,
         amount: cat.totalAmount,
+        allocated: getAllocatedAmount(cat.categoryName),
         type: 'expense' as const,
         color: cat.color,
         // Store original amount for tooltip accuracy

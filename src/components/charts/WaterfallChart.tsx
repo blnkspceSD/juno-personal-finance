@@ -97,6 +97,7 @@ export function WaterfallChart({
   enabledViews = ['day', 'week', 'month'],
   customDateRange,
   periodSelectorProps,
+  currentBudget,
 }: WaterfallChartProps) {
   // Enhanced state management for view selection
   const [selectedView, setSelectedView] = useState<TimeViewPeriod>(defaultView || 'day')
@@ -259,26 +260,44 @@ export function WaterfallChart({
   // Keep monthData for backward compatibility (will be replaced)
   const monthData = chartData
   
-  // Extract expense categories (excluding income) - these should already be grouped/processed
-  const expenseCategories = monthData.categories
-    .filter(cat => cat.type === 'expense')
-    // Don't slice - the grouping logic has already processed the categories appropriately
+  // Use real budget data if available, otherwise fall back to mock data
+  const expenseCategories = currentBudget ? 
+    currentBudget.categories.map(cat => ({
+      id: cat.id,
+      name: cat.name,
+      amount: cat.spent,
+      allocated: cat.allocated,
+      type: 'expense' as const,
+      color: cat.color
+    })) :
+    monthData.categories.filter(cat => cat.type === 'expense')
   
 
-  // Calculate leftover money
+  // Calculate leftover money using real budget data
   const totalSpent = expenseCategories.reduce((sum, cat) => sum + cat.amount, 0)
-  const leftoverMoney = monthData.totalIncome - totalSpent
+  const totalIncome = currentBudget ? currentBudget.total_income : monthData.totalIncome
+  const leftoverMoney = totalIncome - totalSpent
+
+  // Calculate budget amount (sum of all allocated amounts)
+  const budgetAmount = expenseCategories.reduce((sum, cat) => sum + (cat.allocated || cat.amount * 1.2), 0) + (leftoverMoney * 1.2)
 
   // Calculate dynamic max value based on actual data for appropriate axis intervals
-  const maxDataValue = Math.max(monthData.totalIncome, totalSpent)
+  const maxDataValue = Math.max(totalIncome, totalSpent, budgetAmount)
   const dynamicMax = Math.ceil(maxDataValue * 1.1 / 100) * 100 // 10% padding, round to nearest 100
 
   // Transform to Nivo horizontal mixed bar format - no padding, start at RM 0
   const chartKeys = ['Income', ...expenseCategories.map(cat => cat.name), 'Leftover']
   
+  const budgetRow = {
+    category: 'Budget',
+    Income: 0,
+    ...expenseCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: cat.allocated || cat.amount * 1.2 }), {}),
+    Leftover: leftoverMoney * 1.2 // Add some buffer for budget leftover
+  }
+  
   const incomeRow = {
     category: 'Income',
-    Income: monthData.totalIncome,
+    Income: totalIncome,
     ...expenseCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: 0 }), {}),
     Leftover: 0
   }
@@ -290,7 +309,7 @@ export function WaterfallChart({
     Leftover: leftoverMoney
   }
 
-  const nivoData = [spendingRow, incomeRow]
+  const nivoData = [spendingRow, incomeRow, budgetRow]
   
   // Color mapping for categories - more flexible matching
   const categoryColors = {
@@ -475,10 +494,10 @@ export function WaterfallChart({
           </h1>
           <p className="text-sm" style={{ color: 'var(--juno-muted-fg)' }}>
             {leftoverMoney > 0 
-              ? `Saving ${formatWaterfallCurrency(leftoverMoney)} this ${selectedView === 'month' ? 'month' : selectedView === 'week' ? 'week' : 'day'} • ${((leftoverMoney / monthData.totalIncome) * 100).toFixed(1)}% savings rate`
+              ? `Saving ${formatWaterfallCurrency(leftoverMoney)} this ${selectedView === 'month' ? 'month' : selectedView === 'week' ? 'week' : 'day'} • ${((leftoverMoney / totalIncome) * 100).toFixed(1)}% savings rate`
               : leftoverMoney === 0
               ? `Breaking even this ${selectedView === 'month' ? 'month' : selectedView === 'week' ? 'week' : 'day'} • Consider optimizing expenses`
-              : `Overspending by ${formatWaterfallCurrency(Math.abs(leftoverMoney))} this ${selectedView === 'month' ? 'month' : selectedView === 'week' ? 'week' : 'day'} • ${((Math.abs(leftoverMoney) / monthData.totalIncome) * 100).toFixed(1)}% over budget`
+              : `Overspending by ${formatWaterfallCurrency(Math.abs(leftoverMoney))} this ${selectedView === 'month' ? 'month' : selectedView === 'week' ? 'week' : 'day'} • ${((Math.abs(leftoverMoney) / totalIncome) * 100).toFixed(1)}% over budget`
             }
           </p>
         </div>
@@ -713,7 +732,7 @@ export function WaterfallChart({
                     const categoryData = chartData.categories.find(cat => cat.name === id)
                     const percentage = categoryData?.type === 'expense' 
                       ? ((categoryData.originalAmount || categoryData.amount) / totalSpent * 100).toFixed(1)
-                      : ((categoryData?.amount || 0) / monthData.totalIncome * 100).toFixed(1)
+                      : ((categoryData?.amount || 0) / totalIncome * 100).toFixed(1)
                     
                     const isAdjusted = categoryData?.originalAmount && 
                       categoryData.originalAmount !== categoryData.amount
@@ -845,7 +864,7 @@ export function WaterfallChart({
              }}>
           <div className="text-sm mb-1" style={{ color: 'var(--juno-muted-fg)' }}>Total Income</div>
           <div className="text-lg font-semibold" style={{ color: 'var(--juno-success)' }}>
-            {formatWaterfallCurrency(monthData.totalIncome)}
+            {formatWaterfallCurrency(totalIncome)}
           </div>
         </div>
         <div className="text-center p-4 rounded-xl border" 
@@ -856,7 +875,7 @@ export function WaterfallChart({
              }}>
           <div className="text-sm mb-1" style={{ color: 'var(--juno-muted-fg)' }}>Total Spending</div>
           <div className="text-lg font-semibold" style={{ color: 'var(--juno-danger)' }}>
-            -{formatWaterfallCurrency(monthData.totalExpenses)}
+            -{formatWaterfallCurrency(totalSpent)}
           </div>
         </div>
         <div className="text-center p-4 rounded-xl border" 
@@ -868,9 +887,9 @@ export function WaterfallChart({
           <div className="text-sm mb-1" style={{ color: 'var(--juno-muted-fg)' }}>Net Amount</div>
           <div className={cn(
             "text-lg font-semibold",
-            monthData.netAmount >= 0 ? "text-green-600" : "text-red-600"
+            leftoverMoney >= 0 ? "text-green-600" : "text-red-600"
           )}>
-            {monthData.netAmount >= 0 ? '+' : ''}{formatWaterfallCurrency(monthData.netAmount)}
+            {leftoverMoney >= 0 ? '+' : ''}{formatWaterfallCurrency(leftoverMoney)}
           </div>
         </div>
       </div>

@@ -30,6 +30,7 @@ export interface WaterfallCategory {
   id: string
   name: string
   amount: number
+  allocated?: number // Budget allocated amount for this category
   type: 'income' | 'expense'
   color: string
   subcategories?: WaterfallSubcategory[]
@@ -78,6 +79,19 @@ export interface WaterfallChartProps {
     maxHistoryItems?: number
     customPeriodLabels?: Record<string, string>
   }
+  
+  // Real budget data
+  currentBudget?: {
+    id: string
+    total_income: number
+    categories: Array<{
+      id: string
+      name: string
+      allocated: number
+      spent: number
+      color: string
+    }>
+  } | null
 }
 
 export interface TransactionForWaterfall {

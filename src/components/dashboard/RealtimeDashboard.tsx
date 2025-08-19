@@ -233,6 +233,7 @@ export function RealtimeDashboard({
           defaultView="month"
           enabledViews={['day', 'week', 'month']}
           className="w-full"
+          currentBudget={currentBudget}
         />
       </div>
 
