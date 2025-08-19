@@ -68,7 +68,7 @@ export function CategoryCard({
 
   return (
     <Card 
-      className={`transition-all duration-200 ${
+      className={`transition-all duration-200 w-80 ${
         onClick ? "cursor-pointer hover:shadow-md" : ""
       } ${isSelected ? "ring-2 ring-primary" : ""} ${
         category.is_overspent ? "border-red-200 bg-red-50/50" : ""

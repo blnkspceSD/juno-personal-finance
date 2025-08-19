@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,9 +24,9 @@ export default function ProfilePage() {
 
   useEffect(() => {
     loadProfile()
-  }, [])
+  }, [loadProfile])
 
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError || !user) {
@@ -52,7 +52,7 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error loading profile:', error)
     }
-  }
+  }, [supabase, router])
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault()

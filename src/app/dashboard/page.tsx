@@ -13,14 +13,16 @@ export default async function DashboardPage() {
   let currentBudget = null
   let monthlySpendingData = []
   let recentTransactions = []
+  let chartTransactions = []
   let categoryGroupsData = { groups: [], categoriesByGroup: {} }
   let unassignedCategories = []
   
   try {
-    [currentBudget, monthlySpendingData, recentTransactions, categoryGroupsData, unassignedCategories] = await Promise.all([
+    [currentBudget, monthlySpendingData, recentTransactions, chartTransactions, categoryGroupsData, unassignedCategories] = await Promise.all([
       getCurrentMonthBudget(),
       getMonthlySpendingData(),
-      getRecentTransactions(5),
+      getRecentTransactions(5), // For recent transactions table
+      getRecentTransactions(50), // For chart analysis - get more data
       getCategoryGroupsWithCategories(),
       getUnassignedCategories()
     ])
@@ -33,6 +35,7 @@ export default async function DashboardPage() {
     user={user}
     monthlySpendingData={monthlySpendingData}
     recentTransactions={recentTransactions}
+    chartTransactions={chartTransactions}
     categoryGroups={categoryGroupsData.groups}
     categoriesByGroup={categoryGroupsData.categoriesByGroup}
     unassignedCategories={unassignedCategories}
