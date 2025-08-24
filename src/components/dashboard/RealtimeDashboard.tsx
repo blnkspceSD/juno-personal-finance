@@ -9,15 +9,15 @@ import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, Wifi, WifiOff, ChevronDown } from 'lucide-react'
-import { ProgressiveChart } from '@/components/charts/ProgressiveChart'
+import { Plus } from 'lucide-react'
+import { SpendingOverviewSection } from './SpendingOverviewSection'
+import { RecentTransactionsCard } from './RecentTransactionsCard'
 import { CategoryGroupCardsView, CategoryGroupCreateDialog } from '@/components/category-groups'
+import { RealtimeCategoryTable } from '@/components/tables/RealtimeCategoryTable'
+import { TransactionTable, TransactionTableRow } from '@/components/tables/TransactionTable'
 import { useRealtimeBalance } from '@/lib/hooks/useRealtimeBalance'
 import { useRealtimeContext } from '@/lib/context/RealtimeContext'
 import { calculateBudgetSummary } from '@/lib/utils/budget-calculations'
-import { formatCurrency, getCurrencyClasses } from '@/lib/utils/currency'
-import { RealtimeCategoryTable } from '@/components/tables/RealtimeCategoryTable'
-import { TransactionTable, TransactionTableRow } from '@/components/tables/TransactionTable'
 import type { BudgetWithCategories } from '@/lib/types/database'
 
 interface RealtimeDashboardProps {
@@ -41,6 +41,7 @@ interface RealtimeDashboardProps {
     date: string
     category_id: string
     category_name: string
+    category_color?: string
   }[]
   chartTransactions?: {
     id: string
@@ -75,6 +76,19 @@ interface RealtimeDashboardProps {
     spent: number
     color: string
   }[]
+  groupedSpendingData?: {
+    groupName: string
+    groupColor: string
+    groupIcon?: string
+    totalSpent: number
+    totalAllocated: number
+    categories: {
+      name: string
+      spent: number
+      allocated: number
+      color: string
+    }[]
+  }[]
 }
 
 export function RealtimeDashboard({ 
@@ -85,7 +99,8 @@ export function RealtimeDashboard({
   chartTransactions = [],
   categoryGroups = [],
   categoriesByGroup = {},
-  unassignedCategories = []
+  unassignedCategories = [],
+  groupedSpendingData = []
 }: RealtimeDashboardProps) {
   const [currentBudget, setCurrentBudget] = useState<BudgetWithCategories | null>(initialBudget)
   const { setBudget } = useRealtimeContext()
@@ -155,217 +170,42 @@ export function RealtimeDashboard({
   const budgetLimit = budgetSummary?.total_income || 0
   const spendingProgress = budgetLimit > 0 ? (currentSpending / budgetLimit) * 100 : 0
 
-  // Tab state
-  const [activeTab, setActiveTab] = useState('spending')
-  
   // Category groups state
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
-  // Use real recent transactions or show empty state
-  const displayTransactions = recentTransactions.length > 0 ? recentTransactions : []
+  // Use real recent transactions from Supabase
+  const displayTransactions = recentTransactions
 
   return (
-    <div className="space-y-8">
-      {/* Connection Status Indicator */}
-      {hasActiveBudget && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm">
-            {isConnected ? (
-              <>
-                <Wifi className="h-4 w-4 text-green-500" />
-                <span className="text-green-600">Live updates active</span>
-              </>
-            ) : isReconnecting ? (
-              <>
-                <div className="h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                <span className="text-blue-600">Reconnecting...</span>
-              </>
-            ) : hasError ? (
-              <>
-                <WifiOff className="h-4 w-4 text-red-500" />
-                <span className="text-red-600">Connection lost</span>
-              </>
-            ) : (
-              <>
-                <WifiOff className="h-4 w-4 text-gray-400" />
-                <span className="text-gray-500">Connecting...</span>
-              </>
-            )}
+    <div className="min-h-screen bg-juno-surface-200">
+      <div className="space-y-juno-6">
+        {/* Main Content Layout - Two Column Design */}
+        {hasActiveBudget && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-juno-6">
+            {/* Left Column: Spending Overview (2/3 width) */}
+            <div className="lg:col-span-2">
+              <SpendingOverviewSection
+                currentSpending={currentSpending}
+                budgetLimit={budgetLimit}
+                groupedSpendingData={groupedSpendingData}
+                chartTransactions={chartTransactions}
+                currentBudget={currentBudget}
+              />
+            </div>
+            
+            {/* Right Column: Recent Transactions (1/3 width) */}
+            <div className="lg:col-span-1">
+              <RecentTransactionsCard transactions={displayTransactions} />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Tab Navigation */}
-      <div className="flex space-x-1 bg-muted p-1 rounded-lg w-fit">
-        {[
-          { id: 'spending', label: 'Spending' },
-          { id: 'networth', label: 'Net worth' },
-          { id: 'investments', label: 'Investments' }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
-              activeTab === tab.id
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Spending Metric Display */}
-      <div className="space-y-2">
-        <p className="text-sm text-muted-foreground font-medium">SPENDING THIS MONTH</p>
-        <div className="flex items-baseline space-x-2">
-          <span className="text-4xl font-bold tracking-tight">
-            ${currentSpending.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </span>
-          <span className="text-xl text-muted-foreground">
-            / ${budgetLimit.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </span>
-        </div>
-        <div className="w-full bg-muted rounded-full h-2">
-          <div 
-            className="bg-foreground h-2 rounded-full transition-all duration-300" 
-            style={{ width: `${Math.min(spendingProgress, 100)}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Budget Utilization Chart */}
-      {hasActiveBudget && (
-        <ProgressiveChart
-          transactions={chartTransactions.map(transaction => ({
-            id: transaction.id,
-            amount: Math.abs(transaction.amount),
-            date: transaction.date,
-            categoryId: transaction.category_id,
-            categoryName: transaction.category_name,
-            description: transaction.description,
-            type: transaction.amount > 0 ? 'income' : 'expense'
-          }))}
-          budget={currentBudget ? {
-            id: currentBudget.id,
-            totalIncome: currentBudget.total_income,
-            period: new Date().toISOString().slice(0, 7),
-            categories: currentBudget.categories.map(cat => ({
-              id: cat.id,
-              name: cat.name,
-              allocated: cat.allocated,
-              spent: cat.spent,
-              color: cat.color,
-              type: 'expense' as const,
-              isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
-                cat.name.toLowerCase().includes(keyword)
-              )
-            }))
-          } : undefined}
-          categories={currentBudget?.categories.map(cat => ({
-            id: cat.id,
-            name: cat.name,
-            allocated: cat.allocated,
-            spent: cat.spent,
-            color: cat.color,
-            type: 'expense' as const,
-            isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
-              cat.name.toLowerCase().includes(keyword)
-            )
-          })) || []}
-          height={400}
-          className="w-full"
-        />
-      )}
-
-      {/* Spending Pockets */}
-      {hasActiveBudget && (
-        <div className="space-y-4 pb-12">
-          {categoryGroups.length > 0 ? (
-            <CategoryGroupCardsView
-              groups={categoryGroups}
-              categoriesByGroup={categoriesByGroup}
-              onGroupClick={(group) => {
-                console.log('Group clicked:', group)
-              }}
-              onCreateGroup={() => {
-                setIsCreateDialogOpen(true)
-              }}
-              onEditGroup={(group) => {
-                console.log('Edit group:', group)
-              }}
-              onDeleteGroup={(group) => {
-                console.log('Delete group:', group)
-              }}
-            />
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>Create Your First Spending Pocket</CardTitle>
-                <CardDescription>
-                  Group your spending categories into pockets to get better insights into your spending patterns.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <div className="mx-auto h-16 w-16 bg-muted rounded-lg flex items-center justify-center mb-4">
-                    <div className="w-8 h-8 bg-muted-foreground/20 rounded"></div>
-                  </div>
-                  <p className="text-muted-foreground mb-4">
-                    No spending pockets yet. Create your first pocket to organize your spending categories.
-                  </p>
-                  <Button onClick={() => setIsCreateDialogOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add pocket
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      )}
-
-      {/* Recent Transactions */}
-      <div className="space-y-4 pb-12">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Recent Transactions</h2>
-          <Button className="btn--secondary">
-            <Plus className="h-4 w-4" />
-            Add transaction
-          </Button>
-        </div>
-        
-        <TransactionTable 
-          data={displayTransactions.slice(0, 10) as TransactionTableRow[]}
-          onEdit={(transaction) => {
-            console.log('Edit transaction:', transaction)
-            // TODO: Implement transaction editing
-          }}
-          onDelete={(transaction) => {
-            console.log('Delete transaction:', transaction)
-            // TODO: Implement transaction deletion
-          }}
-          enablePagination={false}
-        />
-        
-        <div className="flex justify-center pt-4">
-          <Button variant="ghost" className="text-juno-text hover:text-juno-text gap-2" asChild>
-            <Link href="/dashboard/transactions">
-              See all transactions
-              <ChevronDown className="h-4 w-4 -rotate-90" />
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      {hasActiveBudget ? (
-        <>
-          {/* Category Management Table */}
-          <div className="space-y-4">
+        {/* Your Envelopes - Category Management Table */}
+        {hasActiveBudget && (
+          <div className="space-y-juno-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-foreground">Your Envelopes</h2>
-              <div className="flex gap-2">
+              <h2 className="text-xl font-semibold text-juno-text">Your Envelopes</h2>
+              <div className="flex gap-juno-2">
                 <Button variant="outline" size="sm" asChild>
                   <Link href="/dashboard/transactions/new">
                     <Plus className="h-4 w-4 mr-2" />
@@ -397,34 +237,119 @@ export function RealtimeDashboard({
               }}
             />
           </div>
+        )}
 
+        {/* Spending Pockets */}
+        {hasActiveBudget && (
+          <div className="space-y-juno-4 pb-juno-12">
+            {categoryGroups.length > 0 ? (
+              <CategoryGroupCardsView
+                groups={categoryGroups}
+                categoriesByGroup={categoriesByGroup}
+                onGroupClick={(group) => {
+                  console.log('Group clicked:', group)
+                }}
+                onCreateGroup={() => {
+                  setIsCreateDialogOpen(true)
+                }}
+                onEditGroup={(group) => {
+                  console.log('Edit group:', group)
+                }}
+                onDeleteGroup={(group) => {
+                  console.log('Delete group:', group)
+                }}
+              />
+            ) : (
+              <Card className="bg-juno-surface-50 rounded-juno-xl shadow-juno-card-with-stroke">
+                <CardHeader>
+                  <CardTitle className="text-juno-text">Create Your First Spending Pocket</CardTitle>
+                  <CardDescription className="text-juno-muted-fg">
+                    Group your spending categories into pockets to get better insights into your spending patterns.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-juno-8">
+                    <div className="mx-auto h-16 w-16 bg-juno-surface-200 rounded-juno-lg flex items-center justify-center mb-juno-4">
+                      <div className="w-8 h-8 bg-juno-muted-fg/20 rounded"></div>
+                    </div>
+                    <p className="text-juno-muted-fg mb-juno-4">
+                      No spending pockets yet. Create your first pocket to organize your spending categories.
+                    </p>
+                    <Button className="btn--primary" onClick={() => setIsCreateDialogOpen(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add pocket
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
 
-          {/* Category Group Create Dialog */}
-          <CategoryGroupCreateDialog
-            open={isCreateDialogOpen}
-            onOpenChange={setIsCreateDialogOpen}
-            unassignedCategories={unassignedCategories}
-            onSuccess={(newGroup) => {
-              console.log('Group created:', newGroup)
-              setIsCreateDialogOpen(false)
+        {/* Recent Transactions Table */}
+        <div className="space-y-juno-4 pb-juno-12">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-juno-text">Recent Transactions</h2>
+            <Button className="btn--secondary" asChild>
+              <Link href="/dashboard/transactions/new">
+                <Plus className="h-4 w-4" />
+                Add transaction
+              </Link>
+            </Button>
+          </div>
+          
+          <TransactionTable 
+            data={displayTransactions.slice(0, 10) as TransactionTableRow[]}
+            onEdit={(transaction) => {
+              console.log('Edit transaction:', transaction)
+              // TODO: Implement transaction editing
             }}
+            onDelete={(transaction) => {
+              console.log('Delete transaction:', transaction)
+              // TODO: Implement transaction deletion
+            }}
+            enablePagination={false}
           />
-        </>
-      ) : (
+          
+          <div className="flex justify-center pt-juno-4">
+            <Button variant="ghost" className="text-juno-text hover:text-juno-text gap-juno-2" asChild>
+              <Link href="/dashboard/transactions">
+                See all transactions
+                <svg className="h-4 w-4 -rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* Category Group Create Dialog */}
+        <CategoryGroupCreateDialog
+          open={isCreateDialogOpen}
+          onOpenChange={setIsCreateDialogOpen}
+          unassignedCategories={unassignedCategories}
+          onSuccess={(newGroup) => {
+            console.log('Group created:', newGroup)
+            setIsCreateDialogOpen(false)
+          }}
+        />
+      </div>
+
+      {!hasActiveBudget && (
         <>
           {/* Getting Started Section */}
-          <Card>
+          <Card className="bg-juno-surface-50 rounded-juno-xl shadow-juno-card-with-stroke">
             <CardHeader>
-              <CardTitle>Create Your First Budget</CardTitle>
+              <CardTitle className="text-juno-text">Create Your First Budget</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-juno-muted-fg mb-juno-6">
                 Let&apos;s get started by creating your monthly budget for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}. 
                 You&apos;ll allocate your income into different spending categories (envelopes).
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild>
+              <div className="flex flex-col sm:flex-row gap-juno-4">
+                <Button className="btn--primary" asChild>
                   <Link href="/dashboard/budget/new">
                     <Plus className="h-4 w-4 mr-2" />
                     Create Budget for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
@@ -435,22 +360,22 @@ export function RealtimeDashboard({
           </Card>
 
           {/* Envelope Status (Empty State) */}
-          <Card>
+          <Card className="bg-juno-surface-50 rounded-juno-xl shadow-juno-card-with-stroke">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Your Envelopes</CardTitle>
-                <span className="text-sm text-muted-foreground">0 envelopes</span>
+                <CardTitle className="text-juno-text">Your Envelopes</CardTitle>
+                <span className="text-sm text-juno-muted-fg">0 envelopes</span>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-12">
-                <div className="mx-auto h-24 w-24 bg-muted rounded-2xl flex items-center justify-center mb-4">
-                  <svg className="h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="text-center py-juno-12">
+                <div className="mx-auto h-24 w-24 bg-juno-surface-200 rounded-juno-2xl flex items-center justify-center mb-juno-4">
+                  <svg className="h-12 w-12 text-juno-muted-fg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-foreground mb-2">No envelopes yet</h3>
-                <p className="text-muted-foreground mb-6">
+                <h3 className="text-lg font-medium text-juno-text mb-juno-2">No envelopes yet</h3>
+                <p className="text-juno-muted-fg mb-juno-6">
                   Create your first budget to start organizing your money into envelopes.
                 </p>
               </div>

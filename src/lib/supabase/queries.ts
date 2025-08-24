@@ -2,11 +2,13 @@
 // Reusable queries for budget and transaction data
 
 import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import type { Budget, Category, Transaction, BudgetWithCategories } from '@/lib/types/database'
 
 // Budget Queries
 export async function getCurrentUserBudgets(): Promise<BudgetWithCategories[]> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const { data, error } = await supabase
     .from('budgets')
@@ -28,7 +30,8 @@ export async function getCurrentUserBudgets(): Promise<BudgetWithCategories[]> {
 }
 
 export async function getCurrentMonthBudget(): Promise<BudgetWithCategories | null> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   const currentDate = new Date()
   const currentMonth = currentDate.toISOString().slice(0, 7) // YYYY-MM
   const currentYear = currentDate.getFullYear()
@@ -54,7 +57,8 @@ export async function getCurrentMonthBudget(): Promise<BudgetWithCategories | nu
 }
 
 export async function getBudgetById(budgetId: string): Promise<BudgetWithCategories | null> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const { data, error } = await supabase
     .from('budgets')
@@ -77,7 +81,8 @@ export async function getBudgetById(budgetId: string): Promise<BudgetWithCategor
 
 // Category Queries
 export async function getCategoriesByBudget(budgetId: string): Promise<Category[]> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const { data, error } = await supabase
     .from('categories')
@@ -93,7 +98,8 @@ export async function getCategoriesByBudget(budgetId: string): Promise<Category[
 }
 
 export async function updateCategoryAllocated(categoryId: string, amount: number): Promise<void> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const { error } = await supabase
     .from('categories')
@@ -106,15 +112,17 @@ export async function updateCategoryAllocated(categoryId: string, amount: number
 }
 
 // Transaction Queries
-export async function getRecentTransactions(limit: number = 10): Promise<(Transaction & { category_name: string })[]> {
-  const supabase = await createClient()
+export async function getRecentTransactions(limit: number = 10): Promise<(Transaction & { category_name: string, category_color?: string })[]> {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const { data, error } = await supabase
     .from('transactions')
     .select(`
       *,
       categories (
-        name
+        name,
+        color
       )
     `)
     .order('date', { ascending: false })
@@ -125,15 +133,17 @@ export async function getRecentTransactions(limit: number = 10): Promise<(Transa
     throw new Error(`Failed to fetch transactions: ${error.message}`)
   }
 
-  // Transform data to include category name
+  // Transform data to include category name and color
   return (data || []).map(transaction => ({
     ...transaction,
-    category_name: transaction.categories?.name || 'Uncategorized'
+    category_name: transaction.categories?.name || 'Uncategorized',
+    category_color: transaction.categories?.color || '#6b7280'
   }))
 }
 
 export async function getTransactionsByCategory(categoryId: string): Promise<Transaction[]> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const { data, error } = await supabase
     .from('transactions')
@@ -154,7 +164,8 @@ export async function addTransaction(transaction: {
   description: string
   date: string
 }): Promise<Transaction> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const { data: { user }, error: userError } = await supabase.auth.getUser()
   if (userError || !user) {
@@ -207,7 +218,8 @@ export async function getMonthlySpendingData(): Promise<{
   actual: number;
   estimated: number;
 }[]> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   // Get the last 12 months
   const endDate = new Date()
@@ -264,7 +276,8 @@ export async function getCategoryGroups(): Promise<{
   created_at: string;
   updated_at: string;
 }[]> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const { data, error } = await supabase
     .from('category_groups')
@@ -286,7 +299,8 @@ export async function getCategoriesWithSpending(): Promise<{
   color: string;
   group_id?: string;
 }[]> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   // Get current month budget first
   const currentBudget = await getCurrentMonthBudget()
@@ -371,7 +385,8 @@ export async function getUnassignedCategories(): Promise<{
   spent: number;
   color: string;
 }[]> {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   // Get current month budget first
   const currentBudget = await getCurrentMonthBudget()
@@ -398,6 +413,138 @@ export async function getUnassignedCategories(): Promise<{
     spent: category.spent || 0,
     color: category.color || '#6366f1'
   }))
+}
+
+// Group-based spending queries for dashboard charts
+export async function getGroupedSpendingData(): Promise<{
+  groupName: string
+  groupColor: string
+  groupIcon?: string
+  totalSpent: number
+  totalAllocated: number
+  categories: {
+    name: string
+    spent: number
+    allocated: number
+    color: string
+  }[]
+}[]> {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+  
+  // Get current month budget first
+  const currentBudget = await getCurrentMonthBudget()
+  if (!currentBudget) {
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from('categories')
+    .select(`
+      id,
+      name,
+      allocated,
+      spent,
+      color,
+      group_id,
+      category_groups (
+        name,
+        color,
+        icon
+      )
+    `)
+    .eq('budget_id', currentBudget.id)
+    .is('archived_at', null)
+    .order('spent', { ascending: false })
+
+  if (error) {
+    throw new Error(`Failed to fetch grouped spending data: ${error.message}`)
+  }
+
+  // Group categories by their category groups
+  const groupMap = new Map<string, {
+    groupName: string
+    groupColor: string
+    groupIcon?: string
+    totalSpent: number
+    totalAllocated: number
+    categories: {
+      name: string
+      spent: number
+      allocated: number
+      color: string
+    }[]
+  }>()
+
+  // Handle ungrouped categories
+  const ungroupedCategories: {
+    name: string
+    spent: number
+    allocated: number
+    color: string
+  }[] = []
+
+  data?.forEach(category => {
+    if (category.group_id && category.category_groups) {
+      const groupKey = category.category_groups.name
+      
+      if (!groupMap.has(groupKey)) {
+        groupMap.set(groupKey, {
+          groupName: category.category_groups.name,
+          groupColor: category.category_groups.color,
+          groupIcon: category.category_groups.icon,
+          totalSpent: 0,
+          totalAllocated: 0,
+          categories: []
+        })
+      }
+
+      const groupData = groupMap.get(groupKey)!
+      groupData.totalSpent += category.spent || 0
+      groupData.totalAllocated += category.allocated || 0
+      groupData.categories.push({
+        name: category.name,
+        spent: category.spent || 0,
+        allocated: category.allocated || 0,
+        color: category.color
+      })
+    } else {
+      // Collect ungrouped categories
+      ungroupedCategories.push({
+        name: category.name,
+        spent: category.spent || 0,
+        allocated: category.allocated || 0,
+        color: category.color
+      })
+    }
+  })
+
+  const result = Array.from(groupMap.values())
+
+  // Add ungrouped categories as a separate group if any exist
+  if (ungroupedCategories.length > 0) {
+    const ungroupedTotal = ungroupedCategories.reduce(
+      (acc, cat) => ({
+        spent: acc.spent + cat.spent,
+        allocated: acc.allocated + cat.allocated
+      }),
+      { spent: 0, allocated: 0 }
+    )
+
+    result.push({
+      groupName: 'Other',
+      groupColor: '#6b7280',
+      groupIcon: '📂',
+      totalSpent: ungroupedTotal.spent,
+      totalAllocated: ungroupedTotal.allocated,
+      categories: ungroupedCategories
+    })
+  }
+
+  // Sort by total spending (highest first) and limit to top 4 groups
+  return result
+    .sort((a, b) => b.totalSpent - a.totalSpent)
+    .slice(0, 4)
 }
 
 // Re-export utility functions for backwards compatibility

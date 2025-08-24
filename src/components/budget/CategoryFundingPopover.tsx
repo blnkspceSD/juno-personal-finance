@@ -193,85 +193,85 @@ export function CategoryFundingPopover({
   const canConfirm = currentStrategy.totalAmount > 0 && currentStrategy.totalAmount >= Math.min(fundingAmount, transactionAmount)
 
   return (
-    <div className=\"space-y-6 p-6 max-w-lg\">
+    <div className="space-y-6 p-6 max-w-lg">
       {/* Header */}
       <div>
-        <h3 className=\"text-lg font-semibold text-foreground mb-2\">
+        <h3 className="text-lg font-semibold text-foreground mb-2">
           New category: {categoryName}
         </h3>
-        <p className=\"text-sm text-muted-foreground\">
+        <p className="text-sm text-muted-foreground">
           Set up budget allocation to cover this transaction
         </p>
       </div>
 
       {/* Amount to Fund */}
-      <div className=\"space-y-3\">
-        <Label htmlFor=\"funding-amount\" className=\"text-sm font-medium\">
+      <div className="space-y-3">
+        <Label htmlFor="funding-amount" className="text-sm font-medium">
           Amount to fund
         </Label>
         
         {/* Quick amount selection */}
-        <div className=\"flex gap-2 flex-wrap\">
+        <div className="flex gap-2 flex-wrap">
           <Button
             variant={fundingMode === 'transaction' ? 'default' : 'outline'}
-            size=\"sm\"
+            size="sm"
             onClick={() => {
               setFundingMode('transaction')
               setFundingAmount(transactionAmount)
             }}
-            className=\"h-8\"
+            className="h-8"
           >
             Cover {formatCurrency(transactionAmount)}
           </Button>
           <Button
             variant={fundingMode === 'monthly_cap' ? 'default' : 'outline'}
-            size=\"sm\"
+            size="sm"
             onClick={() => {
               setFundingMode('monthly_cap')
               setFundingAmount(monthlyCap)
             }}
-            className=\"h-8\"
+            className="h-8"
           >
             Set monthly cap {formatCurrency(monthlyCap)}
           </Button>
         </div>
 
         <Input
-          id=\"funding-amount\"
-          type=\"number\"
-          step=\"0.01\"
-          min=\"0.01\"
+          id="funding-amount"
+          type="number"
+          step="0.01"
+          min="0.01"
           value={fundingAmount}
           onChange={(e) => handleFundingAmountChange(e.target.value)}
-          className=\"w-full\"
+          className="w-full"
         />
 
         {fundingMode === 'monthly_cap' && (
-          <div className=\"space-y-2\">
-            <Label htmlFor=\"monthly-cap\" className=\"text-sm font-medium\">
+          <div className="space-y-2">
+            <Label htmlFor="monthly-cap" className="text-sm font-medium">
               Monthly cap (optional)
             </Label>
             <Input
-              id=\"monthly-cap\"
-              type=\"number\"
-              step=\"0.01\"
+              id="monthly-cap"
+              type="number"
+              step="0.01"
               min={transactionAmount}
               value={monthlyCap}
               onChange={(e) => setMonthlyCap(parseFloat(e.target.value) || transactionAmount)}
-              className=\"w-full\"
+              className="w-full"
             />
           </div>
         )}
       </div>
 
       {/* Funding Sources */}
-      <div className=\"space-y-4\">
-        <div className=\"flex items-center gap-2\">
-          <Label className=\"text-sm font-medium\">Take money from</Label>
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Label className="text-sm font-medium">Take money from</Label>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Info className=\"h-4 w-4 text-muted-foreground\" />
+                <Info className="h-4 w-4 text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent>
                 <p>Moving budget between categories keeps your total Available to Spend unchanged</p>
@@ -281,25 +281,25 @@ export function CategoryFundingPopover({
         </div>
 
         {/* Strategy Options */}
-        <div className=\"space-y-3\">
+        <div className="space-y-3">
           {/* Left to Budget (if available) */}
           {leftToBudget > 0 && (
-            <div className=\"border rounded-lg p-4\">
-              <label className=\"flex items-start gap-3 cursor-pointer\">
+            <div className="border rounded-lg p-4">
+              <label className="flex items-start gap-3 cursor-pointer">
                 <input
-                  type=\"radio\"
-                  name=\"funding-strategy\"
-                  value=\"ltb\"
+                  type="radio"
+                  name="funding-strategy"
+                  value="ltb"
                   checked={strategyType === 'ltb'}
                   onChange={(e) => e.target.checked && setStrategyType('ltb')}
-                  className=\"mt-1\"
+                  className="mt-1"
                 />
-                <div className=\"flex-1\">
-                  <div className=\"font-medium text-foreground\">
+                <div className="flex-1">
+                  <div className="font-medium text-foreground">
                     Use Left to budget ({formatCurrency(leftToBudget)}) first
                   </div>
-                  <div className=\"text-sm text-muted-foreground mt-1\">
-                    Recent income that hasn't been allocated yet
+                  <div className="text-sm text-muted-foreground mt-1">
+                    Recent income that hasn&apos;t been allocated yet
                   </div>
                 </div>
               </label>
@@ -307,39 +307,39 @@ export function CategoryFundingPopover({
           )}
 
           {/* Smart Split (Recommended) */}
-          <div className=\"border rounded-lg p-4\">
-            <label className=\"flex items-start gap-3 cursor-pointer\">
+          <div className="border rounded-lg p-4">
+            <label className="flex items-start gap-3 cursor-pointer">
               <input
-                type=\"radio\"
-                name=\"funding-strategy\"
-                value=\"smart_split\"
+                type="radio"
+                name="funding-strategy"
+                value="smart_split"
                 checked={strategyType === 'smart_split'}
                 onChange={(e) => e.target.checked && setStrategyType('smart_split')}
-                className=\"mt-1\"
+                className="mt-1"
               />
-              <div className=\"flex-1\">
-                <div className=\"flex items-center gap-2\">
-                  <span className=\"font-medium text-foreground\">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-foreground">
                     Split from flexible categories
                   </span>
-                  <Badge variant=\"secondary\" className=\"text-xs\">Recommended</Badge>
+                  <Badge variant="secondary" className="text-xs">Recommended</Badge>
                 </div>
                 {smartSplitSuggestions.length > 0 && (
-                  <div className=\"text-sm text-muted-foreground mt-2 space-y-1\">
+                  <div className="text-sm text-muted-foreground mt-2 space-y-1">
                     {smartSplitSuggestions.slice(0, 3).map(suggestion => (
-                      <div key={suggestion.category.id} className=\"flex items-center justify-between\">
+                      <div key={suggestion.category.id} className="flex items-center justify-between">
                         <span>{suggestion.category.name}</span>
-                        <span className=\"font-mono\">-{formatCurrency(suggestion.suggestedAmount)}</span>
+                        <span className="font-mono">-{formatCurrency(suggestion.suggestedAmount)}</span>
                       </div>
                     ))}
                     {smartSplitSuggestions.length > 3 && (
-                      <div className=\"text-xs text-muted-foreground\">
+                      <div className="text-xs text-muted-foreground">
                         +{smartSplitSuggestions.length - 3} more categories
                       </div>
                     )}
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger className=\"text-xs text-blue-600 hover:text-blue-700 cursor-help\">
+                        <TooltipTrigger className="text-xs text-blue-600 hover:text-blue-700 cursor-help">
                           Why these? ↗
                         </TooltipTrigger>
                         <TooltipContent>
@@ -354,38 +354,38 @@ export function CategoryFundingPopover({
           </div>
 
           {/* Single Category */}
-          <div className=\"border rounded-lg p-4\">
-            <label className=\"flex items-start gap-3 cursor-pointer\">
+          <div className="border rounded-lg p-4">
+            <label className="flex items-start gap-3 cursor-pointer">
               <input
-                type=\"radio\"
-                name=\"funding-strategy\"
-                value=\"single\"
+                type="radio"
+                name="funding-strategy"
+                value="single"
                 checked={strategyType === 'single'}
                 onChange={(e) => e.target.checked && setStrategyType('single')}
-                className=\"mt-1\"
+                className="mt-1"
               />
-              <div className=\"flex-1\">
-                <div className=\"font-medium text-foreground mb-2\">
+              <div className="flex-1">
+                <div className="font-medium text-foreground mb-2">
                   Choose one category…
                 </div>
                 {strategyType === 'single' && (
-                  <div className=\"space-y-2 max-h-32 overflow-y-auto\">
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
                     {donorSuggestions.map(suggestion => {
                       const headroom = suggestion.headroom
                       return (
                         <label
                           key={suggestion.category.id}
-                          className=\"flex items-center gap-2 p-2 rounded border hover:bg-muted/50 cursor-pointer\"
+                          className="flex items-center gap-2 p-2 rounded border hover:bg-muted/50 cursor-pointer"
                         >
                           <input
-                            type=\"radio\"
-                            name=\"single-donor\"
+                            type="radio"
+                            name="single-donor"
                             value={suggestion.category.id}
                             checked={selectedDonor === suggestion.category.id}
                             onChange={(e) => setSelectedDonor(e.target.value)}
                           />
-                          <span className=\"flex-1\">{suggestion.category.name}</span>
-                          <Badge variant=\"outline\" className=\"text-xs\">
+                          <span className="flex-1">{suggestion.category.name}</span>
+                          <Badge variant="outline" className="text-xs">
                             {formatCurrency(headroom)} headroom
                           </Badge>
                         </label>
@@ -398,28 +398,28 @@ export function CategoryFundingPopover({
           </div>
 
           {/* Manual Split */}
-          <div className=\"border rounded-lg p-4\">
-            <label className=\"flex items-start gap-3 cursor-pointer\">
+          <div className="border rounded-lg p-4">
+            <label className="flex items-start gap-3 cursor-pointer">
               <input
-                type=\"radio\"
-                name=\"funding-strategy\"
-                value=\"manual\"
+                type="radio"
+                name="funding-strategy"
+                value="manual"
                 checked={strategyType === 'manual'}
                 onChange={(e) => e.target.checked && setStrategyType('manual')}
-                className=\"mt-1\"
+                className="mt-1"
               />
-              <div className=\"flex-1\">
-                <div className=\"font-medium text-foreground mb-2\">
+              <div className="flex-1">
+                <div className="font-medium text-foreground mb-2">
                   Choose multiple…
                 </div>
                 {strategyType === 'manual' && (
-                  <div className=\"space-y-3\">
-                    <div className=\"max-h-32 overflow-y-auto space-y-2\">
+                  <div className="space-y-3">
+                    <div className="max-h-32 overflow-y-auto space-y-2">
                       {donorSuggestions.map(suggestion => {
                         const currentAmount = manualSplits[suggestion.category.id] || 0
                         const maxAmount = suggestion.headroom
                         return (
-                          <div key={suggestion.category.id} className=\"flex items-center gap-2 p-2 rounded border\">
+                          <div key={suggestion.category.id} className="flex items-center gap-2 p-2 rounded border">
                             <Checkbox
                               checked={currentAmount > 0}
                               onCheckedChange={(checked) => {
@@ -438,11 +438,11 @@ export function CategoryFundingPopover({
                                 }
                               }}
                             />
-                            <span className=\"flex-1 text-sm\">{suggestion.category.name}</span>
+                            <span className="flex-1 text-sm">{suggestion.category.name}</span>
                             <Input
-                              type=\"number\"
-                              step=\"0.01\"
-                              min=\"0\"
+                              type="number"
+                              step="0.01"
+                              min="0"
                               max={maxAmount}
                               value={currentAmount}
                               onChange={(e) => {
@@ -452,23 +452,23 @@ export function CategoryFundingPopover({
                                   [suggestion.category.id]: amount
                                 }))
                               }}
-                              className=\"w-20 h-8 text-xs\"
+                              className="w-20 h-8 text-xs"
                               disabled={currentAmount === 0}
                             />
-                            <span className=\"text-xs text-muted-foreground w-16\">
+                            <span className="text-xs text-muted-foreground w-16">
                               /{formatCurrency(maxAmount)}
                             </span>
                           </div>
                         )
                       })}
                     </div>
-                    <div className=\"flex justify-between text-sm\">
+                    <div className="flex justify-between text-sm">
                       <span>Total allocated:</span>
-                      <span className=\"font-mono\">{formatCurrency(currentStrategy.totalAmount)}</span>
+                      <span className="font-mono">{formatCurrency(currentStrategy.totalAmount)}</span>
                     </div>
-                    <div className=\"flex justify-between text-sm text-muted-foreground\">
+                    <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Remaining to allocate:</span>
-                      <span className=\"font-mono\">{formatCurrency(Math.max(0, fundingAmount - currentStrategy.totalAmount))}</span>
+                      <span className="font-mono">{formatCurrency(Math.max(0, fundingAmount - currentStrategy.totalAmount))}</span>
                     </div>
                   </div>
                 )}
@@ -479,15 +479,15 @@ export function CategoryFundingPopover({
       </div>
 
       {/* Impact Message */}
-      <div className=\"p-3 bg-blue-50 border border-blue-200 rounded-lg\">
-        <div className=\"flex items-start gap-2\">
-          <Info className=\"h-4 w-4 text-blue-600 mt-0.5 shrink-0\" />
-          <div className=\"text-sm\">
-            <div className=\"font-medium text-blue-800 mb-1\">Impact</div>
-            <div className=\"text-blue-700\">
+      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="flex items-start gap-2">
+          <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
+          <div className="text-sm">
+            <div className="font-medium text-blue-800 mb-1">Impact</div>
+            <div className="text-blue-700">
               Total Available to Spend stays {formatCurrency(availableToSpend)}. 
               {currentStrategy.totalAmount > 0 && (
-                <span> We'll move {formatCurrency(currentStrategy.totalAmount)} to <strong>{categoryName}</strong>.</span>
+                <span> We&apos;ll move {formatCurrency(currentStrategy.totalAmount)} to <strong>{categoryName}</strong>.</span>
               )}
             </div>
           </div>
@@ -495,16 +495,16 @@ export function CategoryFundingPopover({
       </div>
 
       {/* Actions */}
-      <div className=\"flex gap-3\">
+      <div className="flex gap-3">
         <Button
           onClick={handleConfirm}
           disabled={!canConfirm || isLoading}
-          className=\"flex-1\"
+          className="flex-1"
         >
           Create & reallocate
         </Button>
         <Button
-          variant=\"outline\"
+          variant="outline"
           onClick={onSkipFunding}
           disabled={isLoading}
         >

@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import type { UpdateCategoryGroupForm } from '@/lib/types/database'
 
 export async function GET(
@@ -12,7 +13,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
     
     // Get current user
     const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -48,7 +50,8 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
     
     // Get current user
     const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -89,7 +92,7 @@ export async function PATCH(
     }
 
     // Build update data
-    const updateData: any = {}
+    const updateData: Record<string, any> = {}
     if (body.name !== undefined) updateData.name = body.name.trim()
     if (body.description !== undefined) updateData.description = body.description?.trim() || null
     if (body.color !== undefined) updateData.color = body.color
@@ -125,7 +128,8 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
     
     // Get current user
     const { data: { user }, error: userError } = await supabase.auth.getUser()

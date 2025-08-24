@@ -52,11 +52,6 @@ export function BudgetInbox({
   const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>(null)
   const [processingCategoryId, setProcessingCategoryId] = useState<string | null>(null)
 
-  // Don't render if no unfunded categories
-  if (unfundedCategories.length === 0) {
-    return null
-  }
-
   const handleQuickCover = useCallback(async (category: UnfundedCategory, amount: number) => {
     setProcessingCategoryId(category.id)
     try {
@@ -99,26 +94,31 @@ export function BudgetInbox({
     }
   }, [onCategoryDismissed])
 
+  // Don't render if no unfunded categories
+  if (unfundedCategories.length === 0) {
+    return null
+  }
+
   return (
-    <Card className=\"border-orange-200 bg-orange-50/50\">
-      <CardHeader className=\"pb-3\">
-        <div className=\"flex items-center justify-between\">
-          <div className=\"flex items-center gap-2\">
-            <AlertTriangle className=\"h-5 w-5 text-orange-600\" />
-            <CardTitle className=\"text-lg text-orange-800\">
+    <Card className="border-orange-200 bg-orange-50/50">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-orange-600" />
+            <CardTitle className="text-lg text-orange-800">
               Budget Inbox
             </CardTitle>
-            <Badge variant=\"outline\" className=\"text-orange-700 border-orange-300\">
+            <Badge variant="outline" className="text-orange-700 border-orange-300">
               {unfundedCategories.length} item{unfundedCategories.length !== 1 ? 's' : ''}
             </Badge>
           </div>
         </div>
-        <p className=\"text-sm text-orange-700\">
+        <p className="text-sm text-orange-700">
           Categories that need budget allocation to cover recent transactions
         </p>
       </CardHeader>
 
-      <CardContent className=\"space-y-3\">
+      <CardContent className="space-y-3">
         {unfundedCategories.map((category) => {
           const isProcessing = processingCategoryId === category.id
           const isExpanded = expandedCategoryId === category.id
@@ -126,31 +126,31 @@ export function BudgetInbox({
           const suggestedMonthlyCap = Math.ceil((category.totalDeficit * 1.5) / 10) * 10 // 150% of deficit, rounded
 
           return (
-            <Card key={category.id} className=\"border-orange-200 bg-white\">
-              <CardContent className=\"p-4\">
-                <div className=\"flex items-start justify-between gap-3 mb-3\">
-                  <div className=\"flex-1 min-w-0\">
-                    <div className=\"flex items-center gap-2 mb-1\">
-                      <h4 className=\"font-semibold text-foreground truncate\">
+            <Card key={category.id} className="border-orange-200 bg-white">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-semibold text-foreground truncate">
                         Finish setting up {category.name}
                       </h4>
                       <Badge 
-                        variant=\"outline\" 
-                        className=\"text-xs shrink-0\"
+                        variant="outline" 
+                        className="text-xs shrink-0"
                         style={{
                           backgroundColor: `${category.color}15`,
                           color: category.color,
                           borderColor: `${category.color}30`
                         }}
                       >
-                        <Clock className=\"h-3 w-3 mr-1\" />
+                        <Clock className="h-3 w-3 mr-1" />
                         {category.transactionCount} transaction{category.transactionCount !== 1 ? 's' : ''}
                       </Badge>
                     </div>
                     
-                    <div className=\"flex items-center gap-4 text-sm text-muted-foreground\">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span>
-                        Needs: <span className=\"font-medium text-orange-700\">{formatCurrency(category.totalDeficit)}</span>
+                        Needs: <span className="font-medium text-orange-700">{formatCurrency(category.totalDeficit)}</span>
                       </span>
                       {category.lastTransactionDate && (
                         <span>
@@ -167,13 +167,13 @@ export function BudgetInbox({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
-                          variant=\"ghost\"
-                          size=\"sm\"
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleDismiss(category.id)}
                           disabled={isProcessing || isLoading}
-                          className=\"h-8 w-8 p-0 shrink-0\"
+                          className="h-8 w-8 p-0 shrink-0"
                         >
-                          <X className=\"h-4 w-4\" />
+                          <X className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -184,40 +184,40 @@ export function BudgetInbox({
                 </div>
 
                 {/* Quick Actions */}
-                <div className=\"flex flex-wrap gap-2 mb-3\">
+                <div className="flex flex-wrap gap-2 mb-3">
                   <Button
-                    size=\"sm\"
+                    size="sm"
                     onClick={() => handleQuickCover(category, suggestedQuickAmount)}
                     disabled={isProcessing || isLoading}
-                    className=\"h-8\"
+                    className="h-8"
                   >
-                    <DollarSign className=\"h-3 w-3 mr-1\" />
+                    <DollarSign className="h-3 w-3 mr-1" />
                     Cover {formatCurrency(suggestedQuickAmount)}
                     {isProcessing && category.lastTransactionAmount === suggestedQuickAmount && (
-                      <div className=\"ml-2 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent\" />
+                      <div className="ml-2 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
                     )}
                   </Button>
 
                   <Button
-                    size=\"sm\"
-                    variant=\"outline\"
+                    size="sm"
+                    variant="outline"
                     onClick={() => handleSetMonthlyCap(category, suggestedMonthlyCap)}
                     disabled={isProcessing || isLoading}
-                    className=\"h-8\"
+                    className="h-8"
                   >
-                    <Target className=\"h-3 w-3 mr-1\" />
+                    <Target className="h-3 w-3 mr-1" />
                     Set cap {formatCurrency(suggestedMonthlyCap)}
                     {isProcessing && (
-                      <div className=\"ml-2 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent\" />
+                      <div className="ml-2 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
                     )}
                   </Button>
 
                   <Button
-                    size=\"sm\"
-                    variant=\"ghost\"
+                    size="sm"
+                    variant="ghost"
                     onClick={() => handleAdvancedFunding(category.id)}
                     disabled={isProcessing || isLoading}
-                    className=\"h-8\"
+                    className="h-8"
                   >
                     Advanced...
                   </Button>
@@ -225,7 +225,7 @@ export function BudgetInbox({
 
                 {/* Advanced Funding Options */}
                 {isExpanded && (
-                  <div className=\"border-t pt-3\">
+                  <div className="border-t pt-3">
                     <CategoryFundingPopover
                       categoryName={category.name}
                       transactionAmount={suggestedQuickAmount}
@@ -248,14 +248,14 @@ export function BudgetInbox({
 
         {/* Batch Actions */}
         {unfundedCategories.length > 1 && (
-          <div className=\"flex justify-between items-center pt-3 border-t border-orange-200\">
-            <div className=\"text-sm text-orange-700\">
+          <div className="flex justify-between items-center pt-3 border-t border-orange-200">
+            <div className="text-sm text-orange-700">
               {unfundedCategories.length} categories need funding
             </div>
-            <div className=\"flex gap-2\">
+            <div className="flex gap-2">
               <Button
-                size=\"sm\"
-                variant=\"outline\"
+                size="sm"
+                variant="outline"
                 onClick={async () => {
                   // Batch dismiss all
                   for (const category of unfundedCategories) {
@@ -263,12 +263,12 @@ export function BudgetInbox({
                   }
                 }}
                 disabled={isLoading}
-                className=\"h-8\"
+                className="h-8"
               >
                 Ignore all this month
               </Button>
               <Button
-                size=\"sm\"
+                size="sm"
                 onClick={async () => {
                   // Batch fund all with smart defaults
                   for (const category of unfundedCategories) {
@@ -277,9 +277,9 @@ export function BudgetInbox({
                   }
                 }}
                 disabled={isLoading}
-                className=\"h-8\"
+                className="h-8"
               >
-                <CheckCircle className=\"h-3 w-3 mr-1\" />
+                <CheckCircle className="h-3 w-3 mr-1" />
                 Fund all
               </Button>
             </div>

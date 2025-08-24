@@ -4,6 +4,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { CategoryManagementLayout } from '@/components/categories/CategoryManagementLayout'
 import type { CategoryGroup, CategoryWithGroup } from '@/lib/types/database'
@@ -23,7 +24,8 @@ interface CategoryManagementPageProps {
 export default async function CategoryManagementPage({ 
   searchParams 
 }: CategoryManagementPageProps) {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   // Check authentication
   const { data: { user }, error: userError } = await supabase.auth.getUser()

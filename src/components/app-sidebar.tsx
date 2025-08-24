@@ -8,11 +8,8 @@ import {
   Home,
   LineChart,
   PieChart,
-  Settings,
   Wallet,
   TrendingUp,
-  Table,
-  Plus,
   User,
 } from "lucide-react"
 

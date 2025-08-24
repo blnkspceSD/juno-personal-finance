@@ -16,7 +16,7 @@ export default function AuthCodeError() {
           </h2>
           
           <p className="text-gray-600 mb-6">
-            Sorry, we couldn't verify your email confirmation link. This could happen if the link has expired or has already been used.
+            Sorry, we couldn&apos;t verify your email confirmation link. This could happen if the link has expired or has already been used.
           </p>
           
           <div className="space-y-3">

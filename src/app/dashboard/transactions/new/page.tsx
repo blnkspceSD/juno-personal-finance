@@ -1,10 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { RealtimeTransactionForm } from '@/components/transactions/RealtimeTransactionForm'
 import type { Category } from '@/lib/types/database'
 
 export default async function NewTransactionPage() {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const { data: { user }, error: userError } = await supabase.auth.getUser()
   if (userError || !user) {

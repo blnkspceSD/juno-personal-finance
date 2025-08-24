@@ -12,10 +12,10 @@
    * ======================================== */
   
   /* Primary Brand Colors - Mapped to scale tokens */
-  --juno-accent: var(--juno-accent-300); /* Maps to accent-300 (#85D6FF) */
+  --juno-accent: var(--juno-accent-900); /* Maps to accent-900 (#1D3F50) - Dark cyan */
   --juno-text: var(--juno-neutral-750);  /* Maps to neutral-750 (#212730) */
   --juno-bg: var(--juno-accent);         /* Background uses accent color */
-  --juno-on-accent: var(--juno-text);    /* Text on accent backgrounds */
+  --juno-on-accent: var(--juno-surface-50); /* Light text on dark accent backgrounds */
 
   /* ========================================
    * JUNO ACCENT RAMP - Your Exact Values
@@ -129,24 +129,161 @@
 
   /* ========================================
    * SEMANTIC COLORS (STATUS INDICATORS)
-   * Using exact values from design direction
+   * Complete scales matching the provided design
    * ======================================== */
   
-  --juno-success: #12B76A;              /* From design direction */
-  --juno-success-bg: #F0FDF9;           /* Light green background */
-  --juno-success-fg: #065F46;           /* Dark green text */
+  /* Success Scale (Green) - #44C12E primary */
+  --juno-success-100: #E8F5E8;          /* Lightest green */
+  --juno-success-200: #C8E6C8;          /* Light green */
+  --juno-success-300: #A3D4A3;          /* Medium light green */
+  --juno-success-400: #7FC27F;          /* Medium green */
+  --juno-success-500: #44C12E;          /* Primary success - from image */
+  --juno-success-600: #38A524;          /* Medium dark green */
+  --juno-success-700: #2D881C;          /* Dark green */
+  --juno-success-800: #226B15;          /* Darker green */
+  --juno-success-900: #1A5511;          /* Darkest green */
   
-  --juno-warning: #F5A623;              /* From design direction */
-  --juno-warning-bg: #FFFBEB;           /* Light amber background */
-  --juno-warning-fg: #92400E;           /* Dark amber text */
+  /* Warning Scale (Orange/Yellow) - #FFB121 primary */
+  --juno-warning-100: #FFF9E6;          /* Lightest yellow */
+  --juno-warning-200: #FFF0B3;          /* Light yellow */
+  --juno-warning-300: #FFE380;          /* Medium light yellow */
+  --juno-warning-400: #FFD24D;          /* Medium yellow */
+  --juno-warning-500: #FFB121;          /* Primary warning - from image */
+  --juno-warning-600: #E6941E;          /* Medium orange */
+  --juno-warning-700: #CC771A;          /* Dark orange */
+  --juno-warning-800: #B35A17;          /* Darker orange */
+  --juno-warning-900: #994D14;          /* Darkest orange */
   
-  --juno-danger: #EF4040;               /* From design direction */
-  --juno-danger-bg: #FEF2F2;            /* Light red background */
-  --juno-danger-fg: #991B1B;            /* Dark red text */
+  /* Danger Scale (Red/Pink) - #FF4769 primary */
+  --juno-danger-100: #FFE6EC;           /* Lightest pink */
+  --juno-danger-200: #FFB3C6;           /* Light pink */
+  --juno-danger-300: #FF809F;           /* Medium light pink */
+  --juno-danger-400: #FF6B85;           /* Medium pink */
+  --juno-danger-500: #FF4769;           /* Primary danger - from image */
+  --juno-danger-600: #E6405E;           /* Medium red */
+  --juno-danger-700: #CC3952;           /* Dark red */
+  --juno-danger-800: #B33247;           /* Darker red */
+  --juno-danger-900: #992B3C;           /* Darkest red */
   
-  --juno-info: var(--juno-accent);      /* Use primary accent for info */
-  --juno-info-bg: var(--juno-accent-50); /* Light accent background */
-  --juno-info-fg: var(--juno-text);     /* Primary text for info */
+  /* Info Scale (Blue) - #3083FF primary */
+  --juno-info-100: #E6F1FF;             /* Lightest blue */
+  --juno-info-200: #B3D6FF;             /* Light blue */
+  --juno-info-300: #80BAFF;             /* Medium light blue */
+  --juno-info-400: #4D9EFF;             /* Medium blue */
+  --juno-info-500: #3083FF;             /* Primary info - from image */
+  --juno-info-600: #2B75E6;             /* Medium dark blue */
+  --juno-info-700: #2666CC;             /* Dark blue */
+  --juno-info-800: #2058B3;             /* Darker blue */
+  --juno-info-900: #1B4A99;             /* Darkest blue */
+  
+  /* ========================================
+   * SHOPIFY-INSPIRED SEMANTIC COLOR TOKENS
+   * Purpose-driven naming following Polaris patterns
+   * ======================================== */
+  
+  /* Background Colors - Surface System */
+  --juno-color-bg-surface: var(--juno-surface-50);           /* Primary surface (white) */
+  --juno-color-bg-surface-secondary: var(--juno-surface-200); /* Secondary surface */
+  --juno-color-bg-surface-tertiary: var(--juno-surface-400);  /* Tertiary surface */
+  --juno-color-bg-surface-brand: var(--juno-accent-50);       /* Brand surface */
+  
+  /* Semantic Background Colors */
+  --juno-color-bg-surface-success: var(--juno-success-100);   /* Success surface */
+  --juno-color-bg-surface-warning: var(--juno-warning-100);   /* Warning surface */
+  --juno-color-bg-surface-critical: var(--juno-danger-100);   /* Critical surface */
+  --juno-color-bg-surface-info: var(--juno-info-100);         /* Info surface */
+  
+  /* Interactive Background States */
+  --juno-color-bg-surface-hover: var(--juno-surface-100);     /* Hover state */
+  --juno-color-bg-surface-active: var(--juno-surface-300);    /* Active/pressed state */
+  --juno-color-bg-surface-selected: var(--juno-accent-100);   /* Selected state */
+  --juno-color-bg-surface-disabled: var(--juno-surface-200);  /* Disabled state */
+  
+  /* Text Colors - Hierarchy System */
+  --juno-color-text: var(--juno-text);                        /* Primary text */
+  --juno-color-text-secondary: var(--juno-muted-fg);          /* Secondary text */
+  --juno-color-text-disabled: rgba(33, 39, 48, 0.38);        /* Disabled text */
+  --juno-color-text-brand: var(--juno-accent-600);            /* Brand text */
+  
+  /* Inverse Text Colors - For Dark Backgrounds */
+  --juno-color-text-inverse: var(--juno-surface-50);          /* White text on dark backgrounds */
+  --juno-color-text-inverse-secondary: rgba(255, 255, 255, 0.72); /* Secondary white text */
+  --juno-color-text-inverse-disabled: rgba(255, 255, 255, 0.38);  /* Disabled white text */
+  
+  /* Semantic Text Colors */
+  --juno-color-text-success: var(--juno-success-700);         /* Success text */
+  --juno-color-text-warning: var(--juno-warning-700);         /* Warning text */
+  --juno-color-text-critical: var(--juno-danger-700);         /* Critical text */
+  --juno-color-text-info: var(--juno-info-700);               /* Info text */
+  
+  /* Interactive Text States */
+  --juno-color-text-hover: var(--juno-neutral-800);           /* Hover text */
+  --juno-color-text-active: var(--juno-neutral-900);          /* Active text */
+  --juno-color-text-link: var(--juno-accent-600);             /* Link text */
+  --juno-color-text-link-hover: var(--juno-accent-700);       /* Link hover */
+  --juno-color-text-link-active: var(--juno-accent-800);      /* Link active */
+  
+  /* Border Colors - Hierarchy System */
+  --juno-color-border: var(--juno-border);                    /* Primary border */
+  --juno-color-border-secondary: var(--juno-border-alpha-subtle); /* Subtle border */
+  --juno-color-border-strong: var(--juno-border-alpha-strong); /* Strong border */
+  --juno-color-border-brand: var(--juno-accent-300);          /* Brand border */
+  
+  /* Semantic Border Colors */
+  --juno-color-border-success: var(--juno-success-300);       /* Success border */
+  --juno-color-border-warning: var(--juno-warning-300);       /* Warning border */
+  --juno-color-border-critical: var(--juno-danger-300);       /* Critical border */
+  --juno-color-border-info: var(--juno-info-300);             /* Info border */
+  
+  /* Interactive Border States */
+  --juno-color-border-hover: var(--juno-border-alpha-medium); /* Hover border */
+  --juno-color-border-active: var(--juno-border-alpha-strong); /* Active border */
+  --juno-color-border-focus: var(--juno-accent-400);          /* Focus border */
+  --juno-color-border-disabled: var(--juno-border-alpha-subtle); /* Disabled border */
+  
+  /* Icon Colors - Following Text Hierarchy */
+  --juno-color-icon: var(--juno-color-text);                  /* Primary icon */
+  --juno-color-icon-secondary: var(--juno-color-text-secondary); /* Secondary icon */
+  --juno-color-icon-disabled: var(--juno-color-text-disabled); /* Disabled icon */
+  --juno-color-icon-brand: var(--juno-color-text-brand);      /* Brand icon */
+  
+  /* Inverse Icon Colors - For Dark Backgrounds */
+  --juno-color-icon-inverse: var(--juno-color-text-inverse);  /* White icon on dark backgrounds */
+  --juno-color-icon-inverse-secondary: var(--juno-color-text-inverse-secondary); /* Secondary white icon */
+  --juno-color-icon-inverse-disabled: var(--juno-color-text-inverse-disabled);   /* Disabled white icon */
+  
+  /* Semantic Icon Colors */
+  --juno-color-icon-success: var(--juno-color-text-success);  /* Success icon */
+  --juno-color-icon-warning: var(--juno-color-text-warning);  /* Warning icon */
+  --juno-color-icon-critical: var(--juno-color-text-critical); /* Critical icon */
+  --juno-color-icon-info: var(--juno-color-text-info);        /* Info icon */
+  
+  /* Action/Button Colors */
+  --juno-color-bg-fill-brand: var(--juno-accent);             /* Primary button background */
+  --juno-color-bg-fill-brand-hover: var(--juno-accent-800);   /* Primary button hover */
+  --juno-color-bg-fill-brand-active: var(--juno-accent-800);  /* Primary button active */
+  --juno-color-bg-fill-brand-disabled: var(--juno-accent-300); /* Primary button disabled */
+  
+  --juno-color-bg-fill-secondary: var(--juno-surface-50);     /* Secondary button background */
+  --juno-color-bg-fill-secondary-hover: var(--juno-surface-100); /* Secondary button hover */
+  --juno-color-bg-fill-secondary-active: var(--juno-surface-200); /* Secondary button active */
+  
+  /* Legacy tokens for backward compatibility */
+  --juno-success: var(--juno-success-500); /* #44C12E */
+  --juno-success-bg: var(--juno-color-bg-surface-success); /* Light green background */
+  --juno-success-fg: var(--juno-color-text-success); /* Dark green text */
+  
+  --juno-warning: var(--juno-warning-500); /* #FFB121 */
+  --juno-warning-bg: var(--juno-color-bg-surface-warning); /* Light yellow background */
+  --juno-warning-fg: var(--juno-color-text-warning); /* Dark orange text */
+  
+  --juno-danger: var(--juno-danger-500); /* #FF4769 */
+  --juno-danger-bg: var(--juno-color-bg-surface-critical); /* Light pink background */
+  --juno-danger-fg: var(--juno-color-text-critical); /* Dark red text */
+  
+  --juno-info: var(--juno-info-500);    /* #3083FF */
+  --juno-info-bg: var(--juno-color-bg-surface-info); /* Light blue background */
+  --juno-info-fg: var(--juno-color-text-info); /* Dark blue text */
 
   /* ========================================
    * TYPOGRAPHY SCALE (MAJOR THIRD - 1.25×)
@@ -425,7 +562,7 @@
  * Using design tokens for consistent theming
  * ======================================== */
 
-/* PRIMARY (accent) button */
+/* PRIMARY (accent) button - Using Shopify-inspired semantic tokens */
 .btn--primary {
   --btn-h: var(--juno-btn-height-lg);      /* 40px from mobile tokens */
   --btn-radius: var(--juno-radius-lg);     /* 16px - matches design system */
@@ -440,12 +577,12 @@
   padding: 0 var(--btn-pad-x);
   border-radius: var(--btn-radius);
 
-  /* Juno brand colors */
-  background: var(--juno-accent);
-  color: var(--juno-text);
+  /* Semantic button colors following Shopify patterns */
+  background: var(--juno-color-bg-fill-brand);
+  color: var(--juno-color-text-inverse); /* Inverse text for dark backgrounds */
+  border: none; /* Remove border for cleaner look */
 
   /* Sophisticated shadows using Juno tokens */
-  border: 1px solid var(--juno-accent-400);
   box-shadow: var(--juno-shadow-button-primary);
 
   font-weight: 600;
@@ -454,35 +591,39 @@
   transition: 
     transform var(--juno-duration-fast) var(--juno-ease-out), 
     box-shadow var(--juno-duration-normal) var(--juno-ease-out), 
-    background-color var(--juno-duration-normal) var(--juno-ease-out), 
-    filter var(--juno-duration-normal) var(--juno-ease-out);
+    background-color var(--juno-duration-normal) var(--juno-ease-out);
 }
 
-/* Hover: tiny lift + a hair brighter */
+/* Hover: same style as secondary button with slight white overlay */
 .btn--primary:hover {
-  filter: brightness(1.03);
-  box-shadow: var(--juno-shadow-button-primary-hover);
+  background: var(--juno-color-bg-fill-brand);
+  box-shadow: var(--juno-shadow-button-secondary-hover); /* Use secondary button shadow style */
+  /* Add subtle white overlay for hover effect */
+  background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08));
 }
 
-/* Active: nudge down, tighter shadow */
+/* Active: semantic active state */
 .btn--primary:active {
+  background: var(--juno-color-bg-fill-brand-active);
   transform: translateY(1px);
   box-shadow: var(--juno-shadow-button-primary-active);
 }
 
-/* Focus: visible but calm outline from brand text */
-.btn--primary:focus-visible {
-  outline: var(--juno-focus-ring-width) solid var(--juno-focus-ring);
-  outline-offset: var(--juno-focus-ring-offset);
-}
-
-/* Disabled */
+/* Disabled: adjusted for new dark primary color */
 .btn--primary:disabled {
-  opacity: 0.6;
+  background: var(--juno-accent-600); /* Darker disabled state for better visual hierarchy */
+  color: var(--juno-color-text-inverse-disabled); /* Muted white text */
+  opacity: 0.6; /* Add slight opacity for additional disabled indication */
   pointer-events: none;
 }
 
-/* SECONDARY button (white pill) */
+/* Focus: semantic focus state */
+.btn--primary:focus-visible {
+  outline: var(--juno-focus-ring-width) solid var(--juno-color-border-focus);
+  outline-offset: var(--juno-focus-ring-offset);
+}
+
+/* SECONDARY button - Using Shopify-inspired semantic tokens */
 .btn--secondary {
   --btn-h: var(--juno-btn-height);         /* 36px - standard height */
   --btn-radius: var(--juno-radius-md);     /* 12px - matches design system */
@@ -495,12 +636,12 @@
   gap: var(--btn-gap);
   height: var(--btn-h);
   padding: 0 var(--btn-pad-x);
-  border: 0;
   border-radius: var(--btn-radius);
   
-  /* Juno surface colors */
-  background: var(--juno-surface-50);
-  color: var(--juno-text);
+  /* Semantic secondary button colors */
+  background: var(--juno-color-bg-fill-secondary);
+  color: var(--juno-color-text);
+  border: 1px solid var(--juno-color-border);
   
   font-weight: 500;
   line-height: 1;
@@ -513,27 +654,31 @@
   box-shadow: var(--juno-shadow-button-secondary);
 }
 
-/* Hover: slightly brighter surface + stronger ring */
+/* Hover: semantic hover state */
 .btn--secondary:hover {
-  background: var(--juno-surface-100);
+  background: var(--juno-color-bg-fill-secondary-hover);
   box-shadow: var(--juno-shadow-button-secondary-hover);
 }
 
-/* Active/pressed: tiny nudge down + tighter shadow */
+/* Active: semantic active state */
 .btn--secondary:active {
+  background: var(--juno-color-bg-fill-secondary-active);
   transform: translateY(1px);
   box-shadow: var(--juno-shadow-button-secondary-active);
 }
 
-/* Keyboard focus: visible but calm ring */
+/* Focus: semantic focus state */
 .btn--secondary:focus-visible {
-  outline: var(--juno-focus-ring-width) solid var(--juno-focus-ring);
+  outline: var(--juno-focus-ring-width) solid var(--juno-color-border-focus);
   outline-offset: var(--juno-focus-ring-offset);
 }
 
-/* Disabled */
+/* Disabled: semantic disabled state */
 .btn--secondary:disabled {
-  opacity: 0.6;
+  background: var(--juno-color-bg-surface-disabled);
+  color: var(--juno-color-text-disabled);
+  border-color: var(--juno-color-border-disabled);
+  opacity: 1; /* Remove opacity since we have semantic disabled colors */
   pointer-events: none;
 }
 

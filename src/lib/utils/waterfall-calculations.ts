@@ -265,7 +265,7 @@ export function transformTransactionsToWaterfall(
   const calculation = calculateCategorySpending(transactions)
   
   // Apply smart grouping and minimum width logic to expense categories
-  let processedExpenseCategories = calculation.expenses.categories
+  const processedExpenseCategories = calculation.expenses.categories
   
   // Skip grouping - just use original categories
   

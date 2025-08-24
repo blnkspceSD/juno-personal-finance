@@ -1,15 +1,18 @@
 import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
+import { ConnectionStatus } from "@/components/ui/connection-status"
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
   const {
     data: { user },
@@ -44,6 +47,9 @@ export default async function DashboardLayout({
           {/* Spacer to push notifications to far right */}
           <div className="flex-1"></div>
           
+          {/* Connection Status */}
+          <ConnectionStatus />
+          
           {/* Mail/Notifications */}
           <button className="btn--secondary btn--icon-only">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -52,7 +58,7 @@ export default async function DashboardLayout({
           </button>
         </header>
         
-        <main className="flex flex-1 flex-col gap-4 p-4">
+        <main className="flex flex-1 flex-col gap-4 p-juno-16">
           <div className="max-w-7xl mx-auto w-full">
             {children}
           </div>

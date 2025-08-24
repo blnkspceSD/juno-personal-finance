@@ -346,7 +346,7 @@ export default function CreateBudgetPage() {
                 </div>
                 {remaining < 0 && (
                   <p className="text-sm text-red-600 mt-1">
-                    You've allocated more than your income!
+                    You&apos;ve allocated more than your income!
                   </p>
                 )}
                 {remaining > 0 && (
