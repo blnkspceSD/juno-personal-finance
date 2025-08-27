@@ -23,17 +23,17 @@ interface RecentTransactionsCardProps {
 export function RecentTransactionsCard({ transactions }: RecentTransactionsCardProps) {
   return (
     <Card className="bg-juno-surface-50 rounded-juno-xl shadow-juno-card-with-stroke flex flex-col h-full">
-      <CardHeader className="pb-juno-4">
-        <CardTitle className="text-sm text-gray-400 font-medium tracking-wider">RECENT TRANSACTIONS</CardTitle>
+      <CardHeader className="px-juno-6 pb-juno-4">
+        <CardTitle className="!text-sm !text-gray-400 !font-medium tracking-wider">RECENT TRANSACTIONS</CardTitle>
       </CardHeader>
-      <CardContent className="p-0 flex-1 flex flex-col">
+      <CardContent className="flex-1 flex flex-col" noPadding>
         {transactions.length > 0 ? (
           <>
             <div className="space-y-0 flex-1">
               {transactions.slice(0, 7).map((transaction) => (
               <div 
                 key={transaction.id} 
-                className="flex items-center px-juno-6 py-juno-4 hover:bg-juno-surface-100 transition-colors duration-150"
+                className="flex items-center px-juno-4 py-juno-4 hover:bg-juno-surface-300 transition-colors duration-150"
               >
                 {/* Color indicator bar */}
                 <div 
@@ -60,15 +60,15 @@ export function RecentTransactionsCard({ transactions }: RecentTransactionsCardP
               ))}
             </div>
             
-            {/* Action Buttons - Side by side at bottom */}
-            <div className="border-t border-juno-border p-juno-4 flex gap-juno-2">
-              <Button size="sm" className="btn--primary flex-1" asChild>
+            {/* Action Buttons - Vertical layout */}
+            <div className="px-juno-6 pb-juno-6 pt-juno-4 space-y-juno-3">
+              <Button variant="primary" size="md" className="w-full" asChild>
                 <Link href="/dashboard/transactions/new">
                   <Plus className="h-4 w-4 mr-2" />
                   Add transaction
                 </Link>
               </Button>
-              <Button variant="ghost" size="sm" className="flex-1 text-juno-muted-fg hover:text-juno-text" asChild>
+              <Button variant="secondary" size="md" className="w-full" asChild>
                 <Link href="/dashboard/transactions">
                   View all
                 </Link>
@@ -84,7 +84,7 @@ export function RecentTransactionsCard({ transactions }: RecentTransactionsCardP
                 </svg>
               </div>
               <p className="text-sm text-juno-muted-fg mb-juno-4">No transactions yet</p>
-              <Button size="sm" className="btn--primary" asChild>
+              <Button variant="primary" size="md" asChild>
                 <Link href="/dashboard/transactions/new">
                   <Plus className="h-4 w-4 mr-2" />
                   Add Transaction

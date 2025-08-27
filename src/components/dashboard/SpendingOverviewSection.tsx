@@ -58,7 +58,7 @@ export function SpendingOverviewSection({
 
   return (
     <Card className="bg-juno-surface-50 rounded-juno-xl shadow-juno-card-with-stroke">
-      <CardHeader className="pb-juno-4">
+      <CardHeader className="pb-juno-4 border-b-0">
         <div className="space-y-juno-2">
           <p className="text-sm text-gray-400 font-medium tracking-wider">SPENDING THIS MONTH</p>
           <div className="flex items-baseline space-x-juno-2">

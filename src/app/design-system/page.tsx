@@ -7,8 +7,21 @@
 
 'use client'
 
-import { useState } from 'react'
-import { ExplainChip } from '@/components/ui/explain-chip'
+import React, { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardSubtitle, 
+  CardContent, 
+  CardFooter, 
+  CardMeta, 
+  CardActions, 
+  CardBadge 
+} from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
 type TabKey = 'overview' | 'colors' | 'components' | 'dataviz' | 'tokens'
 
@@ -294,137 +307,1072 @@ function ColorStrategyTab() {
 
 // Components Tab Component
 function ComponentsTab() {
+  const [activeComponent, setActiveComponent] = React.useState('button')
+  const [activeButtonTab, setActiveButtonTab] = React.useState('primary')
+  const [activeTabExample, setActiveTabExample] = React.useState('basic')
+  const [activeCardExample, setActiveCardExample] = React.useState('basic')
+
+  const buttonExamples = {
+    primary: {
+      title: "Primary",
+      description: "Used most in the interface. Only use another style if a button requires more or less visual weight.",
+      component: <Button variant="primary">Add product</Button>
+    },
+    secondary: {
+      title: "Secondary", 
+      description: "Used for secondary actions that are less important than primary actions.",
+      component: <Button variant="secondary">View details</Button>
+    },
+    outline: {
+      title: "Outline",
+      description: "Used for secondary actions that need more visual weight than ghost buttons.",
+      component: <Button variant="outline">Edit settings</Button>
+    },
+    ghost: {
+      title: "Ghost",
+      description: "Used for tertiary actions or less important interactions.",
+      component: <Button variant="ghost">Cancel</Button>
+    },
+    destructive: {
+      title: "Destructive",
+      description: "Used for actions that are difficult or impossible to undo.",
+      component: <Button variant="destructive">Delete product</Button>
+    },
+    success: {
+      title: "Success",
+      description: "Used for positive actions and confirmations.",
+      component: <Button variant="success">Save changes</Button>
+    },
+    warning: {
+      title: "Warning", 
+      description: "Used for actions that require caution.",
+      component: <Button variant="warning">Archive item</Button>
+    },
+    'with-icon': {
+      title: "With icon",
+      description: "Buttons can include an icon to help convey their purpose.",
+      component: <Button variant="primary" icon="📦">Add product</Button>
+    },
+    'icon-only': {
+      title: "Icon only",
+      description: "Use when an icon alone is sufficient and space is limited.",
+      component: <Button variant="icon" icon="⚙️" aria-label="Settings" />
+    },
+    sizes: {
+      title: "Button sizes",
+      description: "Use different sizes to create visual hierarchy and fit different interface contexts.",
+      component: (
+        <div className="flex items-center gap-3">
+          <Button variant="secondary" size="sm">Small</Button>
+          <Button variant="secondary" size="md">Medium</Button>
+          <Button variant="secondary" size="lg">Large</Button>
+        </div>
+      )
+    },
+    states: {
+      title: "Button states",
+      description: "Buttons communicate their current state through visual and programmatic indicators.",
+      component: (
+        <div className="flex items-center gap-3">
+          <Button variant="primary">Normal</Button>
+          <Button variant="primary" loading>Loading</Button>
+          <Button variant="primary" disabled>Disabled</Button>
+        </div>
+      )
+    }
+  }
+
+  const tabExamples = {
+    basic: {
+      title: "Basic tabs",
+      description: "Use tabs to organize content into sections. Only one tab can be active at a time.",
+      component: (
+        <Tabs value="tab1" onValueChange={() => {}}>
+          <TabsList>
+            <TabsTrigger value="tab1">Overview</TabsTrigger>
+            <TabsTrigger value="tab2">Analytics</TabsTrigger>
+            <TabsTrigger value="tab3">Reports</TabsTrigger>
+          </TabsList>
+          <TabsContent value="tab1" className="mt-4 p-4 bg-juno-surface-50 rounded-lg border border-juno-border">
+            <p className="text-juno-text">Overview content goes here...</p>
+          </TabsContent>
+        </Tabs>
+      )
+    },
+    withIcons: {
+      title: "With icons",
+      description: "Add icons to tab triggers to enhance visual hierarchy and quick recognition.",
+      component: (
+        <Tabs value="dashboard" onValueChange={() => {}}>
+          <TabsList>
+            <TabsTrigger value="dashboard" icon="📊">Dashboard</TabsTrigger>
+            <TabsTrigger value="users" icon="👥">Users</TabsTrigger>
+            <TabsTrigger value="settings" icon="⚙️">Settings</TabsTrigger>
+          </TabsList>
+          <TabsContent value="dashboard" className="mt-4 p-4 bg-juno-surface-50 rounded-lg border border-juno-border">
+            <p className="text-juno-text">Dashboard with charts and metrics...</p>
+          </TabsContent>
+        </Tabs>
+      )
+    },
+    pill: {
+      title: "Pill variant",
+      description: "Use pill tabs for a more modern, contained appearance.",
+      component: (
+        <Tabs value="active" onValueChange={() => {}} variant="pill">
+          <TabsList>
+            <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="completed">Completed</TabsTrigger>
+          </TabsList>
+          <TabsContent value="active" className="mt-4 p-4 bg-juno-surface-50 rounded-lg border border-juno-border">
+            <p className="text-juno-text">Active items are displayed here...</p>
+          </TabsContent>
+        </Tabs>
+      )
+    },
+    vertical: {
+      title: "Vertical orientation",
+      description: "Use vertical tabs when you have longer tab labels or need to save horizontal space.",
+      component: (
+        <Tabs value="profile" onValueChange={() => {}} orientation="vertical" className="flex gap-4">
+          <TabsList className="flex-col w-48">
+            <TabsTrigger value="profile" className="w-full justify-start">Profile Settings</TabsTrigger>
+            <TabsTrigger value="notifications" className="w-full justify-start">Notifications</TabsTrigger>
+            <TabsTrigger value="security" className="w-full justify-start">Security</TabsTrigger>
+            <TabsTrigger value="billing" className="w-full justify-start">Billing</TabsTrigger>
+          </TabsList>
+          <TabsContent value="profile" className="flex-1 p-4 bg-juno-surface-50 rounded-lg border border-juno-border">
+            <p className="text-juno-text">Profile settings content...</p>
+          </TabsContent>
+        </Tabs>
+      )
+    },
+    sizes: {
+      title: "Tab sizes",
+      description: "Different sizes to match your interface hierarchy.",
+      component: (
+        <div className="space-y-6">
+          <div>
+            <h4 className="text-sm font-medium text-juno-text mb-2">Small tabs</h4>
+            <Tabs value="small1" onValueChange={() => {}} size="sm">
+              <TabsList>
+                <TabsTrigger value="small1">Small</TabsTrigger>
+                <TabsTrigger value="small2">Compact</TabsTrigger>
+                <TabsTrigger value="small3">Minimal</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-juno-text mb-2">Medium tabs (default)</h4>
+            <Tabs value="med1" onValueChange={() => {}} size="md">
+              <TabsList>
+                <TabsTrigger value="med1">Medium</TabsTrigger>
+                <TabsTrigger value="med2">Standard</TabsTrigger>
+                <TabsTrigger value="med3">Default</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-juno-text mb-2">Large tabs</h4>
+            <Tabs value="large1" onValueChange={() => {}} size="lg">
+              <TabsList>
+                <TabsTrigger value="large1">Large</TabsTrigger>
+                <TabsTrigger value="large2">Prominent</TabsTrigger>
+                <TabsTrigger value="large3">Bold</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </div>
+      )
+    },
+    accessibility: {
+      title: "Keyboard navigation",
+      description: "Tabs support full keyboard navigation and screen readers. Try using Arrow keys, Home, and End.",
+      component: (
+        <div className="space-y-4">
+          <div className="bg-juno-info-bg border border-juno-info p-4 rounded-lg">
+            <p className="text-juno-info-fg text-sm mb-2"><strong>Keyboard shortcuts:</strong></p>
+            <ul className="text-juno-info-fg text-xs space-y-1">
+              <li>• <kbd className="px-1 bg-white text-juno-text rounded text-xs">←→</kbd> Navigate horizontally</li>
+              <li>• <kbd className="px-1 bg-white text-juno-text rounded text-xs">↑↓</kbd> Navigate vertically</li>
+              <li>• <kbd className="px-1 bg-white text-juno-text rounded text-xs">Home</kbd> First tab</li>
+              <li>• <kbd className="px-1 bg-white text-juno-text rounded text-xs">End</kbd> Last tab</li>
+              <li>• <kbd className="px-1 bg-white text-juno-text rounded text-xs">Enter</kbd> or <kbd className="px-1 bg-white text-juno-text rounded text-xs">Space</kbd> Activate tab</li>
+            </ul>
+          </div>
+          <Tabs value="accessibility1" onValueChange={() => {}}>
+            <TabsList>
+              <TabsTrigger value="accessibility1">Try keyboard navigation</TabsTrigger>
+              <TabsTrigger value="accessibility2">WCAG 2.1 AA compliant</TabsTrigger>
+              <TabsTrigger value="accessibility3">Screen reader friendly</TabsTrigger>
+            </TabsList>
+            <TabsContent value="accessibility1" className="mt-4 p-4 bg-juno-surface-50 rounded-lg border border-juno-border">
+              <p className="text-juno-text">Click here then use arrow keys to navigate tabs!</p>
+            </TabsContent>
+          </Tabs>
+        </div>
+      )
+    }
+  }
+
+  const cardExamples = {
+    basic: {
+      title: "Basic card",
+      description: "A simple card with header, content, and footer sections.",
+      component: (
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle>Project Alpha</CardTitle>
+            <CardSubtitle>Data analysis dashboard</CardSubtitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-juno-text">This project focuses on creating comprehensive analytics for user engagement patterns.</p>
+          </CardContent>
+          <CardFooter>
+            <CardMeta>
+              <span>Updated 2 hours ago</span>
+              <span>By John Doe</span>
+            </CardMeta>
+            <CardActions>
+              <Button variant="outline" size="sm">View</Button>
+              <Button variant="primary" size="sm">Edit</Button>
+            </CardActions>
+          </CardFooter>
+        </Card>
+      )
+    },
+    variants: {
+      title: "Card variants",
+      description: "Different visual styles for cards including elevated, flat, outlined, and status variants.",
+      component: (
+        <div className="grid grid-cols-2 gap-4 max-w-4xl">
+          <Card variant="default" className="text-center">
+            <CardContent>
+              <h4 className="font-medium text-juno-text mb-2">Default</h4>
+              <p className="text-juno-muted-fg text-sm">Standard card with subtle shadow</p>
+            </CardContent>
+          </Card>
+          <Card variant="elevated" className="text-center">
+            <CardContent>
+              <h4 className="font-medium text-juno-text mb-2">Elevated</h4>
+              <p className="text-juno-muted-fg text-sm">Enhanced shadow for prominence</p>
+            </CardContent>
+          </Card>
+          <Card variant="flat" className="text-center">
+            <CardContent>
+              <h4 className="font-medium text-juno-text mb-2">Flat</h4>
+              <p className="text-juno-muted-fg text-sm">No shadow, border only</p>
+            </CardContent>
+          </Card>
+          <Card variant="outlined" className="text-center">
+            <CardContent>
+              <h4 className="font-medium text-juno-text mb-2">Outlined</h4>
+              <p className="text-juno-muted-fg text-sm">Prominent border emphasis</p>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    },
+    interactive: {
+      title: "Interactive cards",
+      description: "Cards that respond to user interactions with hover and click effects.",
+      component: (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+          <Card interactive={true} className="cursor-pointer">
+            <CardContent>
+              <h4 className="font-medium text-juno-text mb-2">Interactive Card</h4>
+              <p className="text-juno-muted-fg text-sm">Hover me to see the interactive effect</p>
+            </CardContent>
+          </Card>
+          <Card interactive="clickable" className="cursor-pointer">
+            <CardContent>
+              <h4 className="font-medium text-juno-text mb-2">Clickable Card</h4>
+              <p className="text-juno-muted-fg text-sm">Click me for a different interaction style</p>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    },
+    status: {
+      title: "Status cards",
+      description: "Cards with semantic color indicators for success, warning, error, and info states.",
+      component: (
+        <div className="grid grid-cols-2 gap-4 max-w-4xl">
+          <Card variant="success">
+            <CardContent>
+              <h4 className="font-medium text-juno-success-fg mb-2">Success</h4>
+              <p className="text-juno-success-fg text-sm">Operation completed successfully</p>
+            </CardContent>
+          </Card>
+          <Card variant="warning">
+            <CardContent>
+              <h4 className="font-medium text-juno-warning-fg mb-2">Warning</h4>
+              <p className="text-juno-warning-fg text-sm">Please review before proceeding</p>
+            </CardContent>
+          </Card>
+          <Card variant="error">
+            <CardContent>
+              <h4 className="font-medium text-juno-danger-fg mb-2">Error</h4>
+              <p className="text-juno-danger-fg text-sm">An error occurred during processing</p>
+            </CardContent>
+          </Card>
+          <Card variant="info">
+            <CardContent>
+              <h4 className="font-medium text-juno-info-fg mb-2">Info</h4>
+              <p className="text-juno-info-fg text-sm">Additional information available</p>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    },
+    withMedia: {
+      title: "Cards with media",
+      description: "Cards that include images or other media content with proper aspect ratios.",
+      component: (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+          <Card>
+            <div className="bg-gradient-to-br from-juno-accent-100 to-juno-accent-200 h-48 flex items-center justify-center">
+              <span className="text-juno-accent-600 font-medium">16:9 Aspect Ratio</span>
+            </div>
+            <CardHeader>
+              <CardTitle>Mountain Landscape</CardTitle>
+              <CardSubtitle>Photography Collection</CardSubtitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-juno-text text-sm">Beautiful mountain scenery captured during golden hour.</p>
+              <CardMeta>
+                <span>📸 Photography</span>
+                <span>🕒 2 days ago</span>
+              </CardMeta>
+            </CardContent>
+          </Card>
+          <Card>
+            <div className="bg-gradient-to-br from-juno-success-100 to-juno-success-200 aspect-square flex items-center justify-center">
+              <span className="text-juno-success-600 font-medium">1:1 Aspect Ratio</span>
+            </div>
+            <CardHeader>
+              <CardTitle>Profile Avatar</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-juno-text text-sm">Square format perfect for profile images.</p>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    },
+    layouts: {
+      title: "Card layouts",
+      description: "Different layout options including horizontal cards and compact variants.",
+      component: (
+        <div className="space-y-6 max-w-4xl">
+          <Card layout="horizontal">
+            <div className="bg-gradient-to-br from-juno-info-100 to-juno-info-200 w-48 flex items-center justify-center">
+              <span className="text-juno-info-600 font-medium">Media</span>
+            </div>
+            <div className="flex-1">
+              <CardHeader>
+                <CardTitle>Horizontal Card</CardTitle>
+                <CardSubtitle>Side-by-side layout</CardSubtitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-juno-text">Horizontal cards are perfect for list views where you want to display media alongside content.</p>
+              </CardContent>
+            </div>
+          </Card>
+          <Card layout="compact" className="max-w-md">
+            <CardHeader>
+              <CardTitle>Compact Card</CardTitle>
+              <CardSubtitle>Reduced padding</CardSubtitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-juno-text">Compact cards use less space and are ideal for dense layouts.</p>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    },
+    states: {
+      title: "Card states",
+      description: "Cards can show loading, selected, and disabled states.",
+      component: (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl">
+          <Card loading>
+            <CardHeader>
+              <CardTitle>Loading Card</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-juno-text">This card shows a loading shimmer effect.</p>
+            </CardContent>
+          </Card>
+          <Card selected>
+            <CardHeader>
+              <CardTitle>Selected Card</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-juno-text">This card is in a selected state.</p>
+            </CardContent>
+          </Card>
+          <Card disabled>
+            <CardHeader>
+              <CardTitle>Disabled Card</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-juno-text">This card is disabled and not interactive.</p>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    },
+    withBadge: {
+      title: "Cards with badges",
+      description: "Cards can include badge indicators for status or category information.",
+      component: (
+        <div className="grid grid-cols-2 gap-4 max-w-4xl">
+          <Card className="relative">
+            <CardBadge>New</CardBadge>
+            <CardHeader>
+              <CardTitle>Featured Article</CardTitle>
+              <CardSubtitle>Just published</CardSubtitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-juno-text text-sm">This article has been recently added to our collection.</p>
+            </CardContent>
+          </Card>
+          <Card className="relative">
+            <CardBadge variant="success">✓ Verified</CardBadge>
+            <CardHeader>
+              <CardTitle>Verified Account</CardTitle>
+              <CardSubtitle>Premium member</CardSubtitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-juno-text text-sm">This account has been verified by our team.</p>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    }
+  }
+
+  const buttonTabs = Object.keys(buttonExamples)
+  const currentButtonExample = buttonExamples[activeButtonTab as keyof typeof buttonExamples]
+  
+  const tabTabs = Object.keys(tabExamples)
+  const currentTabExample = tabExamples[activeTabExample as keyof typeof tabExamples]
+  
+  const cardTabs = Object.keys(cardExamples)
+  const currentCardExample = cardExamples[activeCardExample as keyof typeof cardExamples]
+
   return (
-    <div className="space-y-12">
-      {/* Professional Interface Patterns */}
-      <div className="space-y-8">
-        <h2 className="text-2xl font-semibold text-juno-text">Professional Interface Patterns</h2>
-        
-        {/* Dashboard Pattern */}
-        <div className="bg-white p-8 rounded-juno-xl shadow-juno-card-with-stroke">
-          <h3 className="text-lg font-semibold text-juno-text mb-6">Clean Dashboard Pattern (Cluely-inspired)</h3>
-          <div className="bg-juno-surface-50 p-6 rounded-juno-xl border border-juno-border-alpha-subtle">
-            
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-juno-border-alpha-soft">
-              <div>
-                <h4 className="text-lg font-semibold text-juno-text">Financial Dashboard</h4>
-                <p className="text-juno-muted-fg text-sm mt-1">Track your spending and savings</p>
-              </div>
-              <button className="btn--primary">
-                <span className="btn__lead">Add Transaction</span>
-              </button>
-            </div>
-
-            {/* Content Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              
-              {/* Stat Card 1 */}
-              <div className="bg-white p-4 rounded-juno-xl border border-juno-border-alpha-soft">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-juno-surface-200 rounded-full flex items-center justify-center">
-                    <span className="text-xs">💰</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-juno-muted-fg">Total Balance</p>
-                    <p className="text-lg font-semibold text-juno-text">RM 12,450</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Stat Card 2 */}
-              <div className="bg-white p-4 rounded-juno-xl border border-juno-border-alpha-soft">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-juno-surface-200 rounded-full flex items-center justify-center">
-                    <span className="text-xs">📊</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-juno-muted-fg">This Month</p>
-                    <p className="text-lg font-semibold text-juno-text">RM 3,240</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Stat Card 3 */}
-              <div className="bg-white p-4 rounded-juno-xl border border-juno-border-alpha-soft">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-juno-surface-200 rounded-full flex items-center justify-center">
-                    <span className="text-xs">🎯</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-juno-muted-fg">Budget Left</p>
-                    <p className="text-lg font-semibold text-juno-text">RM 760</p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* Button Examples */}
-        <div className="bg-white p-8 rounded-juno-xl shadow-juno-card-with-stroke">
-          <h3 className="text-lg font-semibold text-juno-text mb-6">Button Components</h3>
-          
-          <div className="space-y-6">
-            <div>
-              <h4 className="font-medium text-juno-text mb-4">Primary Buttons</h4>
-              <div className="flex flex-wrap gap-4 items-center">
-                <button className="btn--primary">
-                  <span className="btn__lead">Save Changes</span>
-                </button>
-                <button className="btn--primary">
-                  <span className="btn__lead">Create</span>
-                  <span className="btn__sub">New</span>
-                </button>
-                <button className="btn--primary" disabled>
-                  <span className="btn__lead">Disabled</span>
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-medium text-juno-text mb-4">Secondary Buttons</h4>
-              <div className="flex flex-wrap gap-4 items-center">
-                <button className="btn--secondary">
-                  Cancel
-                </button>
-                <button className="btn--secondary">
-                  <span>Settings</span>
-                  <span className="icon">⚙️</span>
-                </button>
-                <button className="btn--secondary btn--icon-only">
-                  <span className="icon">×</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ExplainChip Component */}
-        <div className="bg-white p-8 rounded-juno-xl shadow-juno-card-with-stroke">
-          <h3 className="text-lg font-semibold text-juno-text mb-6">Educational Components</h3>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <span className="text-juno-text">Emergency Fund</span>
-              <ExplainChip 
-                title="Emergency Fund"
-                explanation="A dedicated savings account with 3-6 months of living expenses. This fund helps you handle unexpected costs like medical bills, car repairs, or job loss without going into debt."
-                size="sm"
-              />
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-2xl font-semibold text-juno-text">RM 2,450</span>
-              <ExplainChip 
-                title="Monthly Investment Recommendation"
-                explanation="Based on your income of RM 8,000 and expenses of RM 5,550, we recommend investing 30% of your surplus (RM 8,000 - RM 5,550 = RM 2,450). This follows the 50/30/20 budgeting rule for financial health."
-              />
-            </div>
-          </div>
-        </div>
+    <div className="space-y-8">
+      {/* Component Navigation */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setActiveComponent('button')}
+          className={cn(
+            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            activeComponent === 'button' 
+              ? 'bg-juno-accent text-white' 
+              : 'bg-juno-surface-100 text-juno-text hover:bg-juno-surface-200'
+          )}
+        >
+          Button
+        </button>
+        <button
+          onClick={() => setActiveComponent('tabs')}
+          className={cn(
+            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            activeComponent === 'tabs' 
+              ? 'bg-juno-accent text-white' 
+              : 'bg-juno-surface-100 text-juno-text hover:bg-juno-surface-200'
+          )}
+        >
+          Tabs
+        </button>
+        <button
+          onClick={() => setActiveComponent('cards')}
+          className={cn(
+            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            activeComponent === 'cards' 
+              ? 'bg-juno-accent text-white' 
+              : 'bg-juno-surface-100 text-juno-text hover:bg-juno-surface-200'
+          )}
+        >
+          Cards
+        </button>
       </div>
+
+      {/* Button Documentation */}
+      {activeComponent === 'button' && (
+        <div className="space-y-8">
+          <div>
+            <h1 className="text-3xl font-semibold text-juno-text mb-4">Button</h1>
+            <p className="text-juno-muted-fg leading-relaxed max-w-4xl">
+              Buttons are used primarily for actions, such as &quot;Add&quot;, &quot;Close&quot;, &quot;Cancel&quot;, or &quot;Save&quot;. Plain buttons, which look similar to links, are used for less important or less commonly used actions, such as &quot;view shipping settings&quot;.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-xl font-medium text-juno-text">Button component examples</h3>
+            
+            <Tabs value={activeButtonTab} onValueChange={setActiveButtonTab}>
+              <TabsList>
+                {buttonTabs.map((tab) => (
+                  <TabsTrigger key={tab} value={tab}>
+                    {buttonExamples[tab as keyof typeof buttonExamples].title}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              <TabsContent value={activeButtonTab} className="bg-white border border-juno-border rounded-lg p-8 space-y-6">
+                <p className="text-juno-muted-fg leading-relaxed">
+                  {currentButtonExample.description}
+                </p>
+
+                <div className="bg-juno-surface-50 p-6 rounded-lg border border-juno-border-alpha-subtle">
+                  <div className="flex items-center justify-center min-h-[80px]">
+                    {currentButtonExample.component}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 text-sm bg-juno-surface-100 text-juno-text rounded border border-juno-border">
+                      React
+                    </button>
+                  </div>
+                  <div className="bg-juno-neutral-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                    <code>
+                      {getButtonCodeExample(activeButtonTab)}
+                    </code>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-2xl font-medium text-juno-text">Props</h2>
+            <div className="bg-white border border-juno-border rounded-lg overflow-hidden">
+              <div className="p-6 border-b border-juno-border bg-juno-surface-50">
+                <code className="text-sm font-mono">interface ButtonProps</code>
+              </div>
+              <div className="divide-y divide-juno-border">
+                {[
+                  { name: 'variant?', type: '"primary" | "secondary" | "outline" | "ghost" | "destructive" | "success" | "warning" | "icon"', description: 'Changes the visual appearance of the Button.' },
+                  { name: 'size?', type: '"sm" | "md" | "lg"', description: 'Changes the size of the button, giving it more or less padding.' },
+                  { name: 'icon?', type: 'React.ReactNode', description: 'Icon to display in the button.' },
+                  { name: 'iconPosition?', type: '"left" | "right"', description: 'Position of the icon relative to the text.' },
+                  { name: 'loading?', type: 'boolean', description: 'Replaces button content with a spinner while a background action is being performed.' },
+                  { name: 'disabled?', type: 'boolean', description: 'Disables the button, disallowing user interaction.' },
+                  { name: 'children?', type: 'React.ReactNode', description: 'The content to display inside the button.' }
+                ].map((prop) => (
+                  <div key={prop.name} className="p-6">
+                    <dt className="font-mono text-sm text-juno-text mb-2">{prop.name} <span className="text-juno-muted-fg">{prop.type}</span></dt>
+                    <dd className="text-sm text-juno-muted-fg">{prop.description}</dd>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-2xl font-medium text-juno-text">Best practices</h2>
+            <div className="bg-juno-surface-50 border border-juno-border rounded-lg p-6">
+              <p className="font-medium text-juno-text mb-4">Buttons should:</p>
+              <ul className="space-y-2 text-sm text-juno-muted-fg">
+                <li>• Be clearly and accurately labeled.</li>
+                <li>• Lead with a strong, actionable verb.</li>
+                <li>• Use established button colors appropriately. For example, only use a red button for an action that&apos;s difficult or impossible to undo.</li>
+                <li>• Prioritize the most important actions. Too many calls to action can cause confusion and make merchants unsure of what to do next.</li>
+                <li>• Be positioned in consistent locations in the interface.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tabs Documentation */}
+      {activeComponent === 'tabs' && (
+        <div className="space-y-8">
+          <div>
+            <h1 className="text-3xl font-semibold text-juno-text mb-4">Tabs</h1>
+            <p className="text-juno-muted-fg leading-relaxed max-w-4xl">
+              Tabs organize content into multiple sections and allow users to navigate between them. Only one tab panel is shown at a time. Tabs include full keyboard navigation and screen reader support.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-xl font-medium text-juno-text">Tab component examples</h3>
+            
+            <Tabs value={activeTabExample} onValueChange={setActiveTabExample}>
+              <TabsList>
+                {tabTabs.map((tab) => (
+                  <TabsTrigger key={tab} value={tab}>
+                    {tabExamples[tab as keyof typeof tabExamples].title}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              <TabsContent value={activeTabExample} className="bg-white border border-juno-border rounded-lg p-8 space-y-6">
+                <p className="text-juno-muted-fg leading-relaxed">
+                  {currentTabExample.description}
+                </p>
+
+                <div className="bg-juno-surface-50 p-6 rounded-lg border border-juno-border-alpha-subtle">
+                  <div className="min-h-[120px]">
+                    {currentTabExample.component}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 text-sm bg-juno-surface-100 text-juno-text rounded border border-juno-border">
+                      React
+                    </button>
+                  </div>
+                  <div className="bg-juno-neutral-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                    <code>
+                      {getTabCodeExample(activeTabExample)}
+                    </code>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-2xl font-medium text-juno-text">Props</h2>
+            <div className="bg-white border border-juno-border rounded-lg overflow-hidden">
+              <div className="p-6 border-b border-juno-border bg-juno-surface-50">
+                <code className="text-sm font-mono">interface TabsProps</code>
+              </div>
+              <div className="divide-y divide-juno-border">
+                {[
+                  { name: 'value', type: 'string', description: 'The value of the currently active tab.' },
+                  { name: 'onValueChange', type: '(value: string) => void', description: 'Callback function called when the active tab changes.' },
+                  { name: 'orientation?', type: '"horizontal" | "vertical"', description: 'The orientation of the tab list.' },
+                  { name: 'variant?', type: '"underline" | "pill"', description: 'The visual variant of the tabs.' },
+                  { name: 'size?', type: '"sm" | "md" | "lg"', description: 'The size of the tabs.' }
+                ].map((prop) => (
+                  <div key={prop.name} className="p-6">
+                    <dt className="font-mono text-sm text-juno-text mb-2">{prop.name} <span className="text-juno-muted-fg">{prop.type}</span></dt>
+                    <dd className="text-sm text-juno-muted-fg">{prop.description}</dd>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-2xl font-medium text-juno-text">Accessibility</h2>
+            <div className="bg-juno-info-bg border border-juno-info rounded-lg p-6">
+              <p className="font-medium text-juno-info-fg mb-4">Our tabs component provides full accessibility support:</p>
+              <ul className="space-y-2 text-sm text-juno-info-fg">
+                <li>• <strong>Keyboard Navigation:</strong> Arrow keys, Home, End, Enter, and Space</li>
+                <li>• <strong>Screen Readers:</strong> Proper ARIA labels and roles</li>
+                <li>• <strong>Focus Management:</strong> Automatic focus handling and visual indicators</li>
+                <li>• <strong>WCAG 2.1 AA:</strong> Meets accessibility contrast and interaction standards</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-2xl font-medium text-juno-text">Best practices</h2>
+            <div className="bg-juno-surface-50 border border-juno-border rounded-lg p-6">
+              <p className="font-medium text-juno-text mb-4">Tabs should:</p>
+              <ul className="space-y-2 text-sm text-juno-muted-fg">
+                <li>• Have clear, concise labels that describe the tab content</li>
+                <li>• Present content that is related but distinct</li>
+                <li>• Be used when you have 2-7 sections (avoid single tabs or too many tabs)</li>
+                <li>• Default to the most important or most commonly used tab</li>
+                <li>• Maintain consistent content structure across tabs</li>
+                <li>• Include keyboard navigation instructions when relevant</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cards Documentation */}
+      {activeComponent === 'cards' && (
+        <div className="space-y-8">
+          <div>
+            <h1 className="text-3xl font-semibold text-juno-text mb-4">Card</h1>
+            <p className="text-juno-muted-fg leading-relaxed max-w-4xl">
+              Cards are versatile containers for grouping related content and actions. They provide a clean, organized way to present information with support for interactive states, status variants, and flexible layouts.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-xl font-medium text-juno-text">Card component examples</h3>
+            
+            <Tabs value={activeCardExample} onValueChange={setActiveCardExample}>
+              <TabsList>
+                {cardTabs.map((tab) => (
+                  <TabsTrigger key={tab} value={tab}>
+                    {cardExamples[tab as keyof typeof cardExamples].title}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              <TabsContent value={activeCardExample} className="bg-white border border-juno-border rounded-lg p-8 space-y-6">
+                <p className="text-juno-muted-fg leading-relaxed">
+                  {currentCardExample.description}
+                </p>
+
+                <div className="bg-juno-surface-50 p-6 rounded-lg border border-juno-border-alpha-subtle">
+                  <div className="flex justify-center min-h-[120px] items-center">
+                    {currentCardExample.component}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 text-sm bg-juno-surface-100 text-juno-text rounded border border-juno-border">
+                      React
+                    </button>
+                  </div>
+                  <div className="bg-juno-neutral-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                    <code>
+                      {getCardCodeExample(activeCardExample)}
+                    </code>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-2xl font-medium text-juno-text">Props</h2>
+            <div className="bg-white border border-juno-border rounded-lg overflow-hidden">
+              <div className="p-6 border-b border-juno-border bg-juno-surface-50">
+                <code className="text-sm font-mono">interface CardProps</code>
+              </div>
+              <div className="divide-y divide-juno-border">
+                {[
+                  { name: 'variant?', type: '"default" | "elevated" | "flat" | "outlined" | "success" | "warning" | "error" | "info"', description: 'Changes the visual style of the card.' },
+                  { name: 'size?', type: '"sm" | "md" | "lg"', description: 'Controls the padding and overall size of the card.' },
+                  { name: 'interactive?', type: '"true" | "clickable"', description: 'Makes the card interactive with hover and click effects.' },
+                  { name: 'layout?', type: '"default" | "horizontal" | "compact"', description: 'Changes the layout structure of the card.' },
+                  { name: 'loading?', type: 'boolean', description: 'Shows a shimmer loading animation overlay.' },
+                  { name: 'selected?', type: 'boolean', description: 'Highlights the card in a selected state.' },
+                  { name: 'disabled?', type: 'boolean', description: 'Disables the card and reduces opacity.' }
+                ].map((prop) => (
+                  <div key={prop.name} className="p-6">
+                    <dt className="font-mono text-sm text-juno-text mb-2">{prop.name} <span className="text-juno-muted-fg">{prop.type}</span></dt>
+                    <dd className="text-sm text-juno-muted-fg">{prop.description}</dd>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-2xl font-medium text-juno-text">Card Components</h2>
+            <div className="bg-juno-surface-50 border border-juno-border rounded-lg p-6">
+              <p className="font-medium text-juno-text mb-4">Available card sub-components:</p>
+              <ul className="space-y-2 text-sm text-juno-muted-fg">
+                <li>• <strong>CardHeader:</strong> Contains title and subtitle with optional actions</li>
+                <li>• <strong>CardTitle:</strong> Primary heading for the card content</li>
+                <li>• <strong>CardSubtitle:</strong> Secondary text below the title</li>
+                <li>• <strong>CardContent:</strong> Main content area with configurable padding</li>
+                <li>• <strong>CardFooter:</strong> Actions and metadata at the bottom</li>
+                <li>• <strong>CardMedia:</strong> Images and media with aspect ratio controls</li>
+                <li>• <strong>CardMeta:</strong> Metadata display with automatic separators</li>
+                <li>• <strong>CardActions:</strong> Button groups with layout options</li>
+                <li>• <strong>CardBadge:</strong> Status indicators and labels</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-2xl font-medium text-juno-text">Best practices</h2>
+            <div className="bg-juno-surface-50 border border-juno-border rounded-lg p-6">
+              <p className="font-medium text-juno-text mb-4">Cards should:</p>
+              <ul className="space-y-2 text-sm text-juno-muted-fg">
+                <li>• Present related information in a scannable format</li>
+                <li>• Use consistent spacing and alignment within card groups</li>
+                <li>• Include clear visual hierarchy with titles and content</li>
+                <li>• Provide appropriate interactive feedback when clickable</li>
+                <li>• Use status variants sparingly and meaningfully</li>
+                <li>• Include proper alt text for media content</li>
+                <li>• Be accessible with keyboard navigation when interactive</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
+}
+
+// Helper functions to generate code examples
+function getButtonCodeExample(tab: string): string {
+  const examples = {
+    primary: `<Button variant="primary">Add product</Button>`,
+    secondary: `<Button variant="secondary">View details</Button>`,
+    outline: `<Button variant="outline">Edit settings</Button>`,
+    ghost: `<Button variant="ghost">Cancel</Button>`,
+    destructive: `<Button variant="destructive">Delete product</Button>`,
+    success: `<Button variant="success">Save changes</Button>`,
+    warning: `<Button variant="warning">Archive item</Button>`,
+    'with-icon': `<Button variant="primary" icon="📦">Add product</Button>`,
+    'icon-only': `<Button variant="icon" icon="⚙️" aria-label="Settings" />`,
+    sizes: `<Button variant="secondary" size="sm">Small</Button>
+<Button variant="secondary" size="md">Medium</Button>
+<Button variant="secondary" size="lg">Large</Button>`,
+    states: `<Button variant="primary">Normal</Button>
+<Button variant="primary" loading>Loading</Button>
+<Button variant="primary" disabled>Disabled</Button>`
+  }
+  return examples[tab as keyof typeof examples] || examples.primary
+}
+
+function getTabCodeExample(tab: string): string {
+  const examples = {
+    basic: `<Tabs value="tab1" onValueChange={setActiveTab}>
+  <TabsList>
+    <TabsTrigger value="tab1">Overview</TabsTrigger>
+    <TabsTrigger value="tab2">Analytics</TabsTrigger>
+    <TabsTrigger value="tab3">Reports</TabsTrigger>
+  </TabsList>
+  <TabsContent value="tab1">
+    <p>Overview content goes here...</p>
+  </TabsContent>
+</Tabs>`,
+    withIcons: `<Tabs value="dashboard" onValueChange={setActiveTab}>
+  <TabsList>
+    <TabsTrigger value="dashboard" icon="📊">Dashboard</TabsTrigger>
+    <TabsTrigger value="users" icon="👥">Users</TabsTrigger>
+    <TabsTrigger value="settings" icon="⚙️">Settings</TabsTrigger>
+  </TabsList>
+  <TabsContent value="dashboard">
+    <p>Dashboard with charts and metrics...</p>
+  </TabsContent>
+</Tabs>`,
+    pill: `<Tabs value="active" onValueChange={setActiveTab} variant="pill">
+  <TabsList>
+    <TabsTrigger value="active">Active</TabsTrigger>
+    <TabsTrigger value="pending">Pending</TabsTrigger>
+    <TabsTrigger value="completed">Completed</TabsTrigger>
+  </TabsList>
+  <TabsContent value="active">
+    <p>Active items are displayed here...</p>
+  </TabsContent>
+</Tabs>`,
+    vertical: `<Tabs value="profile" onValueChange={setActiveTab} orientation="vertical">
+  <TabsList className="flex-col">
+    <TabsTrigger value="profile">Profile Settings</TabsTrigger>
+    <TabsTrigger value="notifications">Notifications</TabsTrigger>
+    <TabsTrigger value="security">Security</TabsTrigger>
+    <TabsTrigger value="billing">Billing</TabsTrigger>
+  </TabsList>
+  <TabsContent value="profile">
+    <p>Profile settings content...</p>
+  </TabsContent>
+</Tabs>`,
+    sizes: `{/* Small tabs */}
+<Tabs value="small1" onValueChange={setActiveTab} size="sm">
+  <TabsList>
+    <TabsTrigger value="small1">Small</TabsTrigger>
+    <TabsTrigger value="small2">Compact</TabsTrigger>
+  </TabsList>
+</Tabs>
+
+{/* Medium tabs (default) */}
+<Tabs value="med1" onValueChange={setActiveTab} size="md">
+  <TabsList>
+    <TabsTrigger value="med1">Medium</TabsTrigger>
+    <TabsTrigger value="med2">Standard</TabsTrigger>
+  </TabsList>
+</Tabs>
+
+{/* Large tabs */}
+<Tabs value="large1" onValueChange={setActiveTab} size="lg">
+  <TabsList>
+    <TabsTrigger value="large1">Large</TabsTrigger>
+    <TabsTrigger value="large2">Prominent</TabsTrigger>
+  </TabsList>
+</Tabs>`,
+    accessibility: `<Tabs value="accessibility1" onValueChange={setActiveTab}>
+  <TabsList>
+    <TabsTrigger value="accessibility1">Keyboard Navigation</TabsTrigger>
+    <TabsTrigger value="accessibility2">WCAG 2.1 AA</TabsTrigger>
+    <TabsTrigger value="accessibility3">Screen Reader</TabsTrigger>
+  </TabsList>
+  <TabsContent value="accessibility1">
+    <p>Use arrow keys to navigate tabs!</p>
+  </TabsContent>
+</Tabs>
+
+{/* 
+Keyboard navigation:
+- Arrow keys: Navigate between tabs
+- Home/End: Jump to first/last tab  
+- Enter/Space: Activate focused tab
+- Tab: Move focus to tab content
+*/}`
+  }
+  return examples[tab as keyof typeof examples] || examples.basic
+}
+
+function getCardCodeExample(tab: string): string {
+  const examples = {
+    basic: `<Card className="max-w-md">
+  <CardHeader>
+    <CardTitle>Project Alpha</CardTitle>
+    <CardSubtitle>Data analysis dashboard</CardSubtitle>
+  </CardHeader>
+  <CardContent>
+    <p>This project focuses on creating comprehensive analytics...</p>
+  </CardContent>
+  <CardFooter>
+    <CardMeta>
+      <span>Updated 2 hours ago</span>
+      <span>By John Doe</span>
+    </CardMeta>
+    <CardActions>
+      <Button variant="outline" size="sm">View</Button>
+      <Button variant="primary" size="sm">Edit</Button>
+    </CardActions>
+  </CardFooter>
+</Card>`,
+    variants: `<Card variant="default">
+  <CardContent>
+    <h4>Default Card</h4>
+    <p>Standard card with subtle shadow</p>
+  </CardContent>
+</Card>
+
+<Card variant="elevated">
+  <CardContent>
+    <h4>Elevated Card</h4>
+    <p>Enhanced shadow for prominence</p>
+  </CardContent>
+</Card>
+
+<Card variant="flat">
+  <CardContent>
+    <h4>Flat Card</h4>
+    <p>No shadow, border only</p>
+  </CardContent>
+</Card>`,
+    interactive: `<Card interactive={true}>
+  <CardContent>
+    <h4>Interactive Card</h4>
+    <p>Hover me to see the interactive effect</p>
+  </CardContent>
+</Card>
+
+<Card interactive="clickable">
+  <CardContent>
+    <h4>Clickable Card</h4>
+    <p>Click me for a different interaction style</p>
+  </CardContent>
+</Card>`,
+    status: `<Card variant="success">
+  <CardContent>
+    <h4>Success Card</h4>
+    <p>Operation completed successfully</p>
+  </CardContent>
+</Card>
+
+<Card variant="warning">
+  <CardContent>
+    <h4>Warning Card</h4>
+    <p>Please review before proceeding</p>
+  </CardContent>
+</Card>
+
+<Card variant="error">
+  <CardContent>
+    <h4>Error Card</h4>
+    <p>An error occurred during processing</p>
+  </CardContent>
+</Card>`,
+    withMedia: `<Card>
+  <CardMedia 
+    src="/image.jpg" 
+    alt="Mountain landscape" 
+    aspectRatio="16-9" 
+  />
+  <CardHeader>
+    <CardTitle>Mountain Landscape</CardTitle>
+    <CardSubtitle>Photography Collection</CardSubtitle>
+  </CardHeader>
+  <CardContent>
+    <p>Beautiful mountain scenery captured during golden hour.</p>
+    <CardMeta>
+      <span>📸 Photography</span>
+      <span>🕒 2 days ago</span>
+    </CardMeta>
+  </CardContent>
+</Card>`,
+    layouts: `{/* Horizontal Layout */}
+<Card layout="horizontal">
+  <CardMedia src="/image.jpg" alt="Media" />
+  <CardHeader>
+    <CardTitle>Horizontal Card</CardTitle>
+    <CardSubtitle>Side-by-side layout</CardSubtitle>
+  </CardHeader>
+  <CardContent>
+    <p>Perfect for list views with media and content.</p>
+  </CardContent>
+</Card>
+
+{/* Compact Layout */}
+<Card layout="compact">
+  <CardHeader>
+    <CardTitle>Compact Card</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>Reduced padding for dense layouts.</p>
+  </CardContent>
+</Card>`,
+    states: `<Card loading>
+  <CardContent>
+    <h4>Loading Card</h4>
+    <p>This card shows a loading shimmer effect.</p>
+  </CardContent>
+</Card>
+
+<Card selected>
+  <CardContent>
+    <h4>Selected Card</h4>
+    <p>This card is in a selected state.</p>
+  </CardContent>
+</Card>
+
+<Card disabled>
+  <CardContent>
+    <h4>Disabled Card</h4>
+    <p>This card is disabled and not interactive.</p>
+  </CardContent>
+</Card>`,
+    withBadge: `<Card className="relative">
+  <CardBadge>New</CardBadge>
+  <CardHeader>
+    <CardTitle>Featured Article</CardTitle>
+    <CardSubtitle>Just published</CardSubtitle>
+  </CardHeader>
+  <CardContent>
+    <p>This article has been recently added to our collection.</p>
+  </CardContent>
+</Card>
+
+<Card className="relative">
+  <CardBadge variant="success">✓ Verified</CardBadge>
+  <CardHeader>
+    <CardTitle>Verified Account</CardTitle>
+    <CardSubtitle>Premium member</CardSubtitle>
+  </CardHeader>
+  <CardContent>
+    <p>This account has been verified by our team.</p>
+  </CardContent>
+</Card>`
+  }
+  return examples[tab as keyof typeof examples] || examples.basic
 }
 
 // Data Visualization Tab Component

@@ -107,9 +107,10 @@ function FormLabel({
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
 
+  // Note: Slot components can render as React.Fragment, so we avoid passing data attributes
+  // that would cause "Invalid prop supplied to React.Fragment" errors
   return (
     <Slot
-      data-slot="form-control"
       id={formItemId}
       aria-describedby={
         !error
