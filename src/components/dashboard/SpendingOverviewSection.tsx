@@ -57,8 +57,16 @@ export function SpendingOverviewSection({
 
 
   return (
-    <Card variant="outlined">
-      <CardHeader className="pb-juno-4 border-b-0">
+    <Card 
+      variant="outlined"
+      style={{
+        "--card-header-pad-block": "32px",
+        "--card-header-pad-inline": "32px",
+        "--card-content-pad-block": "0",
+        "--card-content-pad-inline": "0"
+      } as React.CSSProperties}
+    >
+      <CardHeader className="border-b-0">
         <div className="space-y-juno-2">
           <p className="text-sm text-gray-400 font-medium tracking-wider">SPENDING THIS MONTH</p>
           <div className="flex items-baseline space-x-juno-2">
@@ -117,7 +125,7 @@ export function SpendingOverviewSection({
       </CardHeader>
       <CardContent className="p-0">
         {/* Chart - Grouped or Progressive */}
-        <div className="px-juno-6 pb-juno-6">
+        <div className="px-8 pb-8">
           {groupedSpendingData.length > 0 ? (
             <CustomGroupedBarChart
               groupedData={groupedSpendingData}
