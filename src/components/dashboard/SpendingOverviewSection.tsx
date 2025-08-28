@@ -125,31 +125,46 @@ export function SpendingOverviewSection({
       </CardHeader>
       <CardContent className="p-0">
         {/* Chart - Grouped or Progressive */}
-        <div className="px-8 pb-8">
+        <div className="px-8 pb-8 overflow-hidden">
           {groupedSpendingData.length > 0 ? (
-            <CustomGroupedBarChart
-              groupedData={groupedSpendingData}
-              height={400}
-              className="w-full"
-              showBudgetComparison={true}
-              animate={true}
-            />
+            <div className="w-full max-w-full">
+              <CustomGroupedBarChart
+                groupedData={groupedSpendingData}
+                height={400}
+                className="w-full max-w-full"
+                showBudgetComparison={true}
+                animate={true}
+              />
+            </div>
           ) : (
-            <ProgressiveChart
-                transactions={chartTransactions.map(transaction => ({
-                  id: transaction.id,
-                  amount: Math.abs(transaction.amount),
-                  date: transaction.date,
-                  categoryId: transaction.category_id,
-                  categoryName: transaction.category_name,
-                  description: transaction.description,
-                  type: transaction.amount > 0 ? 'income' : 'expense'
-                }))}
-                budget={currentBudget ? {
-                  id: currentBudget.id,
-                  totalIncome: currentBudget.total_income,
-                  period: new Date().toISOString().slice(0, 7),
-                  categories: currentBudget.categories.map(cat => ({
+            <div className="w-full max-w-full">
+              <ProgressiveChart
+                  transactions={chartTransactions.map(transaction => ({
+                    id: transaction.id,
+                    amount: Math.abs(transaction.amount),
+                    date: transaction.date,
+                    categoryId: transaction.category_id,
+                    categoryName: transaction.category_name,
+                    description: transaction.description,
+                    type: transaction.amount > 0 ? 'income' : 'expense'
+                  }))}
+                  budget={currentBudget ? {
+                    id: currentBudget.id,
+                    totalIncome: currentBudget.total_income,
+                    period: new Date().toISOString().slice(0, 7),
+                    categories: currentBudget.categories.map(cat => ({
+                      id: cat.id,
+                      name: cat.name,
+                      allocated: cat.allocated,
+                      spent: cat.spent,
+                      color: cat.color,
+                      type: 'expense' as const,
+                      isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
+                        cat.name.toLowerCase().includes(keyword)
+                      )
+                    }))
+                  } : undefined}
+                  categories={currentBudget?.categories.map(cat => ({
                     id: cat.id,
                     name: cat.name,
                     allocated: cat.allocated,
@@ -159,22 +174,11 @@ export function SpendingOverviewSection({
                     isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
                       cat.name.toLowerCase().includes(keyword)
                     )
-                  }))
-                } : undefined}
-                categories={currentBudget?.categories.map(cat => ({
-                  id: cat.id,
-                  name: cat.name,
-                  allocated: cat.allocated,
-                  spent: cat.spent,
-                  color: cat.color,
-                  type: 'expense' as const,
-                  isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
-                    cat.name.toLowerCase().includes(keyword)
-                  )
-                })) || []}
-                height={400}
-                className="w-full"
-              />
+                  })) || []}
+                  height={400}
+                  className="w-full max-w-full"
+                />
+            </div>
           )}
         </div>
       </CardContent>
