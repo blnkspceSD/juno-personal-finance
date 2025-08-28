@@ -40,7 +40,7 @@ export default function CardPlaygroundPage() {
   const [copiedCode, setCopiedCode] = useState<string>('')
 
   // Generate the card props and styles
-  const cardProps: any = {}
+  const cardProps: Record<string, string | boolean> = {}
   const cardStyles: React.CSSProperties = {}
   const cardClasses = ['card']
 
