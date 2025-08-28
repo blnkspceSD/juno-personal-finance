@@ -629,6 +629,11 @@
 /* ========================================
  * JUNO BUTTON CLASSES
  * Using design tokens for consistent theming
+ * 
+ * DESIGN RULES:
+ * 1. Button text should never exceed 1 line
+ * 2. Button and icons should never be multiline  
+ * 3. Button texts should be concise and not too wordy
  * ======================================== */
 
 /* PRIMARY button - Elegant styling matching reference design */
@@ -794,7 +799,7 @@
  * EXPANDED BUTTON VARIANTS
  * ======================================== */
 
-/* Base button class */
+/* Base button class - Enforces design rules */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -807,7 +812,11 @@
   transition: all 150ms ease-out;
   position: relative;
   overflow: hidden;
-  white-space: nowrap;
+  
+  /* Enforce design rules: */
+  white-space: nowrap;              /* Rule 1: Never exceed 1 line */
+  text-overflow: ellipsis;          /* Rule 1: Handle overflow gracefully */
+  max-width: 100%;                  /* Rule 1: Prevent breaking containers */
 }
 
 /* Ghost button variant */
@@ -1308,7 +1317,7 @@
 /* Base card class */
 .card {
   background: white;
-  border-radius: var(--juno-radius-lg);
+  border-radius: var(--card-border-radius, var(--juno-radius-xl));
   border: 1px solid var(--juno-border);
   overflow: hidden;
   transition: 
@@ -1317,6 +1326,43 @@
     transform var(--juno-transition-fast);
   position: relative;
 }
+
+/* Card border radius utilities */
+.card-rounded-none { --card-border-radius: 0; }
+.card-rounded-sm { --card-border-radius: var(--juno-radius-sm); }
+.card-rounded-md { --card-border-radius: var(--juno-radius-md); }
+.card-rounded-lg { --card-border-radius: var(--juno-radius-lg); }
+.card-rounded-xl { --card-border-radius: var(--juno-radius-xl); }
+.card-rounded-2xl { --card-border-radius: var(--juno-radius-2xl); }
+.card-rounded-3xl { --card-border-radius: var(--juno-radius-3xl); }
+
+/* Card padding utilities */
+.card-header-padding-none { --card-header-padding: 0; }
+.card-header-padding-sm { --card-header-padding: var(--juno-space-2); }
+.card-header-padding-md { --card-header-padding: var(--juno-space-4); }
+.card-header-padding-lg { --card-header-padding: var(--juno-space-6); }
+.card-header-padding-xl { --card-header-padding: var(--juno-space-8); }
+
+.card-content-padding-none { --card-content-padding: 0; }
+.card-content-padding-sm { --card-content-padding: var(--juno-space-2); }
+.card-content-padding-md { --card-content-padding: var(--juno-space-4); }
+.card-content-padding-lg { --card-content-padding: var(--juno-space-6); }
+.card-content-padding-xl { --card-content-padding: var(--juno-space-8); }
+
+.card-footer-padding-none { --card-footer-padding: 0; }
+.card-footer-padding-sm { --card-footer-padding: var(--juno-space-2); }
+.card-footer-padding-md { --card-footer-padding: var(--juno-space-4); }
+.card-footer-padding-lg { --card-footer-padding: var(--juno-space-6); }
+.card-footer-padding-xl { --card-footer-padding: var(--juno-space-8); }
+
+/* Card background utilities */
+.card-header-bg-transparent { --card-header-bg: transparent; }
+.card-header-bg-white { --card-header-bg: white; }
+.card-footer-bg-transparent { --card-footer-bg: transparent; }
+.card-footer-bg-white { --card-footer-bg: white; }
+
+/* Card border utilities */
+.card-footer-border-none { --card-footer-border: none; }
 
 /* Card variants */
 .card--default {
@@ -1334,7 +1380,7 @@
 
 .card--outlined {
   box-shadow: none;
-  border: 2px solid var(--juno-border);
+  border: 2px solid var(--juno-border-alpha-soft);
 }
 
 /* Interactive cards */
@@ -1411,17 +1457,16 @@
 
 /* Card header */
 .card__header {
-  padding: var(--juno-space-6);
-  border-bottom: 1px solid var(--juno-border);
-  background: var(--juno-surface-50);
+  padding: var(--card-header-padding, var(--juno-space-6));
+  background: var(--card-header-bg, var(--juno-surface-50));
 }
 
 .card__header--sm {
-  padding: var(--juno-space-4);
+  --card-header-padding: var(--juno-space-4);
 }
 
 .card__header--lg {
-  padding: var(--juno-space-8);
+  --card-header-padding: var(--juno-space-8);
 }
 
 .card__title {
@@ -1441,26 +1486,26 @@
 
 /* Card content */
 .card__content {
-  padding: var(--juno-space-6);
+  padding: var(--card-content-padding, var(--juno-space-6));
 }
 
 .card__content--sm {
-  padding: var(--juno-space-4);
+  --card-content-padding: var(--juno-space-4);
 }
 
 .card__content--lg {
-  padding: var(--juno-space-8);
+  --card-content-padding: var(--juno-space-8);
 }
 
 .card__content--no-padding {
-  padding: 0;
+  --card-content-padding: 0;
 }
 
 /* Card footer */
 .card__footer {
-  padding: var(--juno-space-6);
-  border-top: 1px solid var(--juno-border);
-  background: var(--juno-surface-50);
+  padding: var(--card-footer-padding, var(--juno-space-6));
+  border-top: var(--card-footer-border, 1px solid var(--juno-border));
+  background: var(--card-footer-bg, var(--juno-surface-50));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1468,11 +1513,11 @@
 }
 
 .card__footer--sm {
-  padding: var(--juno-space-4);
+  --card-footer-padding: var(--juno-space-4);
 }
 
 .card__footer--lg {
-  padding: var(--juno-space-8);
+  --card-footer-padding: var(--juno-space-8);
 }
 
 .card__footer--center {

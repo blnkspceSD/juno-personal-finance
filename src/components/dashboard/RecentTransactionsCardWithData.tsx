@@ -1,32 +1,18 @@
 'use client'
 
-import React, { useState, useCallback, memo, useMemo } from 'react'
+import React, { useState, useCallback, memo } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { TransactionDetailsDrawer } from '@/components/ui/TransactionDetailsDrawer'
-import { Plus } from 'lucide-react'
+import { Plus, RefreshCw, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-interface Transaction {
-  id: string
-  description: string
-  amount: number
-  date: string
-  category_id: string
-  category_name: string
-  category_color?: string
-  receipt_url?: string
-  created_at?: string
-  updated_at?: string
-  notes?: string
-  payment_method?: string
-}
-
+import { useRecentTransactions } from '@/hooks/use-recent-transactions'
+import { TransactionWithCategory } from '@/lib/transactions/queries'
 
 interface ClickableTransactionItemProps {
-  transaction: Transaction;
-  onClick: (transaction: Transaction) => void;
+  transaction: TransactionWithCategory;
+  onClick: (transaction: TransactionWithCategory) => void;
   isSelected?: boolean;
 }
 
@@ -46,18 +32,12 @@ const ClickableTransactionItem = memo(function ClickableTransactionItem({
     onClick(transaction);
   }, [onClick, transaction]);
 
-  const formattedData = useMemo(() => {
-    const formattedAmount = `$${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-    const formattedDate = new Date(transaction.date).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    });
-    const ariaLabel = `View transaction details: ${transaction.description}, ${formattedAmount} on ${formattedDate}`;
-    
-    return { formattedAmount, formattedDate, ariaLabel };
-  }, [transaction.amount, transaction.date, transaction.description]);
-
-  const { formattedAmount, formattedDate, ariaLabel } = formattedData;
+  const formattedAmount = `$${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  const formattedDate = new Date(transaction.date).toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric' 
+  });
+  const ariaLabel = `View transaction details: ${transaction.description}, ${formattedAmount} on ${formattedDate}`;
 
   return (
     <div
@@ -100,23 +80,55 @@ const ClickableTransactionItem = memo(function ClickableTransactionItem({
   );
 });
 
-interface RecentTransactionsCardProps {
-  transactions: Transaction[]
-  onTransactionUpdate?: () => void // Callback to refresh transaction data
+function LoadingState() {
+  return (
+    <div className="space-y-0 flex-1">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="flex items-center px-juno-4 py-juno-4">
+          <div className="w-1 h-10 rounded-full mr-juno-4 bg-juno-surface-200 animate-pulse" />
+          <div className="flex-1 space-y-juno-2">
+            <div className="h-4 bg-juno-surface-200 rounded-juno-md w-3/4 animate-pulse" />
+            <div className="h-3 bg-juno-surface-200 rounded-juno-md w-1/3 animate-pulse" />
+          </div>
+          <div className="ml-juno-4">
+            <div className="h-4 bg-juno-surface-200 rounded-juno-md w-16 animate-pulse" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
-export const RecentTransactionsCard = memo(function RecentTransactionsCard({ 
-  transactions, 
-  onTransactionUpdate 
-}: RecentTransactionsCardProps) {
+function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) {
+  return (
+    <div className="flex items-center justify-center py-juno-16 px-juno-6">
+      <div className="text-center space-y-juno-4">
+        <div className="mx-auto h-12 w-12 bg-red-100 rounded-juno-lg flex items-center justify-center">
+          <AlertCircle className="h-6 w-6 text-red-600" />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium text-juno-text">Failed to load transactions</h3>
+          <p className="text-xs text-juno-muted-fg mt-1">{error}</p>
+        </div>
+        <Button variant="secondary" size="md" onClick={onRetry}>
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Try Again
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export const RecentTransactionsCardWithData = memo(function RecentTransactionsCardWithData() {
+  const { transactions, isLoading, error, refetch } = useRecentTransactions(7);
   const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
   const [isLoadingDrawer, setIsLoadingDrawer] = useState(false);
 
-  const handleTransactionClick = useCallback((transaction: Transaction) => {
+  const handleTransactionClick = useCallback((transaction: TransactionWithCategory) => {
     setIsLoadingDrawer(true);
     setOpenDrawerId(transaction.id);
     
-    // Simulate brief loading for UX (in real app, this would be actual data fetch)
+    // Brief loading for UX
     setTimeout(() => setIsLoadingDrawer(false), 150);
   }, []);
 
@@ -126,20 +138,17 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
 
   const handleDelete = useCallback((transactionId: string) => {
     console.log('Transaction deleted:', transactionId);
-    onTransactionUpdate?.(); // Notify parent to refresh data
+    refetch(); // Refresh data after delete
     setOpenDrawerId(null);
-  }, [onTransactionUpdate]);
+  }, [refetch]);
 
-  const handleDuplicate = useCallback((transaction: Transaction) => {
+  const handleDuplicate = useCallback((transaction: TransactionWithCategory) => {
     console.log('Transaction duplicated:', transaction);
-    onTransactionUpdate?.(); // Notify parent to refresh data
+    refetch(); // Refresh data after duplicate
     setOpenDrawerId(null);
-  }, [onTransactionUpdate]);
+  }, [refetch]);
 
-  const selectedTransaction = useMemo(() => 
-    transactions.find(t => t.id === openDrawerId) || transactions[0],
-    [transactions, openDrawerId]
-  );
+  const selectedTransaction = transactions.find(t => t.id === openDrawerId) || transactions[0];
 
   return (
     <Card variant="outlined" className="flex flex-col h-full">
@@ -147,10 +156,14 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
         <CardTitle className="!text-sm !text-gray-400 !font-medium tracking-wider">RECENT TRANSACTIONS</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col" noPadding>
-        {transactions.length > 0 ? (
+        {isLoading ? (
+          <LoadingState />
+        ) : error ? (
+          <ErrorState error={error} onRetry={refetch} />
+        ) : transactions.length > 0 ? (
           <>
             <div className="space-y-0 flex-1">
-              {transactions.slice(0, 7).map((transaction) => (
+              {transactions.map((transaction) => (
                 <ClickableTransactionItem
                   key={transaction.id}
                   transaction={transaction}
@@ -195,16 +208,18 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
         )}
 
         {/* Transaction Details Drawer */}
-        <TransactionDetailsDrawer
-          transaction={selectedTransaction}
-          isOpen={!!openDrawerId}
-          isLoading={isLoadingDrawer}
-          onClose={handleDrawerClose}
-          onDelete={handleDelete}
-          onDuplicate={handleDuplicate}
-          onTransactionUpdate={onTransactionUpdate}
-          showActions={{ delete: false, duplicate: true }} // Hide delete in recent transactions
-        />
+        {selectedTransaction && (
+          <TransactionDetailsDrawer
+            transaction={selectedTransaction}
+            isOpen={!!openDrawerId}
+            isLoading={isLoadingDrawer}
+            onClose={handleDrawerClose}
+            onDelete={handleDelete}
+            onDuplicate={handleDuplicate}
+            onTransactionUpdate={refetch}
+            showActions={{ delete: true, duplicate: true, edit: true }}
+          />
+        )}
       </CardContent>
     </Card>
   )

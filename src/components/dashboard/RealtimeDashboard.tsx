@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { SpendingOverviewSection } from './SpendingOverviewSection'
-import { RecentTransactionsCard } from './RecentTransactionsCard'
+import { RecentTransactionsCardWithData } from './RecentTransactionsCardWithData'
 import { CategoryGroupCardsView, CategoryGroupCreateDialog } from '@/components/category-groups'
 import { RealtimeCategoryTable } from '@/components/tables/RealtimeCategoryTable'
 import { TransactionTable, TransactionTableRow } from '@/components/tables/TransactionTable'
@@ -195,7 +195,7 @@ export function RealtimeDashboard({
             
             {/* Right Column: Recent Transactions (1/3 width) */}
             <div className="lg:col-span-1">
-              <RecentTransactionsCard transactions={displayTransactions} />
+              <RecentTransactionsCardWithData />
             </div>
           </div>
         )}
