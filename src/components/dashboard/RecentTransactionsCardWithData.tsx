@@ -101,7 +101,7 @@ function LoadingState() {
 
 function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) {
   return (
-    <div className="flex items-center justify-center py-juno-16 px-juno-8">
+    <div className="flex items-center justify-center py-juno-16 px-8">
       <div className="text-center space-y-juno-4">
         <div className="mx-auto h-12 w-12 bg-red-100 rounded-juno-lg flex items-center justify-center">
           <AlertCircle className="h-6 w-6 text-red-600" />
@@ -155,8 +155,8 @@ export const RecentTransactionsCardWithData = memo(function RecentTransactionsCa
       variant="outlined" 
       className="flex flex-col h-full"
       style={{
-        "--card-header-pad-block": "var(--juno-space-8)", 
-        "--card-header-pad-inline": "var(--juno-space-8)",
+        "--card-header-pad-block": "32px", 
+        "--card-header-pad-inline": "32px",
         "--card-content-pad-block": "0", 
         "--card-content-pad-inline": "0"
       } as React.CSSProperties}
@@ -183,7 +183,7 @@ export const RecentTransactionsCardWithData = memo(function RecentTransactionsCa
             </div>
             
             {/* Action Buttons - Responsive layout */}
-            <div className="px-juno-8 pb-juno-8 pt-juno-4 flex flex-col md:flex-row gap-juno-3">
+            <div className="px-8 pb-8 pt-juno-4 flex flex-col md:flex-row gap-juno-3">
               <Button variant="primary" size="md" className="w-full md:flex-1" asChild>
                 <Link href="/dashboard/transactions/new">
                   <Plus className="h-4 w-4 mr-2" />
@@ -198,7 +198,7 @@ export const RecentTransactionsCardWithData = memo(function RecentTransactionsCa
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-center py-juno-16 px-juno-8">
+          <div className="flex items-center justify-center py-juno-16 px-8">
             <div className="text-center">
               <div className="mx-auto h-12 w-12 bg-juno-surface-200 rounded-juno-lg flex items-center justify-center mb-juno-4">
                 <svg className="h-6 w-6 text-juno-muted-fg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
