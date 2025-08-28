@@ -1,0 +1,239 @@
+/**
+ * Juno Design System - Card Component
+ * 
+ * Token-based card system with 12 public API tokens
+ * Follows layered approach: Primitives → Semantics → Component tokens → Instance overrides
+ */
+
+@layer components {
+  :where(.card) {
+    /* Position enables optional state layer pseudo-element */
+    position: relative;
+    
+    /* Surface & Content - Maps to semantic tokens with fallbacks */
+    background: var(--card-bg, white);
+    color: var(--card-fg, var(--juno-color-text));
+    
+    /* Shape & Border - RTL-safe with semantic fallbacks */
+    border-radius: var(--card-radius, var(--juno-radius-xl));
+    border: var(--card-border-width, 1px) solid var(--card-border-color, var(--juno-color-border));
+    
+    /* Spacing - Uses logical properties for RTL support */
+    display: flex;
+    flex-direction: column;
+    gap: var(--card-gap, var(--juno-space-2));
+    
+    /* Elevation */
+    box-shadow: var(--card-shadow, var(--juno-shadow-md));
+    
+    /* Transitions - Uses design tokens for consistent timing */
+    transition: 
+      box-shadow var(--juno-duration-normal, 200ms) var(--juno-ease-out, cubic-bezier(.2,0,.2,1)),
+      border-color var(--juno-duration-fast, 120ms) var(--juno-ease-out, cubic-bezier(.2,0,.2,1)),
+      transform var(--juno-duration-fast, 120ms) var(--juno-ease-out, cubic-bezier(.2,0,.2,1));
+    
+    /* Clips state layer & focus ring nicely */
+    overflow: hidden;
+  }
+
+  /* Keyboard Focus for Interactive Cards */
+  .card:focus-visible {
+    outline: none;
+    box-shadow:
+      var(--card-shadow, var(--juno-shadow-md)),
+      var(--card-focus-ring, 0 0 0 3px rgb(59 130 246 / .35));
+  }
+
+  /* Optional Material-like State Layer */
+  .card[data-hoverable="true"]::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    background: var(--card-state-layer, rgb(0 0 0 / 0.04));
+    transition: opacity var(--juno-duration-fast, 120ms) var(--juno-ease-out, cubic-bezier(.2,0,.2,1));
+  }
+
+  .card[data-hoverable="true"]:hover::after { 
+    opacity: 1; 
+  }
+
+  /* Hover Affordance */
+  .card[data-hoverable="true"]:hover {
+    box-shadow: var(--card-hover-shadow, var(--juno-shadow-lg));
+    border-color: var(--card-hover-border-color, var(--juno-color-border-strong, var(--juno-color-border)));
+    transform: translateY(var(--card-hover-translate-y, -2px));
+  }
+
+  /* Card Slots - Optional Structure */
+  .card__header, 
+  .card__footer { 
+    display: flex; 
+    align-items: center; 
+  }
+
+  .card__header {
+    padding-block: var(--card-header-pad-block, var(--card-pad-block, var(--juno-space-4)));
+    padding-inline: var(--card-header-pad-inline, var(--card-pad-inline, var(--juno-space-4)));
+    background: var(--card-header-bg, transparent);
+    width: 100%;
+  }
+
+  .card__content {
+    padding-block: var(--card-content-pad-block, var(--card-pad-block, var(--juno-space-4)));
+    padding-inline: var(--card-content-pad-inline, var(--card-pad-inline, var(--juno-space-4)));
+    width: 100%;
+    flex: 1;
+  }
+
+  .card__footer {
+    padding-block: var(--card-footer-pad-block, var(--card-pad-block, var(--juno-space-4)));
+    padding-inline: var(--card-footer-pad-inline, var(--card-pad-inline, var(--juno-space-4)));
+    border-top: var(--card-footer-border, none);
+    background: var(--card-footer-bg, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--juno-space-3);
+    width: 100%;
+  }
+
+  /* Card Title & Subtitle */
+  .card__title {
+    font-size: var(--juno-fs-subheading);
+    font-weight: 600;
+    color: var(--card-fg, var(--juno-color-text));
+    margin: 0;
+    line-height: var(--juno-lh-tight);
+  }
+
+  .card__subtitle {
+    font-size: var(--juno-fs-body);
+    color: var(--juno-color-text-secondary);
+    margin: var(--juno-space-1) 0 0 0;
+    line-height: var(--juno-lh-normal);
+  }
+
+  /* Card Meta Information */
+  .card__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--juno-space-2);
+    font-size: var(--juno-fs-caption);
+    color: var(--juno-color-text-secondary);
+    margin-top: var(--juno-space-2);
+  }
+
+  .card__meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--juno-space-1);
+  }
+
+  .card__meta-separator {
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--juno-color-text-secondary);
+  }
+
+  /* Card Actions */
+  .card__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--juno-space-3);
+  }
+
+  .card__actions--vertical {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Card Media */
+  .card__media {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .card__media--aspect-16-9 {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .card__media--aspect-4-3 {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .card__media--aspect-1-1 {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+
+  /* Card Badge/Indicator */
+  .card__badge {
+    position: absolute;
+    top: var(--juno-space-3);
+    right: var(--juno-space-3);
+    background: var(--juno-accent);
+    color: var(--juno-color-text-inverse);
+    padding: var(--juno-space-1) var(--juno-space-2);
+    border-radius: var(--juno-radius-sm);
+    font-size: var(--juno-fs-caption);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .card__badge--success {
+    background: var(--juno-color-text-success);
+  }
+
+  .card__badge--warning {
+    background: var(--juno-color-text-warning);
+  }
+
+  .card__badge--error {
+    background: var(--juno-color-text-critical);
+  }
+
+  /* Card Close/Dismiss Button */
+  .card__close {
+    position: absolute;
+    top: var(--juno-space-2);
+    right: var(--juno-space-2);
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--juno-color-text-secondary);
+    cursor: pointer;
+    border-radius: var(--juno-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    line-height: 1;
+    transition: 
+      background-color var(--juno-duration-fast, 120ms) var(--juno-ease-out, cubic-bezier(.2,0,.2,1)),
+      color var(--juno-duration-fast, 120ms) var(--juno-ease-out, cubic-bezier(.2,0,.2,1));
+    z-index: 1;
+  }
+
+  .card__close:hover {
+    background: var(--juno-color-bg-surface-secondary);
+    color: var(--juno-color-text);
+  }
+
+  .card__close:focus-visible {
+    outline: 2px solid var(--juno-color-border-strong);
+    outline-offset: 2px;
+  }
+
+  .card__close:active {
+    background: var(--juno-color-bg-surface-tertiary, var(--juno-color-bg-surface-secondary));
+    transform: scale(0.95);
+  }
+}

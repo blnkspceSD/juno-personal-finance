@@ -1,0 +1,138 @@
+/**
+ * Juno Design System - Card Sizes
+ * 
+ * Size variants using logical properties for RTL safety
+ * Only sets CSS custom properties for padding and border radius
+ */
+
+@layer utilities {
+  /* ========================================
+   * SIZE VARIANTS
+   * Uses logical properties (pad-block, pad-inline) for RTL support
+   * ======================================== */
+
+  .card--sm {
+    --card-pad-block: var(--juno-space-3);
+    --card-pad-inline: var(--juno-space-3);
+    --card-radius: var(--juno-radius-lg);
+    --card-gap: var(--juno-space-1);
+  }
+
+  .card--md {
+    --card-pad-block: var(--juno-space-4);
+    --card-pad-inline: var(--juno-space-4);
+    --card-radius: var(--juno-radius-xl);
+    --card-gap: var(--juno-space-2);
+  }
+
+  .card--lg {
+    --card-pad-block: var(--juno-space-6);
+    --card-pad-inline: var(--juno-space-6);
+    --card-radius: var(--juno-radius-2xl);
+    --card-gap: var(--juno-space-3);
+  }
+
+  /* ========================================
+   * SLOT-SPECIFIC SIZE MODIFIERS
+   * Allows fine-grained control over individual card sections
+   * ======================================== */
+
+  /* Header Size Modifiers */
+  .card__header--sm {
+    --card-header-pad-block: var(--juno-space-2);
+    --card-header-pad-inline: var(--juno-space-4);
+  }
+
+  .card__header--md {
+    --card-header-pad-block: var(--juno-space-4);
+    --card-header-pad-inline: var(--juno-space-6);
+  }
+
+  .card__header--lg {
+    --card-header-pad-block: var(--juno-space-6);
+    --card-header-pad-inline: var(--juno-space-8);
+  }
+
+  /* Content Size Modifiers */
+  .card__content--sm {
+    --card-content-padding: var(--juno-space-4);
+  }
+
+  .card__content--md {
+    --card-content-padding: var(--juno-space-6);
+  }
+
+  .card__content--lg {
+    --card-content-padding: var(--juno-space-8);
+  }
+
+  .card__content--no-padding {
+    --card-content-padding: 0;
+  }
+
+  /* Footer Size Modifiers */
+  .card__footer--sm {
+    --card-footer-pad-block: var(--juno-space-2);
+    --card-footer-pad-inline: var(--juno-space-4);
+  }
+
+  .card__footer--md {
+    --card-footer-pad-block: var(--juno-space-4);
+    --card-footer-pad-inline: var(--juno-space-6);
+  }
+
+  .card__footer--lg {
+    --card-footer-pad-block: var(--juno-space-6);
+    --card-footer-pad-inline: var(--juno-space-8);
+  }
+
+  /* ========================================
+   * CARD RADIUS UTILITIES
+   * Granular control over border radius
+   * ======================================== */
+
+  .card-rounded-none { --card-radius: 0; }
+  .card-rounded-sm { --card-radius: var(--juno-radius-sm); }
+  .card-rounded-md { --card-radius: var(--juno-radius-md); }
+  .card-rounded-lg { --card-radius: var(--juno-radius-lg); }
+  .card-rounded-xl { --card-radius: var(--juno-radius-xl); }
+  .card-rounded-2xl { --card-radius: var(--juno-radius-2xl); }
+  .card-rounded-3xl { --card-radius: var(--juno-radius-3xl); }
+
+  /* ========================================
+   * RESPONSIVE SIZE ADJUSTMENTS
+   * Ensures proper touch targets and spacing on mobile
+   * ======================================== */
+
+  @media (max-width: 768px) {
+    .card--lg {
+      /* Reduce large padding on mobile for better space utilization */
+      --card-pad-block: var(--juno-space-6);
+      --card-pad-inline: var(--juno-space-6);
+    }
+
+    .card--md {
+      /* Ensure minimum touch-friendly spacing */
+      --card-pad-block: var(--juno-space-5);
+      --card-pad-inline: var(--juno-space-5);
+    }
+
+    /* Reduce header/footer padding on mobile */
+    .card__header--lg {
+      --card-header-pad-block: var(--juno-space-4);
+      --card-header-pad-inline: var(--juno-space-6);
+    }
+
+    .card__footer--lg {
+      --card-footer-pad-block: var(--juno-space-4);
+      --card-footer-pad-inline: var(--juno-space-6);
+    }
+
+    /* Stack footer actions vertically on mobile */
+    .card__footer .card__actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--juno-space-2);
+    }
+  }
+}

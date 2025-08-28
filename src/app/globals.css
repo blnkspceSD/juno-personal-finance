@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "../styles/juno-tokens.css";
+@import "../styles/components/card.css";
+@import "../styles/utilities/card.variants.css";
+@import "../styles/utilities/card.sizes.css";
 
 @custom-variant dark (&:is(.dark *));
 
