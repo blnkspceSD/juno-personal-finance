@@ -9,7 +9,8 @@ import {
   CardContent, 
   CardFooter,
   CardActions,
-  CardMeta
+  CardMeta,
+  CardClose
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
@@ -224,8 +225,8 @@ export default function TestCardsPage() {
               </CardContent>
               <CardFooter>
                 <CardActions>
-                  <Button variant="primary" size="sm">Primary</Button>
-                  <Button variant="secondary" size="sm">Secondary</Button>
+                  <Button variant="primary" size="md">Primary</Button>
+                  <Button variant="secondary" size="md">Secondary</Button>
                 </CardActions>
               </CardFooter>
             </Card>
@@ -235,12 +236,13 @@ export default function TestCardsPage() {
               className="cursor-pointer"
               onClick={() => alert('Card clicked!')}
             >
+              <CardClose onClick={(e) => { e.stopPropagation(); alert('Close clicked!'); }} />
               <CardHeader>
-                <CardTitle>Clickable Card</CardTitle>
-                <CardSubtitle>Scale animation on click</CardSubtitle>
+                <CardTitle>Clickable Card with Close</CardTitle>
+                <CardSubtitle>Scale animation on click + close button</CardSubtitle>
               </CardHeader>
               <CardContent>
-                <p>This card scales down slightly when clicked for tactile feedback.</p>
+                <p>This card scales down slightly when clicked for tactile feedback. The close button has its own click handler.</p>
               </CardContent>
               <CardFooter>
                 <CardMeta>
@@ -248,6 +250,59 @@ export default function TestCardsPage() {
                   <span>Interactive</span>
                 </CardMeta>
               </CardFooter>
+            </Card>
+
+          </div>
+        </section>
+
+        {/* New Features Showcase */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-juno-text">New Features Showcase</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            {/* Close Button Example */}
+            <Card variant="clean">
+              <CardClose onClick={() => alert('Dismissing notification...')} />
+              <CardHeader>
+                <CardTitle>Notification Card</CardTitle>
+                <CardSubtitle>With close button</CardSubtitle>
+              </CardHeader>
+              <CardContent>
+                <p>This card features a 36×36px touch-friendly close button with neutral hover states.</p>
+              </CardContent>
+            </Card>
+
+            {/* Optimized Spacing */}
+            <Card variant="default">
+              <CardHeader>
+                <CardTitle>Optimized Spacing</CardTitle>
+                <CardSubtitle>Better space utilization</CardSubtitle>
+              </CardHeader>
+              <CardContent>
+                <p>Updated with tighter default spacing - 8px gap between sections and 16px padding for better content density.</p>
+              </CardContent>
+              <CardFooter>
+                <CardActions>
+                  <Button variant="primary" size="md">Action</Button>
+                </CardActions>
+              </CardFooter>
+            </Card>
+
+            {/* Token Customization */}
+            <Card 
+              style={{
+                "--card-bg": "var(--juno-accent-50)",
+                "--card-border-color": "var(--juno-accent)",
+                "--card-radius": "24px"
+              } as React.CSSProperties}
+            >
+              <CardHeader>
+                <CardTitle>Token Customization</CardTitle>
+                <CardSubtitle>12 public token API</CardSubtitle>
+              </CardHeader>
+              <CardContent>
+                <p>Customize background, border, radius, spacing, and more using CSS custom properties.</p>
+              </CardContent>
             </Card>
 
           </div>
@@ -268,6 +323,7 @@ export default function TestCardsPage() {
               data-hoverable="true"
               className="cursor-pointer"
             >
+              <CardClose onClick={() => alert('Closing dashboard...')} />
               <CardHeader>
                 <CardTitle>Project Dashboard</CardTitle>
                 <CardSubtitle>Real-time metrics and analytics</CardSubtitle>
@@ -306,8 +362,8 @@ export default function TestCardsPage() {
                   <span>Auto-refresh</span>
                 </CardMeta>
                 <CardActions>
-                  <Button variant="secondary" size="sm">Settings</Button>
-                  <Button variant="primary" size="sm">View Details</Button>
+                  <Button variant="secondary" size="md">Settings</Button>
+                  <Button variant="primary" size="md">View Details</Button>
                 </CardActions>
               </CardFooter>
             </Card>
