@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 
 interface Transaction {
   id: string
+  user_id: string
   description: string
   amount: number
   date: string
@@ -17,8 +18,8 @@ interface Transaction {
   category_name: string
   category_color?: string
   receipt_url?: string
-  created_at?: string
-  updated_at?: string
+  created_at: string
+  updated_at: string
   notes?: string
   payment_method?: string
 }
@@ -142,11 +143,20 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
   );
 
   return (
-    <Card variant="outlined" className="flex flex-col h-full">
-      <CardHeader className="px-juno-6 pb-juno-4">
+    <Card 
+      variant="outlined" 
+      className="flex flex-col h-full"
+      style={{
+        "--card-header-pad-block": "var(--juno-space-4)",
+        "--card-header-pad-inline": "var(--juno-space-6)", 
+        "--card-content-pad-block": "0",
+        "--card-content-pad-inline": "0"
+      } as React.CSSProperties}
+    >
+      <CardHeader>
         <CardTitle className="!text-sm !text-gray-400 !font-medium tracking-wider">RECENT TRANSACTIONS</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col" noPadding>
+      <CardContent className="flex-1 flex flex-col">
         {transactions.length > 0 ? (
           <>
             <div className="space-y-0 flex-1">
@@ -203,7 +213,7 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
           onDelete={handleDelete}
           onDuplicate={handleDuplicate}
           onTransactionUpdate={onTransactionUpdate}
-          showActions={{ delete: false, duplicate: true }} // Hide delete in recent transactions
+          showActions={{ delete: false, duplicate: true, edit: true }} // Hide delete in recent transactions
         />
       </CardContent>
     </Card>

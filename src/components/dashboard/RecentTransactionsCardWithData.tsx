@@ -151,11 +151,20 @@ export const RecentTransactionsCardWithData = memo(function RecentTransactionsCa
   const selectedTransaction = transactions.find(t => t.id === openDrawerId) || transactions[0];
 
   return (
-    <Card variant="outlined" className="flex flex-col h-full">
-      <CardHeader className="px-juno-6 pb-juno-4">
+    <Card 
+      variant="outlined" 
+      className="flex flex-col h-full"
+      style={{
+        "--card-header-pad-block": "var(--juno-space-4)",
+        "--card-header-pad-inline": "var(--juno-space-6)",
+        "--card-content-pad-block": "0", 
+        "--card-content-pad-inline": "0"
+      } as React.CSSProperties}
+    >
+      <CardHeader>
         <CardTitle className="!text-sm !text-gray-400 !font-medium tracking-wider">RECENT TRANSACTIONS</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col" noPadding>
+      <CardContent className="flex-1 flex flex-col">
         {isLoading ? (
           <LoadingState />
         ) : error ? (
