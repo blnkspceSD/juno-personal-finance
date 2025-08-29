@@ -100,23 +100,26 @@ function Button({
       data-slot="button"
       {...props}
     >
-      {hasIcon && iconPosition === "left" && (
-        <span className="btn__icon" aria-hidden={!isIconOnly}>
-          {icon}
-        </span>
-      )}
-      {children && (
-        <span className={loading ? "opacity-0" : ""}>{children}</span>
-      )}
-      {hasIcon && iconPosition === "right" && (
-        <span className="btn__icon" aria-hidden={!isIconOnly}>
-          {icon}
-        </span>
-      )}
-      {isIconOnly && (
+      {isIconOnly ? (
         <span className={cn("btn__icon", loading ? "opacity-0" : "")}>
           {icon}
         </span>
+      ) : (
+        <>
+          {hasIcon && iconPosition === "left" && (
+            <span className="btn__icon" aria-hidden="true">
+              {icon}
+            </span>
+          )}
+          {children && (
+            <span className={loading ? "opacity-0" : ""}>{children}</span>
+          )}
+          {hasIcon && iconPosition === "right" && (
+            <span className="btn__icon" aria-hidden="true">
+              {icon}
+            </span>
+          )}
+        </>
       )}
     </button>
   )
