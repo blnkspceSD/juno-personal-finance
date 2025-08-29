@@ -120,7 +120,7 @@ function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) 
 }
 
 export const RecentTransactionsCardWithData = memo(function RecentTransactionsCardWithData() {
-  const { transactions, isLoading, error, refetch } = useRecentTransactions(7);
+  const { transactions, isLoading, error, refetch } = useRecentTransactions(6);
   const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
   const [isLoadingDrawer, setIsLoadingDrawer] = useState(false);
 

@@ -160,7 +160,7 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
         {transactions.length > 0 ? (
           <>
             <div className="space-y-0 flex-1">
-              {transactions.slice(0, 7).map((transaction) => (
+              {transactions.slice(0, 6).map((transaction) => (
                 <ClickableTransactionItem
                   key={transaction.id}
                   transaction={transaction}

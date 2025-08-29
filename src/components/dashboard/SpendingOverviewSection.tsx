@@ -181,6 +181,14 @@ export function SpendingOverviewSection({
             </div>
           )}
         </div>
+
+        {/* Spending Summary */}
+        <div className="px-8 pb-8 pt-4">
+          <p className="text-base text-juno-muted-fg text-center">
+            You're spending most on <span className="font-medium text-juno-text">Lifestyle</span> with 
+            <span className="font-medium text-green-600"> RM 380.15 </span>remaining this month.
+          </p>
+        </div>
       </CardContent>
     </Card>
   )
