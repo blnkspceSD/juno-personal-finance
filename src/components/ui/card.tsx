@@ -13,6 +13,10 @@ const cardVariants = cva(
         elevated: "card--elevated",
         flat: "card--flat",
         outlined: "card--outlined",
+        filled: "card--filled",
+        "stroke-filled": "card--stroke-filled",
+        background: "card--background",
+        clean: "card--clean",
         success: "card--success",
         warning: "card--warning",
         error: "card--error",
@@ -274,6 +278,24 @@ const CardBadge = React.forwardRef<HTMLDivElement, CardBadgeProps>(
 )
 CardBadge.displayName = "CardBadge"
 
+interface CardCloseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+
+const CardClose = React.forwardRef<HTMLButtonElement, CardCloseProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <button
+        ref={ref}
+        className={cn("card__close", className)}
+        aria-label="Close"
+        {...props}
+      >
+        ×
+      </button>
+    )
+  }
+)
+CardClose.displayName = "CardClose"
+
 // Legacy exports for backward compatibility
 const CardDescription = CardSubtitle
 const CardAction = CardActions
@@ -289,6 +311,7 @@ export {
   CardMeta,
   CardActions,
   CardBadge,
+  CardClose,
   // Legacy exports
   CardDescription,
   CardAction

@@ -57,8 +57,16 @@ export function SpendingOverviewSection({
 
 
   return (
-    <Card variant="outlined">
-      <CardHeader className="pb-juno-4 border-b-0">
+    <Card 
+      variant="outlined"
+      style={{
+        "--card-header-pad-block": "32px",
+        "--card-header-pad-inline": "32px",
+        "--card-content-pad-block": "0",
+        "--card-content-pad-inline": "0"
+      } as React.CSSProperties}
+    >
+      <CardHeader className="border-b-0">
         <div className="space-y-juno-2">
           <p className="text-sm text-gray-400 font-medium tracking-wider">SPENDING THIS MONTH</p>
           <div className="flex items-baseline space-x-juno-2">
@@ -117,31 +125,46 @@ export function SpendingOverviewSection({
       </CardHeader>
       <CardContent className="p-0">
         {/* Chart - Grouped or Progressive */}
-        <div className="px-juno-6 pb-juno-6">
+        <div className="px-8 pb-8 overflow-hidden">
           {groupedSpendingData.length > 0 ? (
-            <CustomGroupedBarChart
-              groupedData={groupedSpendingData}
-              height={400}
-              className="w-full"
-              showBudgetComparison={true}
-              animate={true}
-            />
+            <div className="w-full max-w-full">
+              <CustomGroupedBarChart
+                groupedData={groupedSpendingData}
+                height={400}
+                className="w-full max-w-full"
+                showBudgetComparison={true}
+                animate={true}
+              />
+            </div>
           ) : (
-            <ProgressiveChart
-                transactions={chartTransactions.map(transaction => ({
-                  id: transaction.id,
-                  amount: Math.abs(transaction.amount),
-                  date: transaction.date,
-                  categoryId: transaction.category_id,
-                  categoryName: transaction.category_name,
-                  description: transaction.description,
-                  type: transaction.amount > 0 ? 'income' : 'expense'
-                }))}
-                budget={currentBudget ? {
-                  id: currentBudget.id,
-                  totalIncome: currentBudget.total_income,
-                  period: new Date().toISOString().slice(0, 7),
-                  categories: currentBudget.categories.map(cat => ({
+            <div className="w-full max-w-full">
+              <ProgressiveChart
+                  transactions={chartTransactions.map(transaction => ({
+                    id: transaction.id,
+                    amount: Math.abs(transaction.amount),
+                    date: transaction.date,
+                    categoryId: transaction.category_id,
+                    categoryName: transaction.category_name,
+                    description: transaction.description,
+                    type: transaction.amount > 0 ? 'income' : 'expense'
+                  }))}
+                  budget={currentBudget ? {
+                    id: currentBudget.id,
+                    totalIncome: currentBudget.total_income,
+                    period: new Date().toISOString().slice(0, 7),
+                    categories: currentBudget.categories.map(cat => ({
+                      id: cat.id,
+                      name: cat.name,
+                      allocated: cat.allocated,
+                      spent: cat.spent,
+                      color: cat.color,
+                      type: 'expense' as const,
+                      isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
+                        cat.name.toLowerCase().includes(keyword)
+                      )
+                    }))
+                  } : undefined}
+                  categories={currentBudget?.categories.map(cat => ({
                     id: cat.id,
                     name: cat.name,
                     allocated: cat.allocated,
@@ -151,23 +174,20 @@ export function SpendingOverviewSection({
                     isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
                       cat.name.toLowerCase().includes(keyword)
                     )
-                  }))
-                } : undefined}
-                categories={currentBudget?.categories.map(cat => ({
-                  id: cat.id,
-                  name: cat.name,
-                  allocated: cat.allocated,
-                  spent: cat.spent,
-                  color: cat.color,
-                  type: 'expense' as const,
-                  isEssential: ['groceries', 'rent', 'utilities', 'insurance'].some(keyword => 
-                    cat.name.toLowerCase().includes(keyword)
-                  )
-                })) || []}
-                height={400}
-                className="w-full"
-              />
+                  })) || []}
+                  height={400}
+                  className="w-full max-w-full"
+                />
+            </div>
           )}
+        </div>
+
+        {/* Spending Summary */}
+        <div className="px-8 pb-8 pt-4">
+          <p className="text-base text-juno-muted-fg text-center">
+            You're spending most on <span className="font-medium text-juno-text">Lifestyle</span> with 
+            <span className="font-medium text-green-600"> RM 380.15 </span>remaining this month.
+          </p>
         </div>
       </CardContent>
     </Card>

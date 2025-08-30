@@ -4,6 +4,7 @@ import React, { useState, useCallback, memo } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { ButtonPair } from '@/components/ui/button-pair'
 import { TransactionDetailsDrawer } from '@/components/ui/TransactionDetailsDrawer'
 import { Plus, RefreshCw, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -101,7 +102,7 @@ function LoadingState() {
 
 function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) {
   return (
-    <div className="flex items-center justify-center py-juno-16 px-juno-6">
+    <div className="flex items-center justify-center py-juno-16 px-8">
       <div className="text-center space-y-juno-4">
         <div className="mx-auto h-12 w-12 bg-red-100 rounded-juno-lg flex items-center justify-center">
           <AlertCircle className="h-6 w-6 text-red-600" />
@@ -120,7 +121,7 @@ function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) 
 }
 
 export const RecentTransactionsCardWithData = memo(function RecentTransactionsCardWithData() {
-  const { transactions, isLoading, error, refetch } = useRecentTransactions(7);
+  const { transactions, isLoading, error, refetch } = useRecentTransactions(6);
   const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
   const [isLoadingDrawer, setIsLoadingDrawer] = useState(false);
 
@@ -149,11 +150,20 @@ export const RecentTransactionsCardWithData = memo(function RecentTransactionsCa
   const selectedTransaction = transactions.find(t => t.id === openDrawerId) || transactions[0];
 
   return (
-    <Card variant="outlined" className="flex flex-col h-full">
-      <CardHeader className="px-juno-6 pb-juno-4">
+    <Card 
+      variant="outlined" 
+      className="flex flex-col h-full"
+      style={{
+        "--card-header-pad-block": "32px", 
+        "--card-header-pad-inline": "32px",
+        "--card-content-pad-block": "0", 
+        "--card-content-pad-inline": "0"
+      } as React.CSSProperties}
+    >
+      <CardHeader>
         <CardTitle className="!text-sm !text-gray-400 !font-medium tracking-wider">RECENT TRANSACTIONS</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col" noPadding>
+      <CardContent className="flex-1 flex flex-col">
         {isLoading ? (
           <LoadingState />
         ) : error ? (
@@ -171,23 +181,18 @@ export const RecentTransactionsCardWithData = memo(function RecentTransactionsCa
               ))}
             </div>
             
-            {/* Action Buttons - Responsive layout */}
-            <div className="px-juno-6 pb-juno-6 pt-juno-4 flex flex-col md:flex-row gap-juno-3">
-              <Button variant="primary" size="md" className="w-full md:flex-1" asChild>
+            {/* Action Button - Single Add Transaction button */}
+            <div className="px-8 pb-8 pt-juno-4">
+              <Button variant="secondary" size="md" className="w-full" asChild>
                 <Link href="/dashboard/transactions/new">
                   <Plus className="h-4 w-4 mr-2" />
                   Add transaction
                 </Link>
               </Button>
-              <Button variant="secondary" size="md" className="w-full md:flex-1" asChild>
-                <Link href="/dashboard/transactions">
-                  View all
-                </Link>
-              </Button>
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-center py-juno-16 px-juno-6">
+          <div className="flex items-center justify-center py-juno-16 px-8">
             <div className="text-center">
               <div className="mx-auto h-12 w-12 bg-juno-surface-200 rounded-juno-lg flex items-center justify-center mb-juno-4">
                 <svg className="h-6 w-6 text-juno-muted-fg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

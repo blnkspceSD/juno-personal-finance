@@ -4,12 +4,14 @@ import React, { useState, useCallback, memo, useMemo } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { ButtonPair } from '@/components/ui/button-pair'
 import { TransactionDetailsDrawer } from '@/components/ui/TransactionDetailsDrawer'
 import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Transaction {
   id: string
+  user_id: string
   description: string
   amount: number
   date: string
@@ -17,8 +19,8 @@ interface Transaction {
   category_name: string
   category_color?: string
   receipt_url?: string
-  created_at?: string
-  updated_at?: string
+  created_at: string
+  updated_at: string
   notes?: string
   payment_method?: string
 }
@@ -142,15 +144,24 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
   );
 
   return (
-    <Card variant="outlined" className="flex flex-col h-full">
-      <CardHeader className="px-juno-6 pb-juno-4">
+    <Card 
+      variant="outlined" 
+      className="flex flex-col h-full"
+      style={{
+        "--card-header-pad-block": "32px",
+        "--card-header-pad-inline": "32px", 
+        "--card-content-pad-block": "0",
+        "--card-content-pad-inline": "0"
+      } as React.CSSProperties}
+    >
+      <CardHeader>
         <CardTitle className="!text-sm !text-gray-400 !font-medium tracking-wider">RECENT TRANSACTIONS</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col" noPadding>
+      <CardContent className="flex-1 flex flex-col">
         {transactions.length > 0 ? (
           <>
             <div className="space-y-0 flex-1">
-              {transactions.slice(0, 7).map((transaction) => (
+              {transactions.slice(0, 6).map((transaction) => (
                 <ClickableTransactionItem
                   key={transaction.id}
                   transaction={transaction}
@@ -160,23 +171,25 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
               ))}
             </div>
             
-            {/* Action Buttons - Responsive layout */}
-            <div className="px-juno-6 pb-juno-6 pt-juno-4 flex flex-col md:flex-row gap-juno-3">
-              <Button variant="primary" size="md" className="w-full md:flex-1" asChild>
-                <Link href="/dashboard/transactions/new">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add transaction
-                </Link>
-              </Button>
-              <Button variant="secondary" size="md" className="w-full md:flex-1" asChild>
-                <Link href="/dashboard/transactions">
-                  View all
-                </Link>
-              </Button>
+            {/* Action Buttons - Using ButtonPair component */}
+            <div className="px-8 pb-8 pt-juno-4">
+              <ButtonPair direction="auto" aria-label="Transaction actions">
+                <Button variant="secondary" size="md" className="flex-1" asChild>
+                  <Link href="/dashboard/transactions/new">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add transaction
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="md" className="flex-1" asChild>
+                  <Link href="/dashboard/transactions">
+                    View all
+                  </Link>
+                </Button>
+              </ButtonPair>
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-center py-juno-16 px-juno-6">
+          <div className="flex items-center justify-center py-juno-16 px-8">
             <div className="text-center">
               <div className="mx-auto h-12 w-12 bg-juno-surface-200 rounded-juno-lg flex items-center justify-center mb-juno-4">
                 <svg className="h-6 w-6 text-juno-muted-fg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -203,7 +216,7 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
           onDelete={handleDelete}
           onDuplicate={handleDuplicate}
           onTransactionUpdate={onTransactionUpdate}
-          showActions={{ delete: false, duplicate: true }} // Hide delete in recent transactions
+          showActions={{ delete: false, duplicate: true, edit: true }} // Hide delete in recent transactions
         />
       </CardContent>
     </Card>

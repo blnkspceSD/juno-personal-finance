@@ -1,0 +1,254 @@
+/**
+ * Juno Design System - Card Variants
+ * 
+ * Variable-only presets for card visual styles
+ * These classes ONLY set CSS custom properties, never direct properties
+ */
+
+@layer utilities {
+  /* ========================================
+   * VISUAL VARIANTS
+   * Mirror common Elevated / Filled / Outlined patterns
+   * ======================================== */
+
+  /* Elevated: Drop border, add soft shadow */
+  .card--elevated {
+    --card-border-width: 0px;
+    --card-shadow: var(--juno-shadow-md);
+    --card-hover-shadow: var(--juno-shadow-lg);
+  }
+
+  /* Filled: Subtle filled surface, no shadow */
+  .card--filled {
+    --card-bg: var(--juno-color-bg-surface-secondary);
+    --card-border-width: 0px;
+    --card-shadow: none;
+  }
+
+  /* Outlined: Stronger border, no shadow */
+  .card--outlined {
+    --card-border-width: 1px;
+    --card-border-color: var(--juno-color-border-strong, var(--juno-color-border));
+    --card-shadow: none;
+    --card-hover-shadow: none;
+  }
+
+  /* Flat: No shadow, standard border (alias for outlined) */
+  .card--flat {
+    --card-border-width: 1px;
+    --card-border-color: var(--juno-color-border);
+    --card-shadow: none;
+    --card-hover-shadow: none;
+  }
+
+  /* Default: Standard card with subtle shadow */
+  .card--default {
+    --card-shadow: var(--juno-shadow-sm);
+    --card-hover-shadow: var(--juno-shadow-md);
+  }
+
+  /* Stroke with background: Border with filled background, no shadow */
+  .card--stroke-filled {
+    --card-bg: var(--juno-color-bg-surface-secondary);
+    --card-border-width: 1px;
+    --card-border-color: var(--juno-color-border);
+    --card-shadow: none;
+    --card-hover-shadow: none;
+  }
+
+  /* Background only: Filled background, no border, no shadow */
+  .card--background {
+    --card-bg: var(--juno-color-bg-surface-secondary);
+    --card-border-width: 0px;
+    --card-shadow: none;
+    --card-hover-shadow: none;
+  }
+
+  /* Clean: White background, no border, subtle shadow on hover only */
+  .card--clean {
+    --card-bg: white;
+    --card-border-width: 0px;
+    --card-shadow: none;
+    --card-hover-shadow: var(--juno-shadow-md);
+  }
+
+  /* ========================================
+   * STATUS VARIANTS
+   * Map to semantic status tokens for theme compatibility
+   * ======================================== */
+
+  .card--success {
+    --card-bg: var(--juno-color-bg-surface-success, var(--juno-color-bg-surface));
+    --card-border-color: var(--juno-color-border-success, var(--juno-color-border));
+  }
+
+  .card--warning {
+    --card-bg: var(--juno-color-bg-surface-warning, var(--juno-color-bg-surface));
+    --card-border-color: var(--juno-color-border-warning, var(--juno-color-border));
+  }
+
+  .card--danger,
+  .card--error {
+    --card-bg: var(--juno-color-bg-surface-critical, var(--juno-color-bg-surface));
+    --card-border-color: var(--juno-color-border-critical, var(--juno-color-border));
+  }
+
+  .card--info {
+    --card-bg: var(--juno-color-bg-surface-info, var(--juno-color-bg-surface));
+    --card-border-color: var(--juno-color-border-info, var(--juno-color-border));
+  }
+
+  /* ========================================
+   * INTERACTIVE VARIANTS
+   * For clickable and hoverable cards
+   * ======================================== */
+
+  /* Interactive: Basic hover effects */
+  .card--interactive {
+    cursor: pointer;
+    user-select: none;
+    --card-hover-border-color: var(--juno-color-border-strong, var(--juno-color-border));
+    --card-hover-shadow: var(--juno-shadow-lg);
+    --card-hover-translate-y: -2px;
+  }
+
+  .card--interactive:hover {
+    transform: translateY(var(--card-hover-translate-y));
+  }
+
+  .card--interactive:active {
+    transform: translateY(-1px);
+    --card-shadow: var(--juno-shadow-md);
+  }
+
+  .card--interactive:focus-visible {
+    outline: 2px solid var(--juno-color-border-strong);
+    outline-offset: 2px;
+  }
+
+  /* Clickable: Scale on click */
+  .card--clickable {
+    cursor: pointer;
+    --card-hover-border-color: var(--juno-color-border-strong, var(--juno-color-border));
+    --card-hover-shadow: var(--juno-shadow-md);
+  }
+
+  .card--clickable:active {
+    transform: scale(0.98);
+    --card-shadow: var(--juno-shadow-sm);
+  }
+
+  /* ========================================
+   * STATE VARIANTS
+   * For loading, selected, and disabled states
+   * ======================================== */
+
+  /* Loading State */
+  .card--loading {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card--loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(133, 214, 255, 0.1),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  /* Selected State */
+  .card--selected {
+    --card-border-color: var(--juno-accent);
+    --card-bg: var(--juno-accent-50);
+    box-shadow: 0 0 0 1px var(--juno-accent);
+  }
+
+  /* Disabled State */
+  .card--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  /* ========================================
+   * LAYOUT VARIANTS
+   * For different card arrangements
+   * ======================================== */
+
+  /* Horizontal Layout */
+  .card--horizontal {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .card--horizontal .card__media {
+    width: 200px;
+    flex-shrink: 0;
+  }
+
+  .card--horizontal .card__content {
+    flex: 1;
+  }
+
+  /* Compact Layout */
+  .card--compact .card__header,
+  .card--compact .card__content,
+  .card--compact .card__footer {
+    --card-content-padding: var(--juno-space-4);
+  }
+
+  .card--compact .card__title {
+    font-size: var(--juno-fs-body);
+  }
+
+  .card--compact .card__subtitle {
+    font-size: var(--juno-fs-caption);
+  }
+}
+
+/* ========================================
+ * RESPONSIVE ADJUSTMENTS
+ * ======================================== */
+
+@media (max-width: 768px) {
+  .card--horizontal {
+    flex-direction: column;
+  }
+  
+  .card--horizontal .card__media {
+    width: 100%;
+    max-height: 200px;
+  }
+}
+
+/* ========================================
+ * ACCESSIBILITY & MOTION PREFERENCES
+ * ======================================== */
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card--interactive,
+  .card--clickable {
+    transition: none;
+    transform: none !important;
+  }
+  
+  .card--loading::before {
+    animation: none;
+  }
+}

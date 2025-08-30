@@ -105,29 +105,6 @@
   --juno-active-overlay: rgba(33, 39, 48, 0.08); /* 8% for active */
 
   /* ========================================
-   * SEMANTIC BUTTON BACKGROUND COLORS
-   * Purpose-driven button backgrounds following hierarchy
-   * ======================================== */
-  
-  /* Button semantic backgrounds */
-  --juno-button-bg-primary: #222222;                        /* Dark gray for primary */
-  --juno-button-bg-primary-hover: #000000;                  /* Pure black for primary hover */
-  --juno-button-bg-secondary: var(--juno-surface-50);       /* Light for secondary */
-  --juno-button-bg-secondary-hover: var(--juno-surface-100); /* Slightly darker for secondary hover */
-  --juno-button-bg-ghost: transparent;                       /* Transparent for ghost */
-  --juno-button-bg-ghost-hover: #F3F4F6;                    /* Neutral 100 for ghost hover */
-  
-  /* Button text colors */
-  --juno-button-text-primary: var(--juno-surface-50);       /* White text on dark primary */
-  --juno-button-text-secondary: var(--juno-text);           /* Default text on light secondary */
-  --juno-button-text-ghost: #333333;                        /* Dark gray text on transparent ghost */
-  
-  /* Button icon colors (for icon-only buttons) */
-  --juno-button-icon-primary: var(--juno-surface-50);       /* White icons on dark primary */
-  --juno-button-icon-secondary: var(--juno-text);           /* Default icon color on light secondary */
-  --juno-button-icon-ghost: #333333;                        /* Dark gray icons on transparent ghost */
-
-  /* ========================================
    * TRANSPARENT BORDER TOKENS
    * Opacity-based borders for layered, subtle effects
    * ======================================== */
@@ -540,15 +517,6 @@
   --juno-card-header-gap: var(--juno-space-2);
   --juno-card-body-gap: var(--juno-space-4);
   --juno-card-footer-border: 1px solid var(--juno-border);
-
-  /* ========================================
-   * LEGACY COMPATIBILITY TOKENS  
-   * Temporary support for migration period - DELETE AFTER CLEANUP
-   * ======================================== */
-   
-  /* Keep only essential legacy tokens during migration */
-  --juno-btn-height: 40px;       /* Remove after button cleanup */
-  --juno-btn-padding-x: 16px;    /* Remove after button cleanup */
 }
 
 /* ========================================
@@ -668,199 +636,139 @@
  * 3. Button texts should be concise and not too wordy
  * ======================================== */
 
-/* Button Base - Consumes variables with semantic fallbacks */
-@layer components {
-  :where(.btn) {
-    /* Layout - keep as literals (these don't vary) */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    max-width: 200px;  /* Character limit equivalent */
-    
-    /* Typography - keep as literals for consistency */
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.4;
-    letter-spacing: -0.006em;
-    -webkit-font-smoothing: antialiased;
-    
-    /* Variable API with semantic fallbacks */
-    background: var(--btn-bg, var(--juno-surface-50));
-    color: var(--btn-fg, var(--juno-text));
-    border: var(--btn-border-width, 1px) solid var(--btn-border, transparent);
-    border-radius: var(--btn-radius, var(--juno-radius-lg));
-    padding-block: var(--btn-pad-block, var(--juno-space-2));
-    padding-inline: var(--btn-pad-inline, var(--juno-space-4));
-    gap: var(--btn-gap, var(--juno-space-2));
-    height: var(--btn-height, 40px);
-    box-shadow: var(--btn-shadow, none);
-    transform: var(--btn-transform, none);
-    
-    /* Specific transitions instead of 'all' */
-    transition:
-      background var(--juno-duration-fast) var(--juno-ease-out),
-      color var(--juno-duration-fast) var(--juno-ease-out),
-      border-color var(--juno-duration-fast) var(--juno-ease-out),
-      box-shadow var(--juno-duration-fast) var(--juno-ease-out),
-      transform var(--juno-duration-fast) var(--juno-ease-out);
-  }
+/* PRIMARY button - Elegant styling matching reference design */
+.btn--primary {
+  --btn-h: 44px;                          /* h-11 from reference */
+  --btn-radius: 13px;                     /* rounded-[13px] from reference */
+  --btn-pad-x: 18px;                      /* px-[18px] from reference */
+  --btn-gap: 14px;                        /* gap-3.5 from reference (0.875rem = 14px) */
 
-  /* Focus handling */
-  :where(.btn):focus-visible {
-    outline: none;
-    box-shadow: var(--btn-shadow, none), var(--btn-focus-ring, 0 0 0 2px rgba(255, 255, 255, 0.3));
-  }
-
-  /* States */
-  .btn:hover:not([disabled]):not([aria-disabled="true"]) {
-    background: var(--btn-bg-hover, var(--btn-bg, var(--juno-surface-50)));
-    color: var(--btn-fg-hover, var(--btn-fg, var(--juno-text)));
-    border-color: var(--btn-border-hover, var(--btn-border, transparent));
-    box-shadow: var(--btn-shadow-hover, var(--btn-shadow, none));
-  }
-
-  .btn:active {
-    transform: var(--btn-transform-active, translateY(1px));
-    background: var(--btn-bg-active, var(--btn-bg, var(--juno-surface-50)));
-  }
-
-  /* Disabled state */
-  .btn[disabled], 
-  .btn[aria-disabled="true"] {
-    background: var(--btn-bg-disabled, var(--juno-surface-200));
-    color: var(--btn-fg-disabled, var(--juno-color-text-disabled));
-    border-color: var(--btn-border-disabled, var(--juno-border-alpha-subtle));
-    box-shadow: none;
-    pointer-events: none;
-    opacity: var(--btn-opacity-disabled, 0.6);
-  }
-}
-
-/* Button text truncation */
-.btn > span {
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--btn-gap);
+  height: var(--btn-h);
+  padding: 0 var(--btn-pad-x);
+  border-radius: var(--btn-radius);
   white-space: nowrap;
-  max-width: inherit;
-}
 
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .btn {
-    transition: none;
-    transform: none;
-  }
-}
-
-/* PRIMARY variant - Sets only variables */
-@layer utilities {
-  .btn--primary {
-    --btn-bg: var(--juno-button-bg-primary);
-    --btn-fg: var(--juno-button-text-primary);
-    --btn-border: none;
-    --btn-shadow: var(--juno-shadow-button-primary);
-    --btn-bg-hover: var(--juno-button-bg-primary-hover);
-    --btn-focus-ring: 0 0 0 2px rgba(255, 255, 255, 0.3);
-  }
+  /* Reference design styling */
+  background: #2e2e2e;                    /* bg-ln-gray-900 */
+  color: #ffffff;                         /* text-ln-gray-0 */
+  border: none;
   
-  /* Primary hover: Remove tint overlay for clean #000000 hover */
-  .btn--primary:hover:not([disabled]):not([aria-disabled="true"]) {
-    background-image: none;
-  }
+  /* Multi-layered shadow system from reference */
+  box-shadow: 
+    0 16px 8px rgba(31,31,31,.01),
+    0 12px 6px rgba(31,31,31,.04),
+    0 4px 4px rgba(31,31,31,.07),
+    0 1.5px 3px rgba(31,31,31,.08),
+    0 0 0 1px #0f0f0f,
+    inset 0 1px 2px hsla(0,0%,100%,.12);
 
-  /* SECONDARY variant - Sets only variables */
-  .btn--secondary {
-    --btn-bg: var(--juno-button-bg-secondary);
-    --btn-fg: var(--juno-button-text-secondary);
-    --btn-border: var(--juno-border);
-    --btn-shadow: var(--juno-shadow-button-secondary);
-    --btn-bg-hover: var(--juno-button-bg-secondary-hover);
-    --btn-focus-ring: 0 0 0 2px var(--juno-accent-400);
-  }
-
-  /* GHOST variant - Sets only variables */
-  .btn--ghost {
-    --btn-bg: var(--juno-button-bg-ghost);
-    --btn-fg: var(--juno-button-text-ghost);
-    --btn-border: transparent;
-    --btn-shadow: none;
-    --btn-bg-hover: var(--juno-button-bg-ghost-hover);
-    --btn-focus-ring: 0 0 0 2px var(--juno-accent-400);
-  }
-
-  /* Size variants - Sets only spacing variables */
-  .btn--sm {
-    --btn-pad-block: var(--juno-space-1);
-    --btn-pad-inline: var(--juno-space-3);
-    --btn-radius: var(--juno-radius-md);
-    --btn-height: 32px;
-  }
-
-  .btn--lg {
-    --btn-pad-block: var(--juno-space-3);
-    --btn-pad-inline: var(--juno-space-5);
-    --btn-radius: var(--juno-radius-xl);
-    --btn-height: 48px;
-  }
-
-  /* DESTRUCTIVE variant - Sets only variables */
-  .btn--destructive {
-    --btn-bg: var(--juno-surface-50);
-    --btn-fg: var(--juno-danger-700);
-    --btn-border: var(--juno-border);
-    --btn-shadow: var(--juno-shadow-button-secondary);
-    --btn-bg-hover: var(--juno-surface-100);
-    --btn-focus-ring: 0 0 0 2px var(--juno-danger-400);
-  }
-
-  /* SUCCESS variant - Sets only variables */
-  .btn--success {
-    --btn-bg: var(--juno-surface-50);
-    --btn-fg: var(--juno-success-700);
-    --btn-border: var(--juno-border);
-    --btn-shadow: var(--juno-shadow-button-secondary);
-    --btn-bg-hover: var(--juno-surface-100);
-    --btn-focus-ring: 0 0 0 2px var(--juno-success-400);
-  }
-
-  /* WARNING variant - Sets only variables */
-  .btn--warning {
-    --btn-bg: var(--juno-surface-50);
-    --btn-fg: var(--juno-warning-700);
-    --btn-border: var(--juno-border);
-    --btn-shadow: var(--juno-shadow-button-secondary);
-    --btn-bg-hover: var(--juno-surface-100);
-    --btn-focus-ring: 0 0 0 2px var(--juno-warning-400);
-  }
-
-  /* OUTLINE variant - Direct CSS (variable system needs fixing) */
-  .btn--outline {
-    background: transparent !important;
-    color: var(--juno-text) !important;
-    border: 1px solid var(--juno-border) !important;
-    transition: all 0.15s ease-out;
-  }
-
-  .btn--outline:hover {
-    background: var(--juno-surface-50) !important;
-    border: 1px solid var(--juno-neutral-800) !important;
-    box-shadow: 0 0 0 1px var(--juno-neutral-800) !important; /* Adds visual thickness without layout shift */
-    color: var(--juno-text) !important;
-  }
+  font-size: 14px;                        /* text-ln-label-sm */
+  line-height: 20px;
+  letter-spacing: -0.006em;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  transition: 
+    background-color 200ms ease-out,
+    box-shadow 200ms ease-out;
 }
 
-/* LEGACY SECONDARY REMOVED - Now using variable-only preset above at line 955 */
+/* Hover: Lighter gray from reference */
+.btn--primary:hover:not(.btn--disabled) {
+  background: #3d3d3d;                    /* hover:bg-ln-gray-800 */
+}
 
-/* Button content elements - Using token hierarchy */
+/* Active: Subtle press effect */
+.btn--primary:active {
+  background: #525252;
+  transform: translateY(1px);
+}
+
+/* Disabled: Reference disabled styling */
+.btn--primary:disabled,
+.btn--primary.btn--disabled {
+  background: #f7f7f7;                    /* disabled:bg-ln-gray-25 */
+  color: #a3a3a3;                         /* disabled:text-ln-gray-450 */
+  pointer-events: none;
+  box-shadow: none;                       /* disabled:shadow-none */
+}
+
+/* Focus: Clean focus outline */
+.btn--primary:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 2px;
+}
+
+/* SECONDARY button - Using Shopify-inspired semantic tokens */
+.btn--secondary {
+  --btn-h: var(--juno-btn-height);         /* 36px - standard height */
+  --btn-radius: var(--juno-radius-md);     /* 12px - matches design system */
+  --btn-pad-x: var(--juno-btn-padding-x);  /* 16px - standard padding */
+  --btn-gap: var(--juno-space-2);          /* 8px - from spacing scale */
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--btn-gap);
+  height: var(--btn-h);
+  padding: 0 var(--btn-pad-x);
+  border-radius: var(--btn-radius);
+  
+  /* Semantic secondary button colors */
+  background: var(--juno-color-bg-fill-secondary);
+  color: var(--juno-color-text);
+  border: 1px solid var(--juno-color-border);
+  
+  font-weight: 500;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  transition: 
+    box-shadow var(--juno-duration-normal) var(--juno-ease-out), 
+    transform var(--juno-duration-fast) var(--juno-ease-out), 
+    background-color var(--juno-duration-normal) var(--juno-ease-out);
+  
+  box-shadow: var(--juno-shadow-button-secondary);
+}
+
+/* Hover: semantic hover state */
+.btn--secondary:hover {
+  background: var(--juno-color-bg-fill-secondary-hover);
+  box-shadow: var(--juno-shadow-button-secondary-hover);
+}
+
+/* Active: semantic active state */
+.btn--secondary:active {
+  background: var(--juno-color-bg-fill-secondary-active);
+  transform: translateY(1px);
+  box-shadow: var(--juno-shadow-button-secondary-active);
+}
+
+/* Focus: semantic focus state */
+.btn--secondary:focus-visible {
+  outline: var(--juno-focus-ring-width) solid var(--juno-color-border-focus);
+  outline-offset: var(--juno-focus-ring-offset);
+}
+
+/* Disabled: semantic disabled state */
+.btn--secondary:disabled {
+  background: var(--juno-color-bg-surface-disabled);
+  color: var(--juno-color-text-disabled);
+  border-color: var(--juno-color-border-disabled);
+  opacity: 1; /* Remove opacity since we have semantic disabled colors */
+  pointer-events: none;
+}
+
+/* Button content elements */
 .btn__lead { 
-  font-weight: var(--juno-button-lead-font-weight);
+  font-weight: 700; 
 }
 
 .btn__sub { 
-  font-weight: var(--juno-button-sub-font-weight);
-  font-size: var(--juno-button-sub-font-size);
-  opacity: var(--juno-button-sub-opacity);
+  opacity: 0.72; 
+  font-weight: 600; 
   margin-left: var(--juno-space-1); /* 4px */
 }
 
@@ -880,10 +788,10 @@
   opacity: 0.7;
 }
 
-/* Icon-only button variant - Using token hierarchy */
+/* Icon-only button variant */
 .btn--icon-only { 
-  padding: 0 var(--juno-button-icon-only-padding);
-  min-width: var(--juno-button-icon-only-min-width);
+  padding: 0 var(--juno-space-3); /* 12px */
+  width: var(--btn-h); 
   gap: 0; 
 }
 
@@ -891,43 +799,19 @@
  * EXPANDED BUTTON VARIANTS
  * ======================================== */
 
-/* Base button class - Enforces design rules and common properties */
+/* Base button class - Enforces design rules */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem; /* 8px - default gap, overridden by size variants */
   font-family: var(--font-geist-sans);
   font-weight: 500;
-  font-size: 0.875rem; /* 14px - default text size */
   text-decoration: none;
   cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 150ms ease-out;
   position: relative;
   overflow: hidden;
-  
-  /* Variable consumption - applies the CSS variables set by variant classes */
-  background: var(--btn-bg, var(--juno-button-bg-secondary));
-  color: var(--btn-fg, var(--juno-button-text-secondary));
-  border: 1px solid var(--btn-border, var(--juno-border));
-  border-radius: var(--btn-radius, var(--juno-radius-md));
-  padding: var(--btn-pad-block, var(--juno-space-2)) var(--btn-pad-inline, var(--juno-space-4));
-  height: var(--btn-height, 40px);
-  box-shadow: var(--btn-shadow, none);
-  
-  /* Transitions and animations */
-  transition: 
-    background-color var(--juno-duration-normal) var(--juno-ease-out),
-    border-color var(--juno-duration-normal) var(--juno-ease-out),
-    color var(--juno-duration-normal) var(--juno-ease-out),
-    box-shadow var(--juno-duration-normal) var(--juno-ease-out),
-    transform var(--juno-duration-fast) var(--juno-ease-out),
-    filter var(--juno-duration-normal) var(--juno-ease-out);
-  
-  /* Focus styles */
-  outline: none;
-  
-  /* Disabled styles */
-  pointer-events: auto; /* Will be overridden when disabled */
   
   /* Enforce design rules: */
   white-space: nowrap;              /* Rule 1: Never exceed 1 line */
@@ -935,29 +819,153 @@
   max-width: 100%;                  /* Rule 1: Prevent breaking containers */
 }
 
-/* Hover state - consumes hover variables */
-.btn:hover {
-  background: var(--btn-bg-hover, var(--btn-bg, var(--juno-button-bg-secondary-hover)));
+/* Ghost button variant */
+.btn--ghost {
+  background: transparent;
+  border: none;
+  color: var(--juno-accent);
+  box-shadow: none;
 }
 
-/* Focus state */
-.btn:focus-visible {
-  outline: 2px solid var(--btn-focus-ring, var(--juno-accent-400));
-  outline-offset: 2px;
+.btn--ghost:hover:not(.btn--disabled) {
+  background: var(--juno-surface-100);
 }
 
-/* Disabled state for all buttons */
-.btn:disabled,
-.btn.btn--disabled {
-  pointer-events: none;
-  opacity: 0.5;
-  filter: none !important; /* Override any brightness filters */
+.btn--ghost:focus-visible {
+  outline: var(--juno-focus-ring-width) solid var(--juno-focus-ring);
+  outline-offset: var(--juno-focus-ring-offset);
 }
 
+/* Destructive button variant - secondary style with destructive text color */
+.btn--destructive {
+  background: var(--juno-color-bg-fill-secondary);
+  color: var(--juno-btn-destructive-fg);
+  border: 1px solid var(--juno-color-border);
+  box-shadow: var(--juno-shadow-button-secondary);
+}
 
-/* LEGACY VARIANTS REMOVED - Now using variable-only presets in utilities layer above */
+.btn--destructive:hover:not(.btn--disabled) {
+  background: var(--juno-color-bg-fill-secondary-hover);
+  border-color: var(--juno-color-border);
+  box-shadow: var(--juno-shadow-button-secondary-hover);
+}
 
-/* LEGACY SIZE VARIANTS REMOVED - Now using variable-only presets in utilities layer above */
+.btn--destructive:active {
+  background: var(--juno-color-bg-fill-secondary-active);
+  transform: translateY(1px);
+  box-shadow: var(--juno-shadow-button-secondary-active);
+}
+
+.btn--destructive:focus-visible {
+  outline: var(--juno-focus-ring-width) solid var(--juno-btn-destructive-fg);
+  outline-offset: var(--juno-focus-ring-offset);
+}
+
+/* Success button variant - secondary style with success text color */
+.btn--success {
+  background: var(--juno-color-bg-fill-secondary);
+  color: var(--juno-btn-success-fg);
+  border: 1px solid var(--juno-color-border);
+  box-shadow: var(--juno-shadow-button-secondary);
+}
+
+.btn--success:hover:not(.btn--disabled) {
+  background: var(--juno-color-bg-fill-secondary-hover);
+  border-color: var(--juno-color-border);
+  box-shadow: var(--juno-shadow-button-secondary-hover);
+}
+
+.btn--success:active {
+  background: var(--juno-color-bg-fill-secondary-active);
+  transform: translateY(1px);
+  box-shadow: var(--juno-shadow-button-secondary-active);
+}
+
+.btn--success:focus-visible {
+  outline: var(--juno-focus-ring-width) solid var(--juno-btn-success-fg);
+  outline-offset: var(--juno-focus-ring-offset);
+}
+
+/* Warning button variant - secondary style with warning text color */
+.btn--warning {
+  background: var(--juno-color-bg-fill-secondary);
+  color: var(--juno-btn-warning-fg);
+  border: 1px solid var(--juno-color-border);
+  box-shadow: var(--juno-shadow-button-secondary);
+}
+
+.btn--warning:hover:not(.btn--disabled) {
+  background: var(--juno-color-bg-fill-secondary-hover);
+  border-color: var(--juno-color-border);
+  box-shadow: var(--juno-shadow-button-secondary-hover);
+}
+
+.btn--warning:active {
+  background: var(--juno-color-bg-fill-secondary-active);
+  transform: translateY(1px);
+  box-shadow: var(--juno-shadow-button-secondary-active);
+}
+
+.btn--warning:focus-visible {
+  outline: var(--juno-focus-ring-width) solid var(--juno-btn-warning-fg);
+  outline-offset: var(--juno-focus-ring-offset);
+}
+
+/* Outline button variant - just stroke, no fill */
+.btn--outline {
+  background: transparent;
+  color: var(--juno-text);
+  border: 2px solid var(--juno-border);
+  box-shadow: none;
+}
+
+.btn--outline:hover:not(.btn--disabled) {
+  background: var(--juno-surface-50);
+  border-color: var(--juno-text);
+  border-width: 2px;
+}
+
+.btn--outline:active {
+  background: var(--juno-surface-100);
+  transform: translateY(1px);
+  border-width: 2px;
+}
+
+.btn--outline:focus-visible {
+  outline: var(--juno-focus-ring-width) solid var(--juno-focus-ring);
+  outline-offset: var(--juno-focus-ring-offset);
+}
+
+/* ========================================
+ * BUTTON SIZE VARIANTS
+ * ======================================== */
+
+/* Small button size */
+.btn--sm {
+  height: var(--juno-btn-sm-height);
+  padding: var(--juno-space-2) var(--juno-space-3);
+  font-size: 0.875rem; /* 14px - matches legacy small buttons */
+  border-radius: var(--juno-radius-md);
+  gap: var(--juno-space-1);
+}
+
+/* Medium button size (default) */
+.btn--md {
+  height: var(--juno-btn-md-height);
+  padding: var(--juno-space-3) var(--juno-space-4);
+  font-size: 0.875rem; /* 14px - matches legacy button text */
+  border-radius: var(--juno-radius-lg);
+  gap: var(--juno-space-2);
+}
+
+/* Large button size */
+.btn--lg {
+  height: var(--juno-btn-lg-height);
+  padding: var(--juno-space-4) var(--juno-space-6);
+  font-size: 1rem; /* 16px - slightly larger for large buttons */
+  border-radius: var(--juno-radius-lg);
+  gap: var(--juno-space-2);
+}
 
 /* ========================================
  * BUTTON STATE VARIANTS
@@ -965,39 +973,29 @@
 
 /* Loading state */
 .btn--loading {
-  position: relative;
-  color: transparent !important;
+  color: transparent;
   pointer-events: none;
 }
 
 .btn--loading::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 16px;
-  height: 16px;
-  margin-top: -8px; /* Half of height for centering */
-  margin-left: -8px; /* Half of width for centering */
+  width: var(--juno-btn-spinner-size-md);
+  height: var(--juno-btn-spinner-size-md);
   border: 2px solid transparent;
   border-top-color: currentColor;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
-/* Loading spinner sizes */
 .btn--sm.btn--loading::after {
-  width: 14px;
-  height: 14px;
-  margin-top: -7px; /* Half of height for centering */
-  margin-left: -7px; /* Half of width for centering */
+  width: var(--juno-btn-spinner-size-sm);
+  height: var(--juno-btn-spinner-size-sm);
 }
 
 .btn--lg.btn--loading::after {
-  width: 18px;
-  height: 18px;
-  margin-top: -9px; /* Half of height for centering */
-  margin-left: -9px; /* Half of width for centering */
+  width: var(--juno-btn-spinner-size-lg);
+  height: var(--juno-btn-spinner-size-lg);
 }
 
 /* Disabled state */
@@ -1023,72 +1021,75 @@
  * For buttons with icons or icon-only buttons
  * ======================================== */
 
-/* Icon button - square buttons with icons - Using variable-only approach */
+/* Icon button - square buttons with icons */
 .btn--icon {
-  --btn-size: var(--juno-button-size-md);
-  --btn-bg: var(--juno-button-bg-secondary);
-  --btn-fg: var(--juno-button-text-secondary);
-  --btn-border: var(--juno-border);
-  --btn-bg-hover: var(--juno-button-bg-secondary-hover);
-  
+  --btn-size: var(--juno-btn-height);
   width: var(--btn-size);
   height: var(--btn-size);
   padding: 0;
-  font-size: var(--juno-button-icon-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--juno-radius-md);
+  background: var(--juno-color-bg-fill-secondary);
+  color: var(--juno-color-text);
+  border: 1px solid var(--juno-color-border);
+  font-size: 16px;
   line-height: 1;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out;
 }
 
-/* Icon button sizes - Using token hierarchy */
+.btn--icon:hover {
+  background: var(--juno-color-bg-fill-secondary-hover);
+}
+
+.btn--icon:active {
+  background: var(--juno-color-bg-fill-secondary-active);
+}
+
+/* Icon button sizes */
 .btn--icon.btn--sm {
-  --btn-size: var(--juno-button-size-sm);
-  font-size: var(--juno-button-icon-sm);
+  --btn-size: var(--juno-btn-sm-height);
+  font-size: 14px;
 }
 
 .btn--icon.btn--lg {
-  --btn-size: var(--juno-button-size-lg);
-  font-size: var(--juno-button-icon-lg);
+  --btn-size: var(--juno-btn-lg-height);
+  font-size: 18px;
 }
 
-/* Primary icon button - Using variable-only approach */
+/* Primary icon button */
 .btn--icon.btn--primary {
-  --btn-bg: var(--juno-button-bg-primary);
-  --btn-fg: var(--juno-button-icon-primary);
-  --btn-border: transparent;
-  --btn-shadow: var(--juno-shadow-button-primary);
-  --btn-bg-hover: var(--juno-button-bg-primary-hover);
+  background: var(--juno-neutral-750);
+  color: white;
+  border: none;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
-/* Ghost icon button - Using variable-only approach */
+.btn--icon.btn--primary:hover {
+  background: var(--juno-neutral-800);
+}
+
+/* Ghost icon button */
 .btn--icon.btn--ghost {
-  --btn-bg: var(--juno-button-bg-ghost);
-  --btn-fg: var(--juno-button-icon-ghost);
-  --btn-border: transparent;
-  --btn-bg-hover: var(--juno-button-bg-ghost-hover);
+  background: transparent;
+  border: none;
+  color: var(--juno-color-text);
 }
 
-/* Destructive icon button - Using variable-only approach */
+.btn--icon.btn--ghost:hover {
+  background: var(--juno-surface-100);
+}
+
+/* Destructive icon button */
 .btn--icon.btn--destructive {
-  --btn-bg: var(--juno-button-destructive-bg);
-  --btn-fg: var(--juno-button-destructive-text);
-  --btn-border: var(--juno-button-destructive-border);
-  --btn-bg-hover: var(--juno-button-destructive-bg-hover);
+  background: transparent;
+  border: 1px solid var(--juno-color-border);
+  color: var(--juno-btn-destructive-fg);
 }
 
-/* Remove left margin from icons inside icon-only buttons */
-.btn--icon .btn__icon {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* Ensure SVG icons within icon buttons are also centered */
-.btn--icon .btn__icon svg {
-  margin: 0 !important;
-  display: block !important;
+.btn--icon.btn--destructive:hover {
+  background: var(--juno-surface-100);
 }
 
 /* Button with icon (text + icon) */
@@ -1112,35 +1113,6 @@
 
 .btn--icon-right {
   flex-direction: row-reverse;
-}
-
-/* ========================================
- * BUTTON PAIR COMPONENT
- * Two-button layout with configurable spacing and direction
- * ======================================== */
-
-@layer components {
-  :where(.btn-pair) {
-    display: flex;
-    flex-direction: var(--btnpair-direction, row);
-    gap: var(--btnpair-gap, var(--juno-space-3));
-    align-items: stretch;
-  }
-
-  .btn-pair.is-vertical {
-    --btnpair-direction: column;
-  }
-
-  .btn-pair.is-vertical > .btn {
-    width: 100%;
-  }
-}
-
-/* Container query for auto-stacking on narrow containers */
-@container (max-width: 360px) {
-  .btn-pair {
-    --btnpair-direction: column;
-  }
 }
 
 /* ========================================
@@ -1338,6 +1310,418 @@
   }
 }
 
+/* ========================================
+ * CARD SYSTEM
+ * ======================================== */
+
+/* Base card class */
+.card {
+  background: white;
+  border-radius: var(--card-border-radius, var(--juno-radius-xl));
+  border: 1px solid var(--juno-border);
+  overflow: hidden;
+  transition: 
+    box-shadow var(--juno-transition-fast),
+    border-color var(--juno-transition-fast),
+    transform var(--juno-transition-fast);
+  position: relative;
+}
+
+/* Card border radius utilities */
+.card-rounded-none { --card-border-radius: 0; }
+.card-rounded-sm { --card-border-radius: var(--juno-radius-sm); }
+.card-rounded-md { --card-border-radius: var(--juno-radius-md); }
+.card-rounded-lg { --card-border-radius: var(--juno-radius-lg); }
+.card-rounded-xl { --card-border-radius: var(--juno-radius-xl); }
+.card-rounded-2xl { --card-border-radius: var(--juno-radius-2xl); }
+.card-rounded-3xl { --card-border-radius: var(--juno-radius-3xl); }
+
+/* Card padding utilities */
+.card-header-padding-none { --card-header-padding: 0; }
+.card-header-padding-sm { --card-header-padding: var(--juno-space-2); }
+.card-header-padding-md { --card-header-padding: var(--juno-space-4); }
+.card-header-padding-lg { --card-header-padding: var(--juno-space-6); }
+.card-header-padding-xl { --card-header-padding: var(--juno-space-8); }
+
+.card-content-padding-none { --card-content-padding: 0; }
+.card-content-padding-sm { --card-content-padding: var(--juno-space-2); }
+.card-content-padding-md { --card-content-padding: var(--juno-space-4); }
+.card-content-padding-lg { --card-content-padding: var(--juno-space-6); }
+.card-content-padding-xl { --card-content-padding: var(--juno-space-8); }
+
+.card-footer-padding-none { --card-footer-padding: 0; }
+.card-footer-padding-sm { --card-footer-padding: var(--juno-space-2); }
+.card-footer-padding-md { --card-footer-padding: var(--juno-space-4); }
+.card-footer-padding-lg { --card-footer-padding: var(--juno-space-6); }
+.card-footer-padding-xl { --card-footer-padding: var(--juno-space-8); }
+
+/* Card background utilities */
+.card-header-bg-transparent { --card-header-bg: transparent; }
+.card-header-bg-white { --card-header-bg: white; }
+.card-footer-bg-transparent { --card-footer-bg: transparent; }
+.card-footer-bg-white { --card-footer-bg: white; }
+
+/* Card border utilities */
+.card-footer-border-none { --card-footer-border: none; }
+
+/* Card variants */
+.card--default {
+  box-shadow: var(--juno-shadow-sm);
+}
+
+.card--elevated {
+  box-shadow: var(--juno-shadow-md);
+}
+
+.card--flat {
+  box-shadow: none;
+  border: 1px solid var(--juno-border-alpha-medium);
+}
+
+.card--outlined {
+  box-shadow: none;
+  border: 2px solid var(--juno-border-alpha-soft);
+}
+
+/* Interactive cards */
+.card--interactive {
+  cursor: pointer;
+  user-select: none;
+}
+
+.card--interactive:hover {
+  border-color: var(--juno-accent-300);
+  box-shadow: var(--juno-shadow-lg);
+  transform: translateY(-2px);
+}
+
+.card--interactive:active {
+  transform: translateY(-1px);
+  box-shadow: var(--juno-shadow-md);
+}
+
+.card--interactive:focus-visible {
+  outline: 2px solid var(--juno-accent-500);
+  outline-offset: 2px;
+}
+
+/* Clickable card states */
+.card--clickable {
+  cursor: pointer;
+  transition: all var(--juno-transition-fast);
+}
+
+.card--clickable:hover {
+  border-color: var(--juno-accent-200);
+  box-shadow: var(--juno-shadow-md);
+}
+
+.card--clickable:active {
+  transform: scale(0.98);
+  box-shadow: var(--juno-shadow-sm);
+}
+
+/* Status variants */
+.card--success {
+  border-left: 4px solid var(--juno-success-500);
+  background: var(--juno-success-bg);
+}
+
+.card--warning {
+  border-left: 4px solid var(--juno-warning-500);
+  background: var(--juno-warning-bg);
+}
+
+.card--error {
+  border-left: 4px solid var(--juno-danger-500);
+  background: var(--juno-danger-bg);
+}
+
+.card--info {
+  border-left: 4px solid var(--juno-info-500);
+  background: var(--juno-info-bg);
+}
+
+/* Card sizes */
+.card--sm {
+  padding: var(--juno-space-4);
+}
+
+.card--md {
+  padding: var(--juno-space-6);
+}
+
+.card--lg {
+  padding: var(--juno-space-8);
+}
+
+/* Card header */
+.card__header {
+  padding: var(--card-header-padding, var(--juno-space-6));
+  background: var(--card-header-bg, var(--juno-surface-50));
+}
+
+.card__header--sm {
+  --card-header-padding: var(--juno-space-4);
+}
+
+.card__header--lg {
+  --card-header-padding: var(--juno-space-8);
+}
+
+.card__title {
+  font-size: var(--juno-fs-subheading);
+  font-weight: 600;
+  color: var(--juno-text);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.card__subtitle {
+  font-size: var(--juno-fs-body);
+  color: var(--juno-muted-fg);
+  margin: var(--juno-space-1) 0 0 0;
+  line-height: 1.5;
+}
+
+/* Card content */
+.card__content {
+  padding: var(--card-content-padding, var(--juno-space-6));
+}
+
+.card__content--sm {
+  --card-content-padding: var(--juno-space-4);
+}
+
+.card__content--lg {
+  --card-content-padding: var(--juno-space-8);
+}
+
+.card__content--no-padding {
+  --card-content-padding: 0;
+}
+
+/* Card footer */
+.card__footer {
+  padding: var(--card-footer-padding, var(--juno-space-6));
+  border-top: var(--card-footer-border, 1px solid var(--juno-border));
+  background: var(--card-footer-bg, var(--juno-surface-50));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--juno-space-3);
+}
+
+.card__footer--sm {
+  --card-footer-padding: var(--juno-space-4);
+}
+
+.card__footer--lg {
+  --card-footer-padding: var(--juno-space-8);
+}
+
+.card__footer--center {
+  justify-content: center;
+}
+
+.card__footer--end {
+  justify-content: flex-end;
+}
+
+/* Card media */
+.card__media {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card__media--aspect-16-9 {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.card__media--aspect-4-3 {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.card__media--aspect-1-1 {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+/* Card meta information */
+.card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--juno-space-2);
+  font-size: var(--juno-fs-caption);
+  color: var(--juno-muted-fg);
+  margin-top: var(--juno-space-2);
+}
+
+.card__meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--juno-space-1);
+}
+
+.card__meta-separator {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--juno-muted-fg);
+}
+
+/* Card actions */
+.card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--juno-space-2);
+}
+
+.card__actions--vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Card badge/indicator */
+.card__badge {
+  position: absolute;
+  top: var(--juno-space-3);
+  right: var(--juno-space-3);
+  background: var(--juno-accent-500);
+  color: white;
+  padding: var(--juno-space-1) var(--juno-space-2);
+  border-radius: var(--juno-radius-sm);
+  font-size: var(--juno-fs-caption);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.card__badge--success {
+  background: var(--juno-success-500);
+}
+
+.card__badge--warning {
+  background: var(--juno-warning-500);
+}
+
+.card__badge--error {
+  background: var(--juno-danger-500);
+}
+
+/* Loading state */
+.card--loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.card--loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--juno-accent-500), 0.1),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Selected state */
+.card--selected {
+  border-color: var(--juno-accent-500);
+  box-shadow: 0 0 0 1px var(--juno-accent-500);
+  background: var(--juno-accent-50);
+}
+
+/* Disabled state */
+.card--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Card layouts */
+.card--horizontal {
+  display: flex;
+  align-items: stretch;
+}
+
+.card--horizontal .card__media {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.card--horizontal .card__content {
+  flex: 1;
+}
+
+/* Compact card */
+.card--compact .card__header,
+.card--compact .card__content,
+.card--compact .card__footer {
+  padding: var(--juno-space-4);
+}
+
+.card--compact .card__title {
+  font-size: var(--juno-fs-body);
+}
+
+.card--compact .card__subtitle {
+  font-size: var(--juno-fs-caption);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card--horizontal {
+    flex-direction: column;
+  }
+  
+  .card--horizontal .card__media {
+    width: 100%;
+    max-height: 200px;
+  }
+  
+  .card__header,
+  .card__content,
+  .card__footer {
+    padding: var(--juno-space-4);
+  }
+  
+  .card__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card--interactive,
+  .card--clickable {
+    transition: none;
+    transform: none;
+  }
+  
+  .card--loading::before {
+    animation: none;
+  }
+}
 
 /* ========================================
  * RESPONSIVE BUTTON ADJUSTMENTS

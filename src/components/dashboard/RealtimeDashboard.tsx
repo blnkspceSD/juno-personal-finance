@@ -275,7 +275,7 @@ export function RealtimeDashboard({
                     <p className="text-juno-muted-fg mb-juno-4">
                       No spending pockets yet. Create your first pocket to organize your spending categories.
                     </p>
-                    <Button className="btn--primary" onClick={() => setIsCreateDialogOpen(true)}>
+                    <Button variant="primary" onClick={() => setIsCreateDialogOpen(true)}>
                       <Plus className="h-4 w-4 mr-2" />
                       Add pocket
                     </Button>
@@ -290,7 +290,7 @@ export function RealtimeDashboard({
         <div className="space-y-juno-4 pb-juno-12">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-juno-text">Recent Transactions</h2>
-            <Button className="btn--secondary" asChild>
+            <Button variant="secondary" asChild>
               <Link href="/dashboard/transactions/new">
                 <Plus className="h-4 w-4" />
                 Add transaction
@@ -349,7 +349,7 @@ export function RealtimeDashboard({
               </p>
               
               <div className="flex flex-col sm:flex-row gap-juno-4">
-                <Button className="btn--primary" asChild>
+                <Button variant="primary" asChild>
                   <Link href="/dashboard/budget/new">
                     <Plus className="h-4 w-4 mr-2" />
                     Create Budget for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
