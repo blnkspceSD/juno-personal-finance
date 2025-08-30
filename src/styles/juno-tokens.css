@@ -676,6 +676,7 @@
     align-items: center;
     justify-content: center;
     white-space: nowrap;
+    max-width: 200px;  /* Character limit equivalent */
     
     /* Typography - keep as literals for consistency */
     font-size: 14px;
@@ -734,6 +735,14 @@
     pointer-events: none;
     opacity: var(--btn-opacity-disabled, 0.6);
   }
+}
+
+/* Button text truncation */
+.btn > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: inherit;
 }
 
 /* Reduced motion support */
@@ -825,14 +834,15 @@
     --btn-focus-ring: 0 0 0 2px var(--juno-warning-400);
   }
 
-  /* OUTLINE variant - Sets only variables */
+  /* OUTLINE variant - Direct CSS (variable system needs fixing) */
   .btn--outline {
-    --btn-bg: transparent;
-    --btn-fg: var(--juno-text);
-    --btn-border: var(--juno-border);
-    --btn-shadow: none;
-    --btn-bg-hover: var(--juno-surface-50);
-    --btn-focus-ring: 0 0 0 2px var(--juno-accent-400);
+    background: transparent !important;
+    color: var(--juno-text) !important;
+    border: 1px solid var(--juno-border) !important;
+  }
+
+  .btn--outline:hover {
+    background: var(--juno-surface-50) !important;
   }
 }
 
@@ -936,32 +946,36 @@
  * BUTTON STATE VARIANTS
  * ======================================== */
 
-/* Loading state - Using token hierarchy */
+/* Loading state */
 .btn--loading {
-  color: transparent;
-  opacity: var(--juno-button-loading-text-opacity);
+  position: relative;
+  color: transparent !important;
   pointer-events: none;
 }
 
 .btn--loading::after {
   content: '';
   position: absolute;
-  width: var(--juno-button-spinner-md);
-  height: var(--juno-button-spinner-md);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
   border: 2px solid transparent;
-  border-top-color: var(--juno-button-loading-spinner-color);
+  border-top-color: currentColor;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
+/* Loading spinner sizes */
 .btn--sm.btn--loading::after {
-  width: var(--juno-button-spinner-sm);
-  height: var(--juno-button-spinner-sm);
+  width: 14px;
+  height: 14px;
 }
 
 .btn--lg.btn--loading::after {
-  width: var(--juno-button-spinner-lg);
-  height: var(--juno-button-spinner-lg);
+  width: 18px;
+  height: 18px;
 }
 
 /* Disabled state */
