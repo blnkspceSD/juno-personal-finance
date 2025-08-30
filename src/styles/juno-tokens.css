@@ -839,10 +839,14 @@
     background: transparent !important;
     color: var(--juno-text) !important;
     border: 1px solid var(--juno-border) !important;
+    transition: all 0.15s ease-out;
   }
 
   .btn--outline:hover {
     background: var(--juno-surface-50) !important;
+    border: 1px solid var(--juno-neutral-800) !important;
+    box-shadow: 0 0 0 1px var(--juno-neutral-800) !important; /* Adds visual thickness without layout shift */
+    color: var(--juno-text) !important;
   }
 }
 
@@ -958,9 +962,10 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   width: 16px;
   height: 16px;
+  margin-top: -8px; /* Half of height for centering */
+  margin-left: -8px; /* Half of width for centering */
   border: 2px solid transparent;
   border-top-color: currentColor;
   border-radius: 50%;
@@ -971,11 +976,15 @@
 .btn--sm.btn--loading::after {
   width: 14px;
   height: 14px;
+  margin-top: -7px; /* Half of height for centering */
+  margin-left: -7px; /* Half of width for centering */
 }
 
 .btn--lg.btn--loading::after {
   width: 18px;
   height: 18px;
+  margin-top: -9px; /* Half of height for centering */
+  margin-left: -9px; /* Half of width for centering */
 }
 
 /* Disabled state */
