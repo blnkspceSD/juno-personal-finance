@@ -75,7 +75,8 @@ export default function ButtonPlaygroundPage() {
   const generateButtonProps = () => {
     const props: Record<string, any> = {}
     
-    if (config.variant !== 'primary') props.variant = config.variant
+    // Always set variant (don't skip primary)
+    props.variant = config.variant
     if (config.size !== 'md') props.size = config.size
     if (config.disabled) props.disabled = config.disabled
     if (config.loading) props.loading = config.loading

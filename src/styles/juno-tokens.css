@@ -542,204 +542,13 @@
   --juno-card-footer-border: 1px solid var(--juno-border);
 
   /* ========================================
-   * BUTTON TOKEN HIERARCHY
-   * Following Primitive → Semantic → Mode pattern like cards
-   * ======================================== */
-
-  /* PRIMITIVE TOKENS - Raw values for button system */
-  --juno-button-primitive-height-sm: 32px;
-  --juno-button-primitive-height-md: 40px;
-  --juno-button-primitive-height-lg: 48px;
-  --juno-button-primitive-padding-x-sm: 12px;
-  --juno-button-primitive-padding-x-md: 16px;
-  --juno-button-primitive-padding-x-lg: 24px;
-  --juno-button-primitive-gap-sm: 6px;
-  --juno-button-primitive-gap-md: 8px;
-  --juno-button-primitive-gap-lg: 10px;
-  --juno-button-primitive-radius-sm: var(--juno-radius-md);
-  --juno-button-primitive-radius-md: var(--juno-radius-lg);
-  --juno-button-primitive-radius-lg: var(--juno-radius-xl);
-  --juno-button-primitive-font-size-sm: 14px;
-  --juno-button-primitive-font-size-md: 14px;
-  --juno-button-primitive-font-size-lg: 16px;
-  --juno-button-primitive-icon-size-sm: 14px;
-  --juno-button-primitive-icon-size-md: 16px;
-  --juno-button-primitive-icon-size-lg: 18px;
-  --juno-button-primitive-spinner-size-sm: 14px;
-  --juno-button-primitive-spinner-size-md: 16px;
-  --juno-button-primitive-spinner-size-lg: 18px;
-
-  /* SEMANTIC TOKENS - Purpose-driven button tokens */
-  --juno-button-size-sm: var(--juno-button-primitive-height-sm);
-  --juno-button-size-md: var(--juno-button-primitive-height-md);
-  --juno-button-size-lg: var(--juno-button-primitive-height-lg);
-  --juno-button-padding-sm: var(--juno-button-primitive-padding-x-sm);
-  --juno-button-padding-md: var(--juno-button-primitive-padding-x-md);
-  --juno-button-padding-lg: var(--juno-button-primitive-padding-x-lg);
-  --juno-button-gap-sm: var(--juno-button-primitive-gap-sm);
-  --juno-button-gap-md: var(--juno-button-primitive-gap-md);
-  --juno-button-gap-lg: var(--juno-button-primitive-gap-lg);
-  --juno-button-radius-sm: var(--juno-button-primitive-radius-sm);
-  --juno-button-radius-md: var(--juno-button-primitive-radius-md);
-  --juno-button-radius-lg: var(--juno-button-primitive-radius-lg);
-  --juno-button-text-sm: var(--juno-button-primitive-font-size-sm);
-  --juno-button-text-md: var(--juno-button-primitive-font-size-md);
-  --juno-button-text-lg: var(--juno-button-primitive-font-size-lg);
-  --juno-button-icon-sm: var(--juno-button-primitive-icon-size-sm);
-  --juno-button-icon-md: var(--juno-button-primitive-icon-size-md);
-  --juno-button-icon-lg: var(--juno-button-primitive-icon-size-lg);
-  --juno-button-spinner-sm: var(--juno-button-primitive-spinner-size-sm);
-  --juno-button-spinner-md: var(--juno-button-primitive-spinner-size-md);
-  --juno-button-spinner-lg: var(--juno-button-primitive-spinner-size-lg);
-
-  /* Button variant semantic colors */
-  --juno-button-primary-bg: #000000;
-  --juno-button-primary-text: var(--juno-surface-50);
-  --juno-button-primary-border: none;
-  --juno-button-secondary-bg: var(--juno-surface-50);
-  --juno-button-secondary-text: var(--juno-text);
-  --juno-button-secondary-border: var(--juno-border);
-  --juno-button-outline-bg: transparent;
-  --juno-button-outline-text: var(--juno-text);
-  --juno-button-outline-border: var(--juno-border);
-  --juno-button-destructive-bg: var(--juno-surface-50);
-  --juno-button-destructive-text: var(--juno-danger-700);
-  --juno-button-destructive-border: var(--juno-border);
-  --juno-button-success-bg: var(--juno-surface-50);
-  --juno-button-success-text: var(--juno-success-700);
-  --juno-button-success-border: var(--juno-border);
-  --juno-button-warning-bg: var(--juno-surface-50);
-  --juno-button-warning-text: var(--juno-warning-700);
-  --juno-button-warning-border: var(--juno-border);
-
-  /* Button shadows */
-  --juno-button-primary-shadow: var(--juno-shadow-button-primary);
-  --juno-button-secondary-shadow: var(--juno-shadow-button-secondary);
-  --juno-button-outline-shadow: none;
-
-  /* MODE-SPECIFIC TOKENS - State variations */
-  /* Default state uses semantic tokens above */
-  
-  /* Hover state */
-  --juno-button-primary-bg-hover: var(--juno-button-primary-bg);
-  --juno-button-primary-bg-hover-tint: rgba(255, 255, 255, 0.2);
-  --juno-button-primary-text-hover: var(--juno-surface-50);
-  --juno-button-primary-border-hover: none;
-  --juno-button-primary-shadow-hover: var(--juno-shadow-button-primary-hover);
-  --juno-button-secondary-bg-hover: var(--juno-surface-100);
-  --juno-button-secondary-text-hover: var(--juno-text);
-  --juno-button-secondary-border-hover: var(--juno-border);
-  --juno-button-secondary-shadow-hover: var(--juno-shadow-button-secondary-hover);
-  --juno-button-outline-bg-hover: var(--juno-surface-50);
-  --juno-button-outline-text-hover: var(--juno-text);
-  --juno-button-outline-border-hover: var(--juno-text);
-  --juno-button-destructive-bg-hover: var(--juno-surface-100);
-  --juno-button-destructive-text-hover: var(--juno-danger-700);
-  --juno-button-destructive-border-hover: var(--juno-border);
-  --juno-button-success-bg-hover: var(--juno-surface-100);
-  --juno-button-success-text-hover: var(--juno-success-700);
-  --juno-button-success-border-hover: var(--juno-border);
-  --juno-button-warning-bg-hover: var(--juno-surface-100);
-  --juno-button-warning-text-hover: var(--juno-warning-700);
-  --juno-button-warning-border-hover: var(--juno-border);
-
-  /* Active state */
-  --juno-button-primary-bg-active: var(--juno-accent-800);
-  --juno-button-primary-text-active: var(--juno-surface-50);
-  --juno-button-primary-border-active: transparent;
-  --juno-button-primary-shadow-active: var(--juno-shadow-button-primary-active);
-  --juno-button-secondary-bg-active: var(--juno-surface-200);
-  --juno-button-secondary-text-active: var(--juno-text);
-  --juno-button-secondary-border-active: var(--juno-border-alpha-strong);
-  --juno-button-secondary-shadow-active: var(--juno-shadow-button-secondary-active);
-  --juno-button-outline-bg-active: var(--juno-surface-100);
-  --juno-button-outline-text-active: var(--juno-text);
-  --juno-button-outline-border-active: var(--juno-text);
-  --juno-button-destructive-bg-active: var(--juno-surface-200);
-  --juno-button-destructive-text-active: var(--juno-danger-700);
-  --juno-button-destructive-border-active: var(--juno-border-alpha-strong);
-  --juno-button-success-bg-active: var(--juno-surface-200);
-  --juno-button-success-text-active: var(--juno-success-700);
-  --juno-button-success-border-active: var(--juno-border-alpha-strong);
-  --juno-button-warning-bg-active: var(--juno-surface-200);
-  --juno-button-warning-text-active: var(--juno-warning-700);
-  --juno-button-warning-border-active: var(--juno-border-alpha-strong);
-
-  /* Focus state */
-  --juno-button-primary-focus-ring: var(--juno-surface-50);
-  --juno-button-secondary-focus-ring: var(--juno-accent-400);
-  --juno-button-outline-focus-ring: var(--juno-accent-400);
-  --juno-button-destructive-focus-ring: var(--juno-danger-400);
-  --juno-button-success-focus-ring: var(--juno-success-400);
-  --juno-button-warning-focus-ring: var(--juno-warning-400);
-
-  /* Disabled state */
-  --juno-button-disabled-bg: var(--juno-surface-200);
-  --juno-button-disabled-text: var(--juno-color-text-disabled);
-  --juno-button-disabled-border: var(--juno-border-alpha-subtle);
-  --juno-button-disabled-shadow: none;
-  --juno-button-disabled-opacity: 0.6;
-
-  /* Loading state */
-  --juno-button-loading-spinner-color: currentColor;
-  --juno-button-loading-text-opacity: 0;
-
-  /* Button typography tokens - Missing from CSS */
-  --juno-button-font-weight: 500;
-  --juno-button-line-height: 1.4;
-  --juno-button-letter-spacing: -0.006em;
-  --juno-button-font-smoothing: antialiased;
-  --juno-button-white-space: nowrap;
-
-  /* Button layout tokens - Missing from CSS */
-  --juno-button-display: inline-flex;
-  --juno-button-align-items: center;
-  --juno-button-justify-content: center;
-
-  /* Button transition tokens - Missing from CSS */
-  --juno-button-transition-bg: background-color var(--juno-duration-normal) var(--juno-ease-out);
-  --juno-button-transition-shadow: box-shadow var(--juno-duration-normal) var(--juno-ease-out);
-  --juno-button-transition-transform: transform var(--juno-duration-fast) var(--juno-ease-out);
-  --juno-button-transition-all: var(--juno-button-transition-bg), var(--juno-button-transition-shadow), var(--juno-button-transition-transform);
-
-  /* Button transform tokens - Missing from CSS */
-  --juno-button-transform-active: translateY(1px);
-
-  /* Button focus tokens - Missing from CSS */
-  --juno-button-focus-outline: none;
-  --juno-button-focus-outline-offset: 0;
-  --juno-button-focus-box-shadow-none: none;
-  --juno-button-focus-visible-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
-
-  /* Filter effects for enhanced interactions */
-  --juno-button-filter-hover-brightness: brightness(1.05);
-  --juno-button-filter-active-brightness: brightness(0.95);
-  --juno-button-filter-disabled: none;
-
-  /* Button text structure tokens */
-  --juno-button-lead-font-weight: 500;
-  --juno-button-sub-font-weight: 400;
-  --juno-button-sub-font-size: 0.875rem; /* 14px */
-  --juno-button-sub-opacity: 0.8;
-
-  /* Icon-only button tokens */
-  --juno-button-icon-only-padding: var(--juno-space-3); /* 12px */
-  --juno-button-icon-only-min-width: var(--juno-button-size-md); /* Same as button height */
-
-  /* ========================================
-   * LEGACY COMPATIBILITY TOKENS
-   * Support for existing globals.css references
+   * LEGACY COMPATIBILITY TOKENS  
+   * Temporary support for migration period - DELETE AFTER CLEANUP
    * ======================================== */
    
-  /* Legacy button height tokens - mapped to new system */
-  --juno-btn-height: var(--juno-button-size-md);      /* 40px - maps to new md size */
-  --juno-btn-height-sm: var(--juno-button-size-sm);   /* 32px - maps to new sm size */
-  --juno-btn-height-lg: var(--juno-button-size-lg);   /* 48px - maps to new lg size */
-  
-  /* Legacy padding tokens - mapped to new system */
-  --juno-btn-padding-x: var(--juno-button-padding-md);
-  --juno-btn-padding-x-sm: var(--juno-button-padding-sm);
-  --juno-btn-padding-x-lg: var(--juno-button-padding-lg);
+  /* Keep only essential legacy tokens during migration */
+  --juno-btn-height: 40px;       /* Remove after button cleanup */
+  --juno-btn-padding-x: 16px;    /* Remove after button cleanup */
 }
 
 /* ========================================
@@ -985,70 +794,49 @@
     --btn-radius: var(--juno-radius-xl);
     --btn-height: 48px;
   }
+
+  /* DESTRUCTIVE variant - Sets only variables */
+  .btn--destructive {
+    --btn-bg: var(--juno-surface-50);
+    --btn-fg: var(--juno-danger-700);
+    --btn-border: var(--juno-border);
+    --btn-shadow: var(--juno-shadow-button-secondary);
+    --btn-bg-hover: var(--juno-surface-100);
+    --btn-focus-ring: 0 0 0 2px var(--juno-danger-400);
+  }
+
+  /* SUCCESS variant - Sets only variables */
+  .btn--success {
+    --btn-bg: var(--juno-surface-50);
+    --btn-fg: var(--juno-success-700);
+    --btn-border: var(--juno-border);
+    --btn-shadow: var(--juno-shadow-button-secondary);
+    --btn-bg-hover: var(--juno-surface-100);
+    --btn-focus-ring: 0 0 0 2px var(--juno-success-400);
+  }
+
+  /* WARNING variant - Sets only variables */
+  .btn--warning {
+    --btn-bg: var(--juno-surface-50);
+    --btn-fg: var(--juno-warning-700);
+    --btn-border: var(--juno-border);
+    --btn-shadow: var(--juno-shadow-button-secondary);
+    --btn-bg-hover: var(--juno-surface-100);
+    --btn-focus-ring: 0 0 0 2px var(--juno-warning-400);
+  }
+
+  /* OUTLINE variant - Sets only variables */
+  .btn--outline {
+    --btn-bg: transparent;
+    --btn-fg: var(--juno-text);
+    --btn-border: var(--juno-border);
+    --btn-shadow: none;
+    --btn-bg-hover: var(--juno-surface-50);
+    --btn-focus-ring: 0 0 0 2px var(--juno-accent-400);
+  }
 }
 
-/* SECONDARY button - Using token hierarchy */
-.btn--secondary {
-  /* Layout tokens */
-  display: var(--juno-button-display);
-  align-items: var(--juno-button-align-items);
-  justify-content: var(--juno-button-justify-content);
-  gap: var(--juno-button-gap-md);
-  height: var(--juno-button-size-md);
-  padding: 0 var(--juno-button-padding-md);
-  border-radius: var(--juno-button-radius-md);
-  white-space: var(--juno-button-white-space);
-  
-  /* Semantic tokens for secondary variant */
-  background: var(--juno-button-secondary-bg);
-  color: var(--juno-button-secondary-text);
-  border: 1px solid var(--juno-button-secondary-border);
-  box-shadow: var(--juno-button-secondary-shadow);
-  
-  /* Typography tokens */
-  font-size: var(--juno-button-text-md);
-  font-weight: var(--juno-button-font-weight);
-  line-height: var(--juno-button-line-height);
-  letter-spacing: var(--juno-button-letter-spacing);
-  -webkit-font-smoothing: var(--juno-button-font-smoothing);
-  
-  /* Transition tokens */
-  transition: var(--juno-button-transition-all);
-}
-
-/* Hover: Mode-specific tokens */
-.btn--secondary:hover:not(.btn--disabled) {
-  background: var(--juno-button-secondary-bg-hover);
-  color: var(--juno-button-secondary-text-hover);
-  border-color: var(--juno-button-secondary-border-hover);
-  box-shadow: var(--juno-button-secondary-shadow-hover);
-}
-
-/* Active: Mode-specific tokens */
-.btn--secondary:active {
-  background: var(--juno-button-secondary-bg-active);
-  color: var(--juno-button-secondary-text-active);
-  border-color: var(--juno-button-secondary-border-active);
-  box-shadow: var(--juno-button-secondary-shadow-active);
-  transform: var(--juno-button-transform-active);
-}
-
-/* Focus: Mode-specific tokens */
-.btn--secondary:focus-visible {
-  outline: var(--juno-focus-ring-width) solid var(--juno-button-secondary-focus-ring);
-  outline-offset: var(--juno-focus-ring-offset);
-}
-
-/* Disabled: Mode-specific tokens */
-.btn--secondary:disabled,
-.btn--secondary.btn--disabled {
-  background: var(--juno-button-disabled-bg);
-  color: var(--juno-button-disabled-text);
-  border-color: var(--juno-button-disabled-border);
-  box-shadow: var(--juno-button-disabled-shadow);
-  opacity: var(--juno-button-disabled-opacity);
-  pointer-events: none;
-}
+/* LEGACY SECONDARY REMOVED - Now using variable-only preset above at line 955 */
 
 /* Button content elements - Using token hierarchy */
 .btn__lead { 
@@ -1140,188 +928,9 @@
 }
 
 
-/* Destructive button variant - Using token hierarchy */
-.btn--destructive {
-  background: var(--juno-button-destructive-bg);
-  color: var(--juno-button-destructive-text);
-  border: 1px solid var(--juno-button-destructive-border);
-  box-shadow: var(--juno-button-secondary-shadow);
-}
+/* LEGACY VARIANTS REMOVED - Now using variable-only presets in utilities layer above */
 
-.btn--destructive:hover:not(.btn--disabled) {
-  background: var(--juno-button-destructive-bg-hover);
-  color: var(--juno-button-destructive-text-hover);
-  border-color: var(--juno-button-destructive-border-hover);
-  box-shadow: var(--juno-button-secondary-shadow-hover);
-}
-
-.btn--destructive:active {
-  background: var(--juno-button-destructive-bg-active);
-  color: var(--juno-button-destructive-text-active);
-  border-color: var(--juno-button-destructive-border-active);
-  box-shadow: var(--juno-button-secondary-shadow-active);
-  transform: translateY(1px);
-}
-
-.btn--destructive:focus-visible {
-  outline: var(--juno-focus-ring-width) solid var(--juno-button-destructive-focus-ring);
-  outline-offset: var(--juno-focus-ring-offset);
-}
-
-.btn--destructive:disabled,
-.btn--destructive.btn--disabled {
-  background: var(--juno-button-disabled-bg);
-  color: var(--juno-button-disabled-text);
-  border-color: var(--juno-button-disabled-border);
-  box-shadow: var(--juno-button-disabled-shadow);
-  opacity: var(--juno-button-disabled-opacity);
-  pointer-events: none;
-}
-
-/* Success button variant - Using token hierarchy */
-.btn--success {
-  background: var(--juno-button-success-bg);
-  color: var(--juno-button-success-text);
-  border: 1px solid var(--juno-button-success-border);
-  box-shadow: var(--juno-button-secondary-shadow);
-}
-
-.btn--success:hover:not(.btn--disabled) {
-  background: var(--juno-button-success-bg-hover);
-  color: var(--juno-button-success-text-hover);
-  border-color: var(--juno-button-success-border-hover);
-  box-shadow: var(--juno-button-secondary-shadow-hover);
-}
-
-.btn--success:active {
-  background: var(--juno-button-success-bg-active);
-  color: var(--juno-button-success-text-active);
-  border-color: var(--juno-button-success-border-active);
-  box-shadow: var(--juno-button-secondary-shadow-active);
-  transform: translateY(1px);
-}
-
-.btn--success:focus-visible {
-  outline: var(--juno-focus-ring-width) solid var(--juno-button-success-focus-ring);
-  outline-offset: var(--juno-focus-ring-offset);
-}
-
-.btn--success:disabled,
-.btn--success.btn--disabled {
-  background: var(--juno-button-disabled-bg);
-  color: var(--juno-button-disabled-text);
-  border-color: var(--juno-button-disabled-border);
-  box-shadow: var(--juno-button-disabled-shadow);
-  opacity: var(--juno-button-disabled-opacity);
-  pointer-events: none;
-}
-
-/* Warning button variant - Using token hierarchy */
-.btn--warning {
-  background: var(--juno-button-warning-bg);
-  color: var(--juno-button-warning-text);
-  border: 1px solid var(--juno-button-warning-border);
-  box-shadow: var(--juno-button-secondary-shadow);
-}
-
-.btn--warning:hover:not(.btn--disabled) {
-  background: var(--juno-button-warning-bg-hover);
-  color: var(--juno-button-warning-text-hover);
-  border-color: var(--juno-button-warning-border-hover);
-  box-shadow: var(--juno-button-secondary-shadow-hover);
-}
-
-.btn--warning:active {
-  background: var(--juno-button-warning-bg-active);
-  color: var(--juno-button-warning-text-active);
-  border-color: var(--juno-button-warning-border-active);
-  box-shadow: var(--juno-button-secondary-shadow-active);
-  transform: translateY(1px);
-}
-
-.btn--warning:focus-visible {
-  outline: var(--juno-focus-ring-width) solid var(--juno-button-warning-focus-ring);
-  outline-offset: var(--juno-focus-ring-offset);
-}
-
-.btn--warning:disabled,
-.btn--warning.btn--disabled {
-  background: var(--juno-button-disabled-bg);
-  color: var(--juno-button-disabled-text);
-  border-color: var(--juno-button-disabled-border);
-  box-shadow: var(--juno-button-disabled-shadow);
-  opacity: var(--juno-button-disabled-opacity);
-  pointer-events: none;
-}
-
-/* Outline button variant - Using token hierarchy */
-.btn--outline {
-  background: var(--juno-button-outline-bg);
-  color: var(--juno-button-outline-text);
-  border: 2px solid var(--juno-button-outline-border);
-  box-shadow: var(--juno-button-outline-shadow);
-}
-
-.btn--outline:hover:not(.btn--disabled) {
-  background: var(--juno-button-outline-bg-hover);
-  color: var(--juno-button-outline-text-hover);
-  border-color: var(--juno-button-outline-border-hover);
-  border-width: 2px;
-}
-
-.btn--outline:active {
-  background: var(--juno-button-outline-bg-active);
-  color: var(--juno-button-outline-text-active);
-  border-color: var(--juno-button-outline-border-active);
-  border-width: 2px;
-  transform: translateY(1px);
-}
-
-.btn--outline:focus-visible {
-  outline: var(--juno-focus-ring-width) solid var(--juno-button-outline-focus-ring);
-  outline-offset: var(--juno-focus-ring-offset);
-}
-
-.btn--outline:disabled,
-.btn--outline.btn--disabled {
-  background: var(--juno-button-disabled-bg);
-  color: var(--juno-button-disabled-text);
-  border-color: var(--juno-button-disabled-border);
-  box-shadow: var(--juno-button-disabled-shadow);
-  opacity: var(--juno-button-disabled-opacity);
-  pointer-events: none;
-}
-
-/* ========================================
- * BUTTON SIZE VARIANTS
- * ======================================== */
-
-/* Small button size - Using token hierarchy */
-.btn--sm {
-  height: var(--juno-button-size-sm);
-  padding: 0 var(--juno-button-padding-sm);
-  font-size: var(--juno-button-text-sm);
-  border-radius: var(--juno-button-radius-sm);
-  gap: var(--juno-button-gap-sm);
-}
-
-/* Medium button size (default) - Using token hierarchy */
-.btn--md {
-  height: var(--juno-button-size-md);
-  padding: 0 var(--juno-button-padding-md);
-  font-size: var(--juno-button-text-md);
-  border-radius: var(--juno-button-radius-md);
-  gap: var(--juno-button-gap-md);
-}
-
-/* Large button size - Using token hierarchy */
-.btn--lg {
-  height: var(--juno-button-size-lg);
-  padding: 0 var(--juno-button-padding-lg);
-  font-size: var(--juno-button-text-lg);
-  border-radius: var(--juno-button-radius-lg);
-  gap: var(--juno-button-gap-lg);
-}
+/* LEGACY SIZE VARIANTS REMOVED - Now using variable-only presets in utilities layer above */
 
 /* ========================================
  * BUTTON STATE VARIANTS
