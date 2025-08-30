@@ -4,6 +4,7 @@ import React, { useState, useCallback, memo, useMemo } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { ButtonPair } from '@/components/ui/button-pair'
 import { TransactionDetailsDrawer } from '@/components/ui/TransactionDetailsDrawer'
 import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -170,19 +171,21 @@ export const RecentTransactionsCard = memo(function RecentTransactionsCard({
               ))}
             </div>
             
-            {/* Action Buttons - Responsive layout */}
-            <div className="px-8 pb-8 pt-juno-4 flex flex-col md:flex-row gap-juno-3">
-              <Button variant="primary" size="md" className="w-full md:flex-1" asChild>
-                <Link href="/dashboard/transactions/new">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add transaction
-                </Link>
-              </Button>
-              <Button variant="secondary" size="md" className="w-full md:flex-1" asChild>
-                <Link href="/dashboard/transactions">
-                  View all
-                </Link>
-              </Button>
+            {/* Action Buttons - Using ButtonPair component */}
+            <div className="px-8 pb-8 pt-juno-4">
+              <ButtonPair direction="auto" aria-label="Transaction actions">
+                <Button variant="secondary" size="md" className="flex-1" asChild>
+                  <Link href="/dashboard/transactions/new">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add transaction
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="md" className="flex-1" asChild>
+                  <Link href="/dashboard/transactions">
+                    View all
+                  </Link>
+                </Button>
+              </ButtonPair>
             </div>
           </>
         ) : (

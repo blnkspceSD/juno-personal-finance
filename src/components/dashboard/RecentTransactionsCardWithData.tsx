@@ -4,6 +4,7 @@ import React, { useState, useCallback, memo } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { ButtonPair } from '@/components/ui/button-pair'
 import { TransactionDetailsDrawer } from '@/components/ui/TransactionDetailsDrawer'
 import { Plus, RefreshCw, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -182,17 +183,12 @@ export const RecentTransactionsCardWithData = memo(function RecentTransactionsCa
               ))}
             </div>
             
-            {/* Action Buttons - Responsive layout */}
-            <div className="px-8 pb-8 pt-juno-4 flex flex-col md:flex-row gap-juno-3">
-              <Button variant="primary" size="md" className="w-full md:flex-1" asChild>
+            {/* Action Button - Single Add Transaction button */}
+            <div className="px-8 pb-8 pt-juno-4">
+              <Button variant="secondary" size="md" className="w-full" asChild>
                 <Link href="/dashboard/transactions/new">
                   <Plus className="h-4 w-4 mr-2" />
                   Add transaction
-                </Link>
-              </Button>
-              <Button variant="secondary" size="md" className="w-full md:flex-1" asChild>
-                <Link href="/dashboard/transactions">
-                  View all
                 </Link>
               </Button>
             </div>

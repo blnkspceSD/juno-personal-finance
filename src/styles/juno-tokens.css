@@ -902,9 +902,17 @@
   font-size: 0.875rem; /* 14px - default text size */
   text-decoration: none;
   cursor: pointer;
-  border: 1px solid transparent;
   position: relative;
   overflow: hidden;
+  
+  /* Variable consumption - applies the CSS variables set by variant classes */
+  background: var(--btn-bg, var(--juno-button-bg-secondary));
+  color: var(--btn-fg, var(--juno-button-text-secondary));
+  border: 1px solid var(--btn-border, var(--juno-border));
+  border-radius: var(--btn-radius, var(--juno-radius-md));
+  padding: var(--btn-pad-block, var(--juno-space-2)) var(--btn-pad-inline, var(--juno-space-4));
+  height: var(--btn-height, 40px);
+  box-shadow: var(--btn-shadow, none);
   
   /* Transitions and animations */
   transition: 
@@ -927,10 +935,15 @@
   max-width: 100%;                  /* Rule 1: Prevent breaking containers */
 }
 
-/* Focus-visible styles for all buttons */
+/* Hover state - consumes hover variables */
+.btn:hover {
+  background: var(--btn-bg-hover, var(--btn-bg, var(--juno-button-bg-secondary-hover)));
+}
+
+/* Focus state */
 .btn:focus-visible {
-  outline: var(--juno-focus-ring-width) solid var(--juno-focus-ring);
-  outline-offset: var(--juno-focus-ring-offset);
+  outline: 2px solid var(--btn-focus-ring, var(--juno-accent-400));
+  outline-offset: 2px;
 }
 
 /* Disabled state for all buttons */
@@ -1010,36 +1023,19 @@
  * For buttons with icons or icon-only buttons
  * ======================================== */
 
-/* Icon button - square buttons with icons - Using token hierarchy */
+/* Icon button - square buttons with icons - Using variable-only approach */
 .btn--icon {
   --btn-size: var(--juno-button-size-md);
+  --btn-bg: var(--juno-button-bg-secondary);
+  --btn-fg: var(--juno-button-text-secondary);
+  --btn-border: var(--juno-border);
+  --btn-bg-hover: var(--juno-button-bg-secondary-hover);
+  
   width: var(--btn-size);
   height: var(--btn-size);
   padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--juno-button-radius-md);
-  background: var(--juno-button-secondary-bg);
-  color: var(--juno-button-secondary-text);
-  border: 1px solid var(--juno-button-secondary-border);
   font-size: var(--juno-button-icon-md);
   line-height: 1;
-  transition: 
-    background-color var(--juno-duration-normal) var(--juno-ease-out), 
-    border-color var(--juno-duration-normal) var(--juno-ease-out);
-}
-
-.btn--icon:hover {
-  background: var(--juno-button-secondary-bg-hover);
-  color: var(--juno-button-secondary-text-hover);
-  border-color: var(--juno-button-secondary-border-hover);
-}
-
-.btn--icon:active {
-  background: var(--juno-button-secondary-bg-active);
-  color: var(--juno-button-secondary-text-active);
-  border-color: var(--juno-button-secondary-border-active);
 }
 
 /* Icon button sizes - Using token hierarchy */
@@ -1053,45 +1049,29 @@
   font-size: var(--juno-button-icon-lg);
 }
 
-/* Primary icon button - Using token hierarchy */
+/* Primary icon button - Using variable-only approach */
 .btn--icon.btn--primary {
-  background: var(--juno-button-bg-primary);
-  color: var(--juno-button-icon-primary);
-  border: 1px solid transparent;
-  box-shadow: var(--juno-shadow-button-primary);
+  --btn-bg: var(--juno-button-bg-primary);
+  --btn-fg: var(--juno-button-icon-primary);
+  --btn-border: transparent;
+  --btn-shadow: var(--juno-shadow-button-primary);
+  --btn-bg-hover: var(--juno-button-bg-primary-hover);
 }
 
-.btn--icon.btn--primary:hover {
-  background: var(--juno-button-bg-primary-hover);
-  color: var(--juno-button-icon-primary);
-  border-color: transparent;
-  box-shadow: var(--juno-shadow-button-primary);
-}
-
-/* Ghost icon button - Using token hierarchy */
+/* Ghost icon button - Using variable-only approach */
 .btn--icon.btn--ghost {
-  background: var(--juno-button-bg-ghost);
-  color: var(--juno-button-icon-ghost);
-  border: 1px solid transparent;
+  --btn-bg: var(--juno-button-bg-ghost);
+  --btn-fg: var(--juno-button-icon-ghost);
+  --btn-border: transparent;
+  --btn-bg-hover: var(--juno-button-bg-ghost-hover);
 }
 
-.btn--icon.btn--ghost:hover {
-  background: var(--juno-button-bg-ghost-hover);
-  color: var(--juno-button-icon-ghost);
-  border-color: transparent;
-}
-
-/* Destructive icon button - Using token hierarchy */
+/* Destructive icon button - Using variable-only approach */
 .btn--icon.btn--destructive {
-  background: var(--juno-button-destructive-bg);
-  color: var(--juno-button-destructive-text);
-  border: 1px solid var(--juno-button-destructive-border);
-}
-
-.btn--icon.btn--destructive:hover {
-  background: var(--juno-button-destructive-bg-hover);
-  color: var(--juno-button-destructive-text-hover);
-  border-color: var(--juno-button-destructive-border-hover);
+  --btn-bg: var(--juno-button-destructive-bg);
+  --btn-fg: var(--juno-button-destructive-text);
+  --btn-border: var(--juno-button-destructive-border);
+  --btn-bg-hover: var(--juno-button-destructive-bg-hover);
 }
 
 /* Remove left margin from icons inside icon-only buttons */
