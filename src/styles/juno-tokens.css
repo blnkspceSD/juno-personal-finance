@@ -1135,6 +1135,35 @@
 }
 
 /* ========================================
+ * BUTTON PAIR COMPONENT
+ * Two-button layout with configurable spacing and direction
+ * ======================================== */
+
+@layer components {
+  :where(.btn-pair) {
+    display: flex;
+    flex-direction: var(--btnpair-direction, row);
+    gap: var(--btnpair-gap, var(--juno-space-3));
+    align-items: stretch;
+  }
+
+  .btn-pair.is-vertical {
+    --btnpair-direction: column;
+  }
+
+  .btn-pair.is-vertical > .btn {
+    width: 100%;
+  }
+}
+
+/* Container query for auto-stacking on narrow containers */
+@container (max-width: 360px) {
+  .btn-pair {
+    --btnpair-direction: column;
+  }
+}
+
+/* ========================================
  * TAB COMPONENT CLASSES
  * Professional tab navigation with accessibility support
  * ======================================== */
