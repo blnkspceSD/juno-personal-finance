@@ -137,13 +137,11 @@ export const RecentTransactionsCardWithData = memo(function RecentTransactionsCa
   }, []);
 
   const handleDelete = useCallback((transactionId: string) => {
-    console.log('Transaction deleted:', transactionId);
     refetch(); // Refresh data after delete
     setOpenDrawerId(null);
   }, [refetch]);
 
   const handleDuplicate = useCallback((transaction: TransactionWithCategory) => {
-    console.log('Transaction duplicated:', transaction);
     refetch(); // Refresh data after duplicate
     setOpenDrawerId(null);
   }, [refetch]);
