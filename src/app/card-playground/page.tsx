@@ -1,8 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardActions, CardClose } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardActions, CardClose, CardCornerAction } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import Link from 'next/link'
+import { Info, ExternalLink, Settings } from 'lucide-react'
 
 interface CardConfig {
   variant: string
@@ -18,6 +21,9 @@ interface CardConfig {
   interactive: boolean
   showClose: boolean
   showCTAs: boolean
+  showCornerAction: boolean
+  cornerActionType: 'drawer' | 'link' | 'click'
+  cornerLinkHref: string
 }
 
 export default function CardPlaygroundPage() {
@@ -34,7 +40,10 @@ export default function CardPlaygroundPage() {
     hoverable: false,
     interactive: false,
     showClose: false,
-    showCTAs: true
+    showCTAs: true,
+    showCornerAction: false,
+    cornerActionType: 'drawer',
+    cornerLinkHref: '/details'
   })
 
   const [copiedCode, setCopiedCode] = useState<string>('')
@@ -119,6 +128,34 @@ export default function CardPlaygroundPage() {
     
     if (config.showClose) {
       jsxCode += '\n  <CardClose onClick={() => console.log("Close clicked")} />'
+    }
+    
+    if (config.showCornerAction) {
+      if (config.cornerActionType === 'drawer') {
+        jsxCode += '\n  <Sheet>'
+        + '\n    <SheetTrigger asChild>'
+        + '\n      <CardCornerAction aria-label="Open details">'
+        + '\n        <Info className="size-4" />'
+        + '\n      </CardCornerAction>'
+        + '\n    </SheetTrigger>'
+        + '\n    <SheetContent side="right">'
+        + '\n      <SheetHeader>'
+        + '\n        <SheetTitle>Details</SheetTitle>'
+        + '\n      </SheetHeader>'
+        + '\n      {/* Drawer content */}'
+        + '\n    </SheetContent>'
+        + '\n  </Sheet>'
+      }
+      if (config.cornerActionType === 'link') {
+        jsxCode += '\n  <CardCornerAction asChild aria-label="View details">'
+          + `\n    <Link href="${config.cornerLinkHref}">`
+          + '\n      <ExternalLink className="size-4" />'
+          + '\n    </Link>'
+          + '\n  </CardCornerAction>'
+      }
+      if (config.cornerActionType === 'click') {
+        jsxCode += '\n  <CardCornerAction aria-label="Settings" onClick={() => alert("Corner clicked!")}>\n    <Settings className="size-4" />\n  </CardCornerAction>'
+      }
     }
     
     jsxCode += '\n  <CardHeader>'
@@ -356,15 +393,54 @@ export default function CardPlaygroundPage() {
                       <span className="text-sm text-juno-text">Show close button</span>
                     </label>
                     
+                  <label className="flex items-center space-x-2">
+                    <input 
+                      type="checkbox"
+                      checked={config.showCTAs}
+                      onChange={(e) => setConfig({...config, showCTAs: e.target.checked})}
+                      className="rounded border-juno-border"
+                    />
+                    <span className="text-sm text-juno-text">Show CTA buttons</span>
+                  </label>
+
                     <label className="flex items-center space-x-2">
                       <input 
                         type="checkbox"
-                        checked={config.showCTAs}
-                        onChange={(e) => setConfig({...config, showCTAs: e.target.checked})}
+                        checked={config.showCornerAction}
+                        onChange={(e) => setConfig({...config, showCornerAction: e.target.checked})}
                         className="rounded border-juno-border"
                       />
-                      <span className="text-sm text-juno-text">Show CTA buttons</span>
+                      <span className="text-sm text-juno-text">Show corner action</span>
                     </label>
+
+                    {config.showCornerAction && (
+                      <div className="space-y-3 pl-6">
+                        <div>
+                          <label className="block text-sm font-medium text-juno-text mb-2">Corner action type</label>
+                          <select
+                            value={config.cornerActionType}
+                            onChange={(e) => setConfig({ ...config, cornerActionType: e.target.value as CardConfig['cornerActionType'] })}
+                            className="w-full p-2 border border-juno-border rounded-lg text-sm"
+                          >
+                            <option value="drawer">Open Drawer</option>
+                            <option value="link">Navigate (Link)</option>
+                            <option value="click">onClick Handler</option>
+                          </select>
+                        </div>
+                        {config.cornerActionType === 'link' && (
+                          <div>
+                            <label className="block text-sm font-medium text-juno-text mb-2">Link href</label>
+                            <input
+                              type="text"
+                              value={config.cornerLinkHref}
+                              onChange={(e) => setConfig({ ...config, cornerLinkHref: e.target.value })}
+                              className="w-full p-2 border border-juno-border rounded-lg text-sm"
+                              placeholder="/details"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -388,6 +464,33 @@ export default function CardPlaygroundPage() {
                 >
                   {config.showClose && (
                     <CardClose onClick={() => alert('Close clicked!')} />
+                  )}
+                  {config.showCornerAction && (
+                    config.cornerActionType === 'drawer' ? (
+                      <Sheet>
+                        <SheetTrigger asChild>
+                          <CardCornerAction aria-label="Open details">
+                            <Info className="size-4" />
+                          </CardCornerAction>
+                        </SheetTrigger>
+                        <SheetContent side="right">
+                          <SheetHeader>
+                            <SheetTitle>Details</SheetTitle>
+                          </SheetHeader>
+                          <div className="p-juno-6 text-sm text-juno-muted-fg">Drawer content goes here.</div>
+                        </SheetContent>
+                      </Sheet>
+                    ) : config.cornerActionType === 'link' ? (
+                      <CardCornerAction asChild aria-label="View details">
+                        <Link href={config.cornerLinkHref}>
+                          <ExternalLink className="size-4" />
+                        </Link>
+                      </CardCornerAction>
+                    ) : (
+                      <CardCornerAction aria-label="Settings" onClick={() => alert('Corner clicked!')}>
+                        <Settings className="size-4" />
+                      </CardCornerAction>
+                    )
                   )}
                   <CardHeader>
                     <CardTitle>Card Title</CardTitle>
