@@ -198,6 +198,58 @@ Mirror the common _Elevated / Filled / Outlined_ mental model. These classes mus
 }
 ```
 
+---
+
+## 9) Corner Action (Top‑Right Icon Button)
+
+Add a non-destructive, top-right icon button for secondary actions like opening drawers or navigating.
+
+Component API:
+
+```
+import { Card, CardHeader, CardTitle, CardContent, CardCornerAction } from '@/components/ui/card'
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import Link from 'next/link'
+import { Info, ExternalLink } from 'lucide-react'
+
+// Drawer usage
+<Card>
+  <Sheet>
+    <SheetTrigger asChild>
+      <CardCornerAction aria-label="Open details">
+        <Info className="size-4" />
+      </CardCornerAction>
+    </SheetTrigger>
+    <SheetContent side="right">
+      <SheetHeader>
+        <SheetTitle>Details</SheetTitle>
+      </SheetHeader>
+      {/* Drawer content */}
+    </SheetContent>
+  </Sheet>
+
+  <CardHeader>
+    <CardTitle>Card Title</CardTitle>
+  </CardHeader>
+  <CardContent>…</CardContent>
+</Card>
+
+// Link/navigation usage
+<Card>
+  <CardCornerAction asChild aria-label="View details">
+    <Link href="/details">
+      <ExternalLink className="size-4" />
+    </Link>
+  </CardCornerAction>
+  …
+</Card>
+```
+
+Notes:
+- Requires `aria-label` for accessibility, especially for icon-only usage.
+- Styled via `.card__corner-action` and positioned like `.card__close` without destructive semantics.
+- Composes with `SheetTrigger asChild` or Next `Link` using `asChild`.
+
 > You already have spacing/radius scales (`--juno-space-*`, `--juno-radius-*`), so this reads cleanly.
 
 ---
