@@ -236,4 +236,41 @@
     background: var(--juno-color-bg-surface-tertiary, var(--juno-color-bg-surface-secondary));
     transform: scale(0.95);
   }
+
+  /* Card Corner Action (top-right icon button) */
+  .card__corner-action {
+    position: absolute;
+    top: var(--juno-space-2);
+    right: var(--juno-space-2);
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--juno-color-text-secondary);
+    cursor: pointer;
+    border-radius: var(--juno-radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition:
+      background-color var(--juno-duration-fast, 120ms) var(--juno-ease-out, cubic-bezier(.2,0,.2,1)),
+      color var(--juno-duration-fast, 120ms) var(--juno-ease-out, cubic-bezier(.2,0,.2,1)),
+      transform var(--juno-duration-fast, 120ms) var(--juno-ease-out, cubic-bezier(.2,0,.2,1));
+    z-index: 1;
+  }
+
+  .card__corner-action:hover {
+    background: var(--juno-color-bg-surface-secondary);
+    color: var(--juno-color-text);
+  }
+
+  .card__corner-action:focus-visible {
+    outline: 2px solid var(--juno-color-border-strong);
+    outline-offset: 2px;
+  }
+
+  .card__corner-action:active {
+    transform: scale(0.96);
+  }
 }

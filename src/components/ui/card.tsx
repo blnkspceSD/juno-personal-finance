@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
@@ -316,3 +317,26 @@ export {
   CardDescription,
   CardAction
 }
+
+// New: Top-right corner action button for navigation or drawers
+interface CardCornerActionProps extends React.ComponentProps<"button"> {
+  asChild?: boolean
+}
+
+const CardCornerAction = React.forwardRef<HTMLButtonElement, CardCornerActionProps>(
+  ({ className, asChild = false, children, ...props }, ref) => {
+    const Comp: any = asChild ? Slot : "button"
+    return (
+      <Comp
+        ref={ref}
+        className={cn("card__corner-action", className)}
+        {...props}
+      >
+        {children}
+      </Comp>
+    )
+  }
+)
+CardCornerAction.displayName = "CardCornerAction"
+
+export { CardCornerAction }
